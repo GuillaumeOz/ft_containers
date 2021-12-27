@@ -6,21 +6,34 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/22 22:37:11 by gozsertt         ###   ########.fr       */
+/*   Updated: 2021/12/27 18:34:33 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vector.hpp"
 #include <vector>
-// #include "stack.hpp"
+#include <iostream>
 
 int main() {
 
-	std::vector<int>	vect;
-	ft::vector<int>		mvect;
-
-
-
+  
+    // allocator for integer values
+    std::allocator<int> myAllocator;
+  
+    // allocate space for five ints
+    int* arr = myAllocator.allocate(5);
+  
+    // construct arr[0] and arr[3]
+	for (int i = 0; i < 5; i++)
+	{
+    	// myAllocator.construct(arr, i);
+		arr[i] = i;
+    	std::cout << arr[i] << std::endl;
+	}
+    // deallocate space for five ints
+    myAllocator.deallocate(arr, 5);
+	
+    return 0;
 }
 
 // iterators_traits, reverse_iterator, enable_if,
