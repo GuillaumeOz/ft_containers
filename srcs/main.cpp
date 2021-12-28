@@ -6,34 +6,35 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/27 18:34:33 by gozsertt         ###   ########.fr       */
+/*   Updated: 2021/12/28 18:00:35 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vector.hpp"
-#include <vector>
 #include <iostream>
+#include <vector>
+// #include "utils.hpp"
+#include "vector.hpp"
 
-int main() {
+int main(int ac, char **av) {
 
-  
-    // allocator for integer values
-    std::allocator<int> myAllocator;
-  
-    // allocate space for five ints
-    int* arr = myAllocator.allocate(5);
-  
-    // construct arr[0] and arr[3]
-	for (int i = 0; i < 5; i++)
-	{
-    	// myAllocator.construct(arr, i);
-		arr[i] = i;
-    	std::cout << arr[i] << std::endl;
-	}
-    // deallocate space for five ints
-    myAllocator.deallocate(arr, 5);
+	std::vector<int>		vector {0, 1, 2, 3, 4};
+	ft::vector<int>			myVector {0, 1, 2, 3, 4};
+
+	auto rv = std::reverse_iterator {v.rbegin()};
+	std::cout << *(++rv) << ' '; // 3
+	std::cout << *(--rv) << ' '; // 4
+	std::cout << *(rv + 3) << ' '; // 1
+	rv += 3;
+	std::cout << rv[0] << ' '; // 1
+	rv -= 3;
+	std::cout << rv[0] << '\n'; // 4
+ 
+	std::list l {5, 6, 7, 8};
+	auto rl = std::reverse_iterator {l.rbegin()};
+	std::cout << *(++rl) << ' '; // OK: 3
+	std::cout << *(--rl) << ' '; // OK: 4
 	
-    return 0;
+	return 0;
 }
 
 // iterators_traits, reverse_iterator, enable_if,
