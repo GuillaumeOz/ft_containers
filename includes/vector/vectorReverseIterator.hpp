@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/28 17:33:09 by gozsertt         ###   ########.fr       */
+/*   Updated: 2021/12/29 09:00:56 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 namespace ft {
 
-template <class T, class Pointer = T*, class Reference = T&, class Distance = ptrdiff_t>
+template <class T, class Pointer = T*, class Reference = T&, class Distance = std::ptrdiff_t>
 class vectorReveseIterator {
 
 	public:
@@ -27,7 +27,7 @@ class vectorReveseIterator {
 		typedef Pointer		pointer;
 		typedef Reference	reference;
 		typedef Distance	difference_type;
-		//add const ptr?
+		//add const ptr? for member function return
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
@@ -39,7 +39,7 @@ class vectorReveseIterator {
 
 		}
 
-		vectorReveseIterator(vectorReveseIterator cosnt & src) {
+		vectorReveseIterator(vectorReveseIterator const & src) {
 
 			*this = src;
 		}
@@ -159,7 +159,7 @@ class vectorReveseIterator {
 //------------------DEREFERENCING_AND_RANDOM_ACCESS_OPERATORS-----------------//
 
 	// *elem
-	reference	operator*() const {
+	reference	operator*(void) const {
 
 		return (*(this->_element));
 	}
@@ -171,9 +171,9 @@ class vectorReveseIterator {
 	}
 
 	// &elem
-	pointer		operator->() const {
+	pointer		operator->(void) const {
 
-		return (this->_element)
+		return (this->_element);
 	}
 
 	// static const bool input_iter = true; // Check this ?

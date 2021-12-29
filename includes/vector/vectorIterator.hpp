@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 09:56:59 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/28 18:00:37 by gozsertt         ###   ########.fr       */
+/*   Updated: 2021/12/29 13:40:34 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 namespace ft {
 
-template <class T, class Pointer = T*, class Reference = T&, class Distance = ptrdiff_t>
+template <class T, class Pointer = T*, class Reference = T&, class Distance = std::ptrdiff_t>
 class vectorIterator {
 
 	public:
@@ -28,7 +28,7 @@ class vectorIterator {
 		typedef Pointer		pointer;
 		typedef Reference	reference;
 		typedef Distance	difference_type;
-		//add const ptr?
+		//add const ptr? for member function return
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
@@ -40,7 +40,7 @@ class vectorIterator {
 
 		}
 
-		vectorIterator(vectorIterator cosnt & src) {
+		vectorIterator(vectorIterator const & src) {
 
 			*this = src;
 		}
@@ -169,7 +169,6 @@ class vectorIterator {
 	difference_type		operator-(vectorIterator b) {
 
 		return (this->_element - b._element);
-	
 	}
 
 //------------------DEREFERENCING_AND_RANDOM_ACCESS_OPERATORS-----------------//
@@ -189,7 +188,7 @@ class vectorIterator {
 	// &elem
 	pointer		operator->() const {
 
-		return (this->_element)
+		return (this->_element);
 	}
 
 	// static const bool input_iter = true; // Check this ?

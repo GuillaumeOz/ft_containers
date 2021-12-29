@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/28 18:04:45 by gozsertt         ###   ########.fr       */
+/*   Updated: 2021/12/29 18:29:28 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 # define print(x) std::cout << x << std::endl;
 
 # include <iostream>
+# include "vectorIterator.hpp"
+# include "vectorReverseIterator.hpp"
 // # include <tgmath.h>
-
-# include <vector>
 
 namespace ft {
 
@@ -29,79 +29,84 @@ class vector {
 
 //--------------------------------TYPEDEF-------------------------------------//
 
-	typedef T												value_type;
-	typedef Alloc											allocator_type;
-	typedef value_type&										reference;//not used yet
-	typedef const value_type&								const_reference;//
-	typedef value_type*										pointer;//
-	typedef const value_type*								const_pointer;//Same
-	typedef ft::vector<value_type>::iterator				iterator;//
-	typedef const ft::vector<value_type>::iterator			const_iterator;// C++11 ?
-	typedef ft::vector<value_type>::reverse_iterator		reverse_iterator;//
-	typedef const ft::vector<value_type>::reverse_iterator	const_reverse_iterator;// C++11 ?
-	typedef std::ptrdiff_t									difference_type;//
-	typedef size_t											size_type;//
+	typedef T													value_type;
+	typedef Alloc												allocator_type;
+	typedef value_type&											reference;//not used yet
+	typedef const value_type&									const_reference;//
+	typedef value_type*											pointer;//
+	typedef const value_type*									const_pointer;//Same
+	typedef typename ft::vectorIterator<value_type>				iterator;//
+	typedef const typename ft::vectorIterator<value_type>		const_iterator;// C++11 ?
+	typedef typename ft::vectorReveseIterator<value_type>		reverse_iterator;//
+	typedef const typename ft::vectorReveseIterator<value_type>	const_reverse_iterator;// C++11 ?
+	typedef std::ptrdiff_t										difference_type;//
+	typedef size_t												size_type;//
 
 //------------------------------CONSTRUCTORS----------------------------------//
 
-	//default const
-	explicit vector (const allocator_type& alloc = std::allocator<T>()) {
+	//default constructor
+	explicit vector (const allocator_type& alloc = allocator_type()) {
 
-		this->_alloc(alloc);
+		this->_alloc = alloc;//why with assignation
 		this->_size = 0;
 		this->_capacity = 0;
 		this->_start = NULL;
 		this->_end = NULL;
 	}
 
-	//fill const
+	//fill constructor
 	explicit vector (size_type n, const value_type& val = value_type(),
 		const allocator_type& alloc = allocator_type()) {
 
-		this->_alloc(alloc);
-		this->_size = 0;
+		this->_alloc = alloc;
+		this->_size = n;
 		this->_capacity = n;//change capacity?
-		this->_start = _alloc.allocate(n);
-		this->_end = _start;
-		for (size_t i = 0; 0 < n; i++) {
+		this->_start = this->_alloc.allocate(n);
+		this->_end = this->_start;
+
+		for (size_t i = 0; i < n; i++) {
 
 			this->_alloc.construct(this->_end, val);
 			this->_end++;
 		}
 	}
 
-	//range const [see enable if] // InputIterator
-			// template <class InputIterator>
-			// vector (InputIterator first, InputIterator last,
-			// 	const allocator_type& alloc = allocator_type()) {
+	// range constructor
+	template <class InputIterator>
+	vector (InputIterator first, InputIterator last,
+		const allocator_type& alloc = allocator_type()) {
 
+		this->_alloc = alloc;
+		this->_size = 0;
+		this->_capacity = first - last;//see this, test capacity value
+		this->_start = this->_start;
 
+		while (first != last) {
 
-			// }
+			this->push_back(*first);
+			++first;
+		}
+	}
 
-	//copy const
+	// copy const
 	vector (const vector& x) {
 
 		this->_alloc(x._alloc);
+		this->_capacity =  x.begin() - x.end();
+		this->_size = 0;
 		this->_start(NULL);
 		this->_end(NULL);
-		this->_end_capacity(NULL);
 		if (this == &x)
-			return ();
+			return ;
 		this->insert(this->begin(), x.begin(), x.end());
 	}
 
-	//destructor
+	// destructor
 	~vector() {
 
-		// this->clear();
+		// this->clear();//see this utility
 		this->_alloc.deallocate(_start, this->_capacity);
 	}
-
-
-
-
-
 
 /*******************************************************************************
 ******************************MEMBER FUNCTIONS**********************************
@@ -121,46 +126,118 @@ class vector {
 
 	reverse_iterator	rbegin() const {
 
-		return (this->_start);
+		return (this->_start);//end
 	}
 
 	reverse_iterator	rend() const {
 
-		return (this->_end);
+		return (this->_end);//start ?
 	}
 
 //--------------------------CAPACITY FUNCTIONS--------------------------------//
 
-	size_type	size (void) {
+	size_type	size (void) const {
 
-		return (this->_start - this->_end);
+		return (this->_size);
 	}
 
-	size_type	max_size (void) {
+	size_type	max_size (void) const {
 
-		return (0);//allocator_type().max_size();
+		return (allocator_type().max_size());
 	}
 
-		//MODIFIER FUNCTIONS
+// resize
+// Change size (public member function )
+
+	size_type	capacity(void) const {
+
+		return (this->_capacity);
+	}
+
+	bool		empty() const {
+
+		if (this->_size == 0)
+			return (true);
+		return (false);
+	}
+
+// reserve
+// Request a change in capacity (public member function )
+
+
+//---------------------------MODIFIER FUNCTIONS-------------------------------//
+
+// This effectively increases the container size by one, which causes an automatic 
+// reallocation of the allocated storage space if -and only if- the new vector size 
+// surpasses the current vector capacity.
+
+		// this->_alloc = alloc;
+		// this->_size = n;
+		// this->_capacity = n;//change capacity?
+		// this->_start = this->_alloc.allocate(n);
+		// this->_end = this->_start;
+
+		// for (size_t i = 0; i < n; i++) {
+
+		// 	this->_alloc.construct(this->_end, val);
+		// 	this->_end++;
+		// }
 
 	void push_back (const value_type& val) {
 
-		//SRC CODE TAKE USEFULL INFORMATIONS
-	// if (this->_M_impl._M_finish != this->_M_impl._M_end_of_storage)
-	//   {
-	//     _GLIBCXX_ASAN_ANNOTATE_GROW(1);
-	//     _Alloc_traits::construct(this->_M_impl, this->_M_impl._M_finish,
-	// 			     __x);
-	//     ++this->_M_impl._M_finish;
-	//     _GLIBCXX_ASAN_ANNOTATE_GREW(1);
-	//   }
-	// else
-	//   _M_realloc_insert(end(), __x);
+		allocator_type	newAlloc;
+		size_type		newCapacity;
+		pointer			newStart;
+		pointer			newEnd;
 
-		(void)val;
-		std::allocator<T> test = std::allocator<T>();
+		// this->_alloc = alloc;
+		// this->_size = n;
+		// this->_capacity = n;//change capacity?
+		// this->_start = this->_alloc.allocate(n);
+		// this->_end = this->_start;
 
-	
+			// allocator_type	_alloc;
+			// size_type		_size;
+			// size_type		_capacity;
+			// pointer			_start;
+			// pointer			_end;
+
+		newCapacity = this->_capacity = 0 ? 1 : this->_capacity * 2;
+		if (newCapacity == 1) {
+
+			newStart = newAlloc.allocate(newCapacity);
+			newEnd = newStart;
+			newAlloc.construct(newStart, val);
+			this->_size++;
+			this->_capacity++;
+			this->_start = newStart;
+			this->_end = newEnd;
+		}
+		else if (this->_size != this->_capacity) {
+
+			this->_alloc.construct(this->_end, val);
+			this->_size++;
+			this->_end++;
+		}
+		else if(this->_size == this->_capacity) {
+
+			newStart = newAlloc.allocate(newCapacity);
+			newEnd = newStart;
+			while (this->_start != this->_end) {
+
+				newAlloc.construct(newEnd, *(this->_start));
+				this->_start++;
+				newEnd++;
+			}
+			newAlloc.construct(newEnd, val);
+			newEnd++;
+			this->_alloc.deallocate(_start, this->_capacity);
+			this->_size++;
+			this->_capacity = newCapacity;
+			this->_start = newStart;
+			this->_end = newEnd;
+			this->_alloc = newAlloc;
+		}
 	}
 
 		//OVERLOAD OPERATOR
@@ -176,7 +253,7 @@ class vector {
 		if (*this == rhs)
 			return (*this);
 		this->clear();
-		this->insert(this->end(), x.begin(), x.end());
+		this->insert(this->end(), rhs.begin(), rhs.end());
 		return (*this);
 	}
 
@@ -190,12 +267,15 @@ class vector {
 // single element (1)
 		iterator insert (iterator position, const value_type& val) {
 
-			
+			(void)position;
+			(void)val;
 		}
 // fill (2)
 		void insert (iterator position, size_type n, const value_type& val) {
 
-			
+			(void)position;
+			(void)val;
+			(void)n;
 		}
 // range (3)
 		// template <class InputIterator>
