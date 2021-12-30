@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/30 11:08:46 by gozsertt         ###   ########.fr       */
+/*   Updated: 2021/12/30 16:58:15 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class vector {
 
 //------------------------------CONSTRUCTORS----------------------------------//
 
-	//default constructor
+	// Default constructor
 	explicit vector (const allocator_type& alloc = allocator_type()) {
 
 		this->_alloc = alloc;//why with assignation
@@ -54,13 +54,13 @@ class vector {
 		this->_end = NULL;
 	}
 
-	//fill constructor
+	// Fill constructor
 	explicit vector (size_type n, const value_type& val = value_type(),
 		const allocator_type& alloc = allocator_type()) {
 
 		this->_alloc = alloc;
 		this->_size = n;
-		this->_capacity = n;//change capacity?
+		this->_capacity = n;
 		this->_start = this->_alloc.allocate(n);
 		this->_end = this->_start;
 
@@ -71,41 +71,49 @@ class vector {
 		}
 	}
 
-	// range constructor
+	// Range constructor
 	template <class InputIterator>
+	// typename ft::enable_if<InputIt::input_iter, InputIt>::type = NULL)
 	vector (InputIterator first, InputIterator last,
 		const allocator_type& alloc = allocator_type()) {
 
 		this->_alloc = alloc;
-		this->_size = 0;
-		this->_capacity = first - last;//see this, test capacity value
-		this->_start = this->_start;
+		this->_size = last - first;
+		this->_capacity = this->_size;
+		this->_start = this->_alloc.allocate(this->_capacity);
+		this->_end = this->_start;
 
 		while (first != last) {
 
-			this->push_back(*first);
+			this->_alloc.construct(this->_end, *first);
 			++first;
+			this->_end++;
 		}
 	}
 
-	// copy const
-	vector (const vector& x) {
+	// Copy const
+	vector (const vector& src) {
 
-		this->_alloc(x._alloc);
-		this->_capacity =  x.begin() - x.end();
-		this->_size = 0;
-		this->_start(NULL);
-		this->_end(NULL);
-		if (this == &x)
-			return ;
-		this->insert(this->begin(), x.begin(), x.end());
+		(*this) = src;
 	}
+//-------------------------------DESTRUCTOR-----------------------------------//
 
-	// destructor
+	// Default Destructor
 	~vector() {
 
 		// this->clear();//see this utility
 		this->_alloc.deallocate(_start, this->_capacity);
+	}
+
+//--------------------------ASSIGNATION OPERATOR------------------------------//
+
+	vector &operator=(ft::vector<value_type> const & rhs) {
+
+		if (*this == rhs)
+			return (*this);
+		this->clear();
+		this->insert(this->end(), rhs.begin(), rhs.end());
+		return (*this);
 	}
 
 /*******************************************************************************
@@ -146,8 +154,19 @@ class vector {
 		return (allocator_type().max_size());
 	}
 
-// resize
-// Change size (public member function )
+// n
+// New container size, expressed in number of elements.
+// Member type size_type is an unsigned integral type.
+
+// val
+// Object whose content is copied to the added elements in case that n is greater than the current container size.
+// If not specified, the default constructor is used instead.
+// Member type value_type is the type of the elements in the container, defined in vector as an alias of the first template parameter (T).
+
+	void resize (size_type n, value_type val = value_type()) {
+
+		
+	}
 
 	size_type	capacity(void) const {
 
@@ -167,6 +186,8 @@ class vector {
 
 //---------------------------MODIFIER FUNCTIONS-------------------------------//
 
+//assign
+
 	void push_back (const value_type& val) {
 
 		allocator_type	newAlloc;
@@ -180,7 +201,6 @@ class vector {
 
 			newStart = newAlloc.allocate(newCapacity);
 			newEnd = newStart;
-			newEnd++;
 			newAlloc.construct(newStart, val);
 			this->_alloc.deallocate(this->_start, this->_capacity);
 			this->_capacity++;
@@ -197,7 +217,6 @@ class vector {
 				newEnd++;
 			}
 			newAlloc.construct(newEnd, val);
-			newEnd++;
 			this->_alloc.deallocate(this->_start, this->_capacity);
 			this->_capacity = newCapacity;
 		}
@@ -209,49 +228,61 @@ class vector {
 			this->_end++;
 			return ;
 		}
+		newEnd++;
 		this->_alloc = newAlloc;
 		this->_size++;
 		this->_start = newStart;
 		this->_end = newEnd;
 	}
 
-	vector &operator=(ft::vector<value_type> const & rhs) {
-
-		if (*this == rhs)
-			return (*this);
-		this->clear();
-		this->insert(this->end(), rhs.begin(), rhs.end());
-		return (*this);
-	}
-
-			//ITERATORS
-
-//--------------------------MODIFIERS FUNCTIONS-------------------------------//
-//assign
-//push_back
 //pop_back
 
-// single element (1)
+// Position in the vector where the new elements are inserted.
+// iterator is a member type, defined as a random access iterator type 
+// that points to elements.
+
+// Value to be copied (or moved) to the inserted elements.
+// Member type value_type is the type of the elements in the container, 
+// defined in deque as an alias of its first template parameter (T).
+
+// Insert single element (1)
 		iterator insert (iterator position, const value_type& val) {
 
 			(void)position;
 			(void)val;
 		}
-// fill (2)
+
+// Insert fill (2)
 		void insert (iterator position, size_type n, const value_type& val) {
 
 			(void)position;
 			(void)val;
 			(void)n;
 		}
-// range (3)
+
+// Insert range (3)
 		// template <class InputIterator>
 		// void insert (iterator position, InputIterator first, InputIterator last);
+
+	void clear(void) {
+
+		std::vector<int>::iterator	itBegin = this->begin();
+		std::vector<int>::iterator	itEnd = this->end();
+
+		if (this->_size > 0) {
+
+			while (itBegin != itEnd) {
+
+				this->_alloc.destroy(itBegin);//test this
+				++itBegin;
+			}
+			this->size = 0;
+		}
+	}
 
 //erase
 //swap
 //clear
-
 
 		private:
 			allocator_type	_alloc;
