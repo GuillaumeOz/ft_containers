@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/29 18:17:40 by gozsertt         ###   ########.fr       */
+/*   Updated: 2021/12/30 11:08:48 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,36 @@ static void	vectorTests() {
 	bothvector("\n")
 	bothvector("Fill constructor :\n")
 	bothvector("\n")
-	std::vector<int>					vector1(4);
+	std::vector<int>					vector1(5);
 	vector1.push_back(42);
+	vector1.push_back(42);
+	vector1.push_back(42);
+	vector1.push_back(42);
+	vector1.push_back(42);
+	vector1.push_back(42);
+	vector1.push_back(42);
+	vector1.push_back(42);
+	vector1.push_back(42);
+
+
+
+
 	std::vector<int>::iterator			beginIteratorVector1 = vector1.begin();
 	std::vector<int>::iterator			endIteratorVector1 = vector1.end();
-	ft::vector<int>						ftVector1(4);
+	ft::vector<int>						ftVector1(5);
 	ftVector1.push_back(42);
+	ftVector1.push_back(42);
+	ftVector1.push_back(42);
+	ftVector1.push_back(42);
+	ftVector1.push_back(42);
+	ftVector1.push_back(42);
+	ftVector1.push_back(42);
+	ftVector1.push_back(42);
+	ftVector1.push_back(42);
+
+
+
+
 	ft::vector<int>::iterator			beginIteratorftVector1 = ftVector1.begin();
 	ft::vector<int>::iterator			endIteratorftVector1 = ftVector1.end();
 
@@ -79,11 +103,13 @@ static void	vectorTests() {
 	VECTFILE("empty = ", vector1.empty());
 	FTVECTFILE("empty = ", ftVector1.empty());
 
+	print("vector")
 	while (beginIteratorVector1 != endIteratorVector1)
 	{
 		print(*beginIteratorVector1)
 		beginIteratorVector1++;
 	}
+	print("ftvector")
 	while (beginIteratorftVector1 != endIteratorftVector1)
 	{
 		print(*beginIteratorftVector1)

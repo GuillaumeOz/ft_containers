@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/29 18:29:28 by gozsertt         ###   ########.fr       */
+/*   Updated: 2021/12/30 11:08:46 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,86 +167,53 @@ class vector {
 
 //---------------------------MODIFIER FUNCTIONS-------------------------------//
 
-// This effectively increases the container size by one, which causes an automatic 
-// reallocation of the allocated storage space if -and only if- the new vector size 
-// surpasses the current vector capacity.
-
-		// this->_alloc = alloc;
-		// this->_size = n;
-		// this->_capacity = n;//change capacity?
-		// this->_start = this->_alloc.allocate(n);
-		// this->_end = this->_start;
-
-		// for (size_t i = 0; i < n; i++) {
-
-		// 	this->_alloc.construct(this->_end, val);
-		// 	this->_end++;
-		// }
-
 	void push_back (const value_type& val) {
 
 		allocator_type	newAlloc;
 		size_type		newCapacity;
 		pointer			newStart;
 		pointer			newEnd;
+		pointer			tmpStart;
 
-		// this->_alloc = alloc;
-		// this->_size = n;
-		// this->_capacity = n;//change capacity?
-		// this->_start = this->_alloc.allocate(n);
-		// this->_end = this->_start;
-
-			// allocator_type	_alloc;
-			// size_type		_size;
-			// size_type		_capacity;
-			// pointer			_start;
-			// pointer			_end;
-
-		newCapacity = this->_capacity = 0 ? 1 : this->_capacity * 2;
+		newCapacity = this->_capacity == 0 ? 1 : this->_capacity * 2;
 		if (newCapacity == 1) {
 
 			newStart = newAlloc.allocate(newCapacity);
 			newEnd = newStart;
+			newEnd++;
 			newAlloc.construct(newStart, val);
-			this->_size++;
+			this->_alloc.deallocate(this->_start, this->_capacity);
 			this->_capacity++;
-			this->_start = newStart;
-			this->_end = newEnd;
-		}
-		else if (this->_size != this->_capacity) {
-
-			this->_alloc.construct(this->_end, val);
-			this->_size++;
-			this->_end++;
 		}
 		else if(this->_size == this->_capacity) {
 
 			newStart = newAlloc.allocate(newCapacity);
 			newEnd = newStart;
-			while (this->_start != this->_end) {
+			tmpStart = this->_start;
+			while (tmpStart != this->_end) {
 
-				newAlloc.construct(newEnd, *(this->_start));
-				this->_start++;
+				newAlloc.construct(newEnd, *(tmpStart));
+				tmpStart++;
 				newEnd++;
 			}
 			newAlloc.construct(newEnd, val);
 			newEnd++;
-			this->_alloc.deallocate(_start, this->_capacity);
-			this->_size++;
+			this->_alloc.deallocate(this->_start, this->_capacity);
 			this->_capacity = newCapacity;
-			this->_start = newStart;
-			this->_end = newEnd;
-			this->_alloc = newAlloc;
 		}
+		else {
+
+			tmpStart = this->_start + this->_size;
+			newAlloc.construct(tmpStart, val);
+			this->_size++;
+			this->_end++;
+			return ;
+		}
+		this->_alloc = newAlloc;
+		this->_size++;
+		this->_start = newStart;
+		this->_end = newEnd;
 	}
-
-		//OVERLOAD OPERATOR
-
-		// allocator_type	_alloc;
-		// size_type		_size;
-		// size_type		_capacity;
-		// pointer			_start;
-		// pointer			_end;
 
 	vector &operator=(ft::vector<value_type> const & rhs) {
 
