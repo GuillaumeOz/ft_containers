@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2021/12/30 16:58:15 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/02 19:08:20 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ class vector {
 
 	typedef T													value_type;
 	typedef Alloc												allocator_type;
-	typedef value_type&											reference;//not used yet
-	typedef const value_type&									const_reference;//
-	typedef value_type*											pointer;//
+	typedef value_type&											reference;
+	typedef const value_type&									const_reference;
+	typedef value_type*											pointer;
 	typedef const value_type*									const_pointer;//Same
 	typedef typename ft::vectorIterator<value_type>				iterator;//
 	typedef const typename ft::vectorIterator<value_type>		const_iterator;// C++11 ?
@@ -154,18 +154,44 @@ class vector {
 		return (allocator_type().max_size());
 	}
 
-// n
-// New container size, expressed in number of elements.
-// Member type size_type is an unsigned integral type.
-
-// val
-// Object whose content is copied to the added elements in case that n is greater than the current container size.
-// If not specified, the default constructor is used instead.
-// Member type value_type is the type of the elements in the container, defined in vector as an alias of the first template parameter (T).
-
 	void resize (size_type n, value_type val = value_type()) {
 
+		value_type		*new_arr;
+		allocator_type	newAlloc;
+		pointer			newStart;
+		pointer			newEnd;
 		
+
+		newStart = newAlloc.allocate(n);
+		if (this->_size < n) {
+
+			for (size_t i = 0; i < this->_size; i++) {
+
+				newAlloc.construct(newStart + i, *(this->_start + i));
+				newEnd = newStart + i;
+			}
+			for (size_t i = 0; i < n - this->_size; i++) {
+
+				newAlloc.construct(newStart + this->_size + i, val);
+			}
+		}
+		else {
+
+			for (size_t i = 0; i < n; i++) {
+
+				newAlloc.construct(newStart + i, *(this->_start + i));
+				newEnd = newStart + i;
+			}
+		}
+		if (this->_size > 0) {
+			this->_alloc.destroy(this->_start);
+			this->_alloc.deallocate(this->_start, this->_capacity);
+		}
+		this->_alloc = newAlloc;
+		this->_size = n;
+		this->_capacity = n;
+		this->_start = newStart;
+		this->_end = newEnd;
 	}
 
 	size_type	capacity(void) const {
@@ -180,13 +206,101 @@ class vector {
 		return (false);
 	}
 
-// reserve
-// Request a change in capacity (public member function )
+	void reserve (size_type n) {
 
+		allocator_type	newAlloc;
+		pointer			newStart;
+		pointer			newEnd;
+
+		if (this->_capacity < n) {
+
+			newStart = newAlloc.allocate(n);
+			for (size_t i = 0; i < this->_size; i++) {
+
+				newAlloc.construct(newStart + i, *(this->_start + i));
+				newEnd = newStart + i;
+			}
+			if (this->_size > 0) {
+
+				this->_alloc.destroy(this->_start);
+				this->_alloc.deallocate(this->_start, this->_capacity);
+			}
+			this->_alloc = newAlloc;
+			this->_capacity = n;
+			this->_start = newStart;
+			this->_end = newEnd;
+		}
+	}
+
+//------------------------ELEMENT ACCESS FUNCTIONS----------------------------//
+
+	reference operator[] (size_type n) {
+
+		return (this->_start[n]);
+	}
+
+	const_reference operator[] (size_type n) const {
+
+		return (this->_start[n]);
+	}
+
+	reference at (size_type n) {
+
+		if (n >= this->_size)
+			throw out_of_range(pos);
+		return (this->_start[n]);
+	}
+
+	const_reference at (size_type n) const {
+
+		if (n >= this->_size)
+			throw out_of_range(pos);
+		return (this->_start[n]);
+	}
+
+	reference front() {
+
+		return (*(this->_start));
+	}
+
+	const_reference front() const {
+
+		return (*(this->_start));
+	}
+
+	reference back() {
+
+		return (*(this->_end));
+	}
+
+	const_reference back() const {
+
+		return (*(this->_end));
+	}
 
 //---------------------------MODIFIER FUNCTIONS-------------------------------//
 
-//assign
+	// Range Assign
+	template <class InputIterator>
+	void assign (InputIterator first, InputIterator last) {
+
+		this->clear();
+		while (first != last) {
+
+			this->push_back(*first);
+			++first;
+		}
+	}
+
+	// Fill Assign	
+	void assign (size_type n, const value_type& val) {
+
+		this->clear();
+		while (n-- != 0) {
+
+			this->push_back(val);
+		}
+	}
 
 	void push_back (const value_type& val) {
 
@@ -235,7 +349,14 @@ class vector {
 		this->_end = newEnd;
 	}
 
-//pop_back
+	void pop_back() {
+
+		if (this->empty() == false) {
+
+			this->_alloc.destroy(this->_end);
+			this->_size--;
+		}
+	}
 
 // Position in the vector where the new elements are inserted.
 // iterator is a member type, defined as a random access iterator type 
@@ -245,54 +366,144 @@ class vector {
 // Member type value_type is the type of the elements in the container, 
 // defined in deque as an alias of its first template parameter (T).
 
-// Insert single element (1)
-		iterator insert (iterator position, const value_type& val) {
+	// Insert single element
+	iterator insert (iterator position, const value_type& val) {
 
-			(void)position;
-			(void)val;
+		(void)position;
+		(void)val;
+	}
+
+	// Insert fill
+	void insert (iterator position, size_type n, const value_type& val) {
+
+		(void)position;
+		(void)val;
+		(void)n;
+	}
+
+	// Insert range
+	template <class InputIterator>
+	void insert (iterator position, InputIterator first, InputIterator last) {
+
+		
+	}
+
+	// Iterator erase
+	iterator erase (iterator position) {
+
+		iterator	newPostion = (position + 1);
+		vector		tmp(newPostion, this->_end);
+
+		for (size_t i = 0; i < tmp.size(); i++)
+			this->pop_back();
+		this->pop_back();
+		for (iterator it = tmp.begin(); it != tmp.end(); it++)
+			this->push_back(*it);
+		return (position);
+	}
+
+	// Range erase
+	iterator erase (iterator first, iterator last) {//test this
+
+		while (first != last)
+		{
+			erase(first);
+			++first;
 		}
+		return (first);
+	}
 
-// Insert fill (2)
-		void insert (iterator position, size_type n, const value_type& val) {
+	void swap (vector& x) {
 
-			(void)position;
-			(void)val;
-			(void)n;
-		}
+		allocator_type	tmpAlloc;
+		size_type		tmpSize;
+		size_type		tmpCapacity;
+		pointer			tmpStart;
+		pointer			tmpEnd;
 
-// Insert range (3)
-		// template <class InputIterator>
-		// void insert (iterator position, InputIterator first, InputIterator last);
+		tmpAlloc = this->_alloc;
+		tmpSize = this->_size;
+		tmpCapacity = this->_capacity;
+		tmpStart = this->_start;
+		tmpEnd = this->_end;
 
-	void clear(void) {
+		this->_alloc = x._alloc;
+		this->_size = x.size();
+		this->_capacity = x.capacity();
+		this->_start = x.begin();
+		this->_end = x.end();
+
+		x._alloc = tmpAlloc;
+		x._size = tmpSize;
+		x._capacity = tmpCapacity;
+		x._start = tmpStart;
+		x._end = tmpEnd;
+	}
+
+	void clear(void) {//test this
 
 		std::vector<int>::iterator	itBegin = this->begin();
 		std::vector<int>::iterator	itEnd = this->end();
 
-		if (this->_size > 0) {
+		if (this->empty() == false) {
 
 			while (itBegin != itEnd) {
 
-				this->_alloc.destroy(itBegin);//test this
+				this->_alloc.destroy(itBegin);
 				++itBegin;
 			}
 			this->size = 0;
 		}
 	}
 
-//erase
-//swap
-//clear
+//---------------------------ALLOCATOR FUNCTION-------------------------------//
 
-		private:
-			allocator_type	_alloc;
-			size_type		_size;
-			size_type		_capacity;
-			pointer			_start;
-			pointer			_end;
+	// allocator_type get_allocator() const {//have to do this ?
 
-	};
+		
+	// }
 
+	private:
+		allocator_type	_alloc;
+		size_type		_size;
+		size_type		_capacity;
+		pointer			_start;
+		pointer			_end;
+
+};
+
+//--------------------------RELATIONAL OPERATOR-------------------------------//
+
+	// Operator ==
+	template <class T, class Alloc>
+	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+
+		if (lhs._size == rhs._size) {
+
+			
+		}
+		return (false);
+	}
+
+	// Operator !=
+	template <class T, class Alloc>
+	bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+
+	// Operator <
+	template <class T, class Alloc>
+	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+
+	// Operator <=
+	template <class T, class Alloc>
+	bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+
+	// Operator >
+	template <class T, class Alloc>
+	bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+
+	// Operator >=
+	template <class T, class Alloc>
+	bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
 
 
 };
