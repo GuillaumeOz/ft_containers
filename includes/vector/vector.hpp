@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/02 19:08:20 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/03 17:59:25 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # define print(x) std::cout << x << std::endl;
 
 # include <iostream>
+# include "utils.hpp"
 # include "vectorIterator.hpp"
 # include "vectorReverseIterator.hpp"
 // # include <tgmath.h>
@@ -34,13 +35,13 @@ class vector {
 	typedef value_type&											reference;
 	typedef const value_type&									const_reference;
 	typedef value_type*											pointer;
-	typedef const value_type*									const_pointer;//Same
-	typedef typename ft::vectorIterator<value_type>				iterator;//
-	typedef const typename ft::vectorIterator<value_type>		const_iterator;// C++11 ?
-	typedef typename ft::vectorReveseIterator<value_type>		reverse_iterator;//
-	typedef const typename ft::vectorReveseIterator<value_type>	const_reverse_iterator;// C++11 ?
+	typedef const value_type*									const_pointer;//
+	typedef typename ft::vectorIterator<value_type>				iterator;
+	typedef const typename ft::vectorIterator<value_type>		const_iterator;
+	typedef typename ft::vectorReveseIterator<value_type>		reverse_iterator;
+	typedef const typename ft::vectorReveseIterator<value_type>	const_reverse_iterator;
 	typedef std::ptrdiff_t										difference_type;//
-	typedef size_t												size_type;//
+	typedef size_t												size_type;
 
 //------------------------------CONSTRUCTORS----------------------------------//
 
@@ -96,12 +97,13 @@ class vector {
 
 		(*this) = src;
 	}
+
 //-------------------------------DESTRUCTOR-----------------------------------//
 
 	// Default Destructor
 	~vector() {
 
-		// this->clear();//see this utility
+		this->clear();
 		this->_alloc.deallocate(_start, this->_capacity);
 	}
 
@@ -127,19 +129,39 @@ class vector {
 		return (this->_start);
 	}
 
+	const_iterator begin() const {
+
+		return (this->_start);
+	}
+
 	iterator	end() const {
+
+		return (this->_end);
+	}
+
+	const_iterator end() const {
 
 		return (this->_end);
 	}
 
 	reverse_iterator	rbegin() const {
 
-		return (this->_start);//end
+		return ((--(this->end())));
+	}
+
+	const_reverse_iterator	rbegin() const {
+
+		return ((--(this->end())));
 	}
 
 	reverse_iterator	rend() const {
 
-		return (this->_end);//start ?
+		return ((--(this->begin())));//check pointer position
+	}
+
+	const_reverse_iterator	rend() const {
+
+		return ((--(this->begin())));
 	}
 
 //--------------------------CAPACITY FUNCTIONS--------------------------------//
@@ -247,14 +269,14 @@ class vector {
 	reference at (size_type n) {
 
 		if (n >= this->_size)
-			throw out_of_range(pos);
+			throw std::out_of_range(n);
 		return (this->_start[n]);
 	}
 
 	const_reference at (size_type n) const {
 
 		if (n >= this->_size)
-			throw out_of_range(pos);
+			throw std::out_of_range(n);
 		return (this->_start[n]);
 	}
 
@@ -369,8 +391,20 @@ class vector {
 	// Insert single element
 	iterator insert (iterator position, const value_type& val) {
 
-		(void)position;
-		(void)val;
+		vector				tmp(*this);
+		// vector				tmp(position, this->end);
+		iterator			newPosIterator;
+		
+		if (this->_size == this->_capacity) {
+
+			resize(this->_capacity * 2);// DO this part
+			newPosIterator = this->begin();
+		}
+		else {
+
+			
+		}
+		
 	}
 
 	// Insert fill
@@ -442,17 +476,17 @@ class vector {
 
 	void clear(void) {//test this
 
-		std::vector<int>::iterator	itBegin = this->begin();
-		std::vector<int>::iterator	itEnd = this->end();
+		ft::vector<int>::iterator	itBegin = this->begin();
+		ft::vector<int>::iterator	itEnd = this->end();
 
 		if (this->empty() == false) {
 
 			while (itBegin != itEnd) {
 
-				this->_alloc.destroy(itBegin);
+				this->_alloc.destroy(*itBegin);
 				++itBegin;
 			}
-			this->size = 0;
+			this->_size = 0;
 		}
 	}
 
@@ -476,35 +510,99 @@ class vector {
 
 	// Operator ==
 	template <class T, class Alloc>
-	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {// const ?
 
-		if (lhs._size == rhs._size) {
+		typename ft::vector<T>::iterator	itLhsBegin = lhs.begin();
+		typename ft::vector<T>::iterator	itLhsEnd = lhs.end();
+		typename ft::vector<T>::iterator	itRhsBegin = rhs.begin();
+		typename ft::vector<T>::iterator	itRhsEnd = rhs.end();
 
-			
+		if (lhs.size() == rhs.size()) {
+
+			// if (ft::is_integer<T>)
+			return (ft::equal(itLhsBegin, itLhsEnd, itRhsBegin));
+			// else
+			// 	return (ft::lexicographical_compare(itLhsBegin, itLhsEnd, itRhsBegin, itRhsEnd));
 		}
 		return (false);
 	}
 
 	// Operator !=
+	// a!=b -> !(a==b)
 	template <class T, class Alloc>
-	bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+
+		return (!(lhs == rhs));
+	}
 
 	// Operator <
 	template <class T, class Alloc>
-	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+
+		typename ft::vector<T>::iterator	itLhsBegin = lhs.begin();
+		typename ft::vector<T>::iterator	itLhsEnd = lhs.end();
+		typename ft::vector<T>::iterator	itRhsBegin = rhs.begin();
+		typename ft::vector<T>::iterator	itRhsEnd = rhs.end();
+
+		if (lhs.size() != rhs.size()) {
+
+			return (ft::lexicographical_compare(itLhsBegin, itLhsEnd, itRhsBegin, itRhsEnd));
+		}
+		return (false);
+	}
 
 	// Operator <=
+	// a<=b -> !(b<a)
 	template <class T, class Alloc>
-	bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+
+		return (!(rhs < lhs));
+	}
 
 	// Operator >
+	// a>b -> b<a
 	template <class T, class Alloc>
-	bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+
+		return (rhs < lhs);
+	}
 
 	// Operator >=
+	// a>=b -> !(a<b)
 	template <class T, class Alloc>
-	bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 
+		return (!(lhs < rhs));
+	}
+
+	// No member Swap overload
+	template <class T, class Alloc>
+	void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {
+
+		Alloc	tmpAlloc;
+		size_t	tmpSize;
+		size_t	tmpCapacity;
+		T		*tmpStart;
+		T		*tmpEnd;
+
+		tmpAlloc = y._alloc;
+		tmpSize = y._size;
+		tmpCapacity = y._capacity;
+		tmpStart = y._start;
+		tmpEnd = y._end;
+
+		y._alloc = x._alloc;
+		y._size = x.size();
+		y._capacity = x.capacity();
+		y._start = x.begin();
+		y._end = x.end();
+
+		x._alloc = tmpAlloc;
+		x._size = tmpSize;
+		x._capacity = tmpCapacity;
+		x._start = tmpStart;
+		x._end = tmpEnd;
+	}
 
 };
 

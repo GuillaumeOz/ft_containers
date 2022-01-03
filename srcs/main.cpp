@@ -6,13 +6,14 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/02 15:02:57 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/03 12:16:09 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <fstream>
-// #include "utils.hpp"
+#include <limits>
+#include "utils.hpp"
 #include <vector>
 #include "vector.hpp"
 
@@ -163,6 +164,9 @@ static void	vectorTests() {
 		FTVECTFILE("Iterator value = ", *beginIteratorftVector3)
 		++beginIteratorftVector3;
 	}
+	
+
+	// std::numeric_limits<int>
 
 	vectorFile.close();
 	ftVectorFile.close();
