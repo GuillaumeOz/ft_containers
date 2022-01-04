@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/03 17:59:25 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/04 13:24:36 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ class vector {
 //-------------------------------DESTRUCTOR-----------------------------------//
 
 	// Default Destructor
-	~vector() {
+	virtual ~vector() {
 
 		this->clear();
 		this->_alloc.deallocate(_start, this->_capacity);
@@ -109,7 +109,7 @@ class vector {
 
 //--------------------------ASSIGNATION OPERATOR------------------------------//
 
-	vector &operator=(ft::vector<value_type> const & rhs) {
+	vector &operator=(const vector& rhs) {
 
 		if (*this == rhs)
 			return (*this);
@@ -124,7 +124,7 @@ class vector {
 
 //--------------------------ITERATORS FUNCTIONS-------------------------------//
 
-	iterator	begin() const {
+	iterator	begin() {
 
 		return (this->_start);
 	}
@@ -134,7 +134,7 @@ class vector {
 		return (this->_start);
 	}
 
-	iterator	end() const {
+	iterator	end() {
 
 		return (this->_end);
 	}
@@ -144,7 +144,7 @@ class vector {
 		return (this->_end);
 	}
 
-	reverse_iterator	rbegin() const {
+	reverse_iterator	rbegin() {
 
 		return ((--(this->end())));
 	}
@@ -154,7 +154,7 @@ class vector {
 		return ((--(this->end())));
 	}
 
-	reverse_iterator	rend() const {
+	reverse_iterator	rend() {
 
 		return ((--(this->begin())));//check pointer position
 	}
@@ -268,16 +268,28 @@ class vector {
 
 	reference at (size_type n) {
 
-		if (n >= this->_size)
-			throw std::out_of_range(n);
-		return (this->_start[n]);
+		try {
+			// n >= this->_size
+			reference ret = this->_start[n];
+			return (ret);
+		}
+		catch (const std::out_of_range& rangeErr) {
+
+			std::cerr << "Out of Range error: " << rangeErr.what() << std::endl;
+		}
 	}
 
 	const_reference at (size_type n) const {
 
-		if (n >= this->_size)
-			throw std::out_of_range(n);
-		return (this->_start[n]);
+		try {
+			// n >= this->_size
+			reference ret = this->_start[n];
+			return (ret);
+		}
+		catch (const std::out_of_range& rangeErr) {
+
+			std::cerr << "Out of Range error: " << rangeErr.what() << std::endl;
+		}
 	}
 
 	reference front() {
@@ -380,46 +392,72 @@ class vector {
 		}
 	}
 
-// Position in the vector where the new elements are inserted.
-// iterator is a member type, defined as a random access iterator type 
-// that points to elements.
-
-// Value to be copied (or moved) to the inserted elements.
-// Member type value_type is the type of the elements in the container, 
-// defined in deque as an alias of its first template parameter (T).
-
 	// Insert single element
 	iterator insert (iterator position, const value_type& val) {
 
-		vector				tmp(*this);
-		// vector				tmp(position, this->end);
+		vector				newVector(this->begin(), position);
 		iterator			newPosIterator;
-		
-		if (this->_size == this->_capacity) {
+		size_type			newDistanceIterator = 0;
 
-			resize(this->_capacity * 2);// DO this part
-			newPosIterator = this->begin();
-		}
-		else {
+		for (iterator it = this->begin(); it != position; ++it)
+			newDistanceIterator++;
+		newVector->push_back(val);
+		newDistanceIterator++;
+		newPosIterator = this->begin() + newDistanceIterator;
+		while (newPosIterator != this->end()) {
 
-			
+			newVector->push_back(*newPosIterator);
+			++newPosIterator;
 		}
-		
+		this = newVector;
 	}
 
 	// Insert fill
 	void insert (iterator position, size_type n, const value_type& val) {
 
-		(void)position;
-		(void)val;
-		(void)n;
+		vector				newVector(this->begin(), position);
+		iterator			newPosIterator;
+		size_type			newDistanceIterator = 0;
+
+		for (iterator it = this->begin(); it != position; ++it)
+			newDistanceIterator++;
+		for (size_type i = 0; i < n; i++) {
+
+			newVector->push_back(val);
+			newDistanceIterator++;
+		}
+		newPosIterator = this->begin() + newDistanceIterator;
+		while (newPosIterator != this->end()) {
+
+			newVector->push_back(*newPosIterator);
+			++newPosIterator;
+		}
+		this = newVector;
 	}
 
 	// Insert range
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last) {
 
-		
+		vector				newVector(this->begin(), position);
+		iterator			newPosIterator;
+		size_type			newDistanceIterator = 0;
+
+		for (iterator it = this->begin(); it != position; ++it)
+			newDistanceIterator++;
+		while (first != last) {
+
+			newVector.push_back(*first);
+			++first;
+			newDistanceIterator++;
+		}
+		newPosIterator = this->begin() + newDistanceIterator;
+		while (newPosIterator != this->end()) {
+
+			newVector.push_back(*newPosIterator);
+			++newPosIterator;
+		}
+		(*this) = newVector;
 	}
 
 	// Iterator erase
@@ -476,14 +514,15 @@ class vector {
 
 	void clear(void) {//test this
 
-		ft::vector<int>::iterator	itBegin = this->begin();
-		ft::vector<int>::iterator	itEnd = this->end();
+		iterator	itBegin = this->begin();
+		iterator	itEnd = this->end();
 
 		if (this->empty() == false) {
 
 			while (itBegin != itEnd) {
 
-				this->_alloc.destroy(*itBegin);
+			// &(*it)
+				this->_alloc.destroy((&(*itBegin)));
 				++itBegin;
 			}
 			this->_size = 0;
