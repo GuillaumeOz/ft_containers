@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 08:59:15 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/04 13:04:19 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/04 18:40:32 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,13 @@
 
 // std::pair -> for map
 // std::make_pair -> for map
+#define print(x)	std::cout << x << std::endl;
 
 namespace ft {
 
 // is_integral Struct
 template <typename T>
-struct is_integer {
+struct is_integral {
 
 	static const bool value;
 };
@@ -41,7 +42,16 @@ struct is_integer {
 
 // is_integral bool assignation
 template <typename T>
-	const bool is_integer<T>::value = std::numeric_limits<T>::is_integer;//test this
+	const bool is_integral<T>::value = std::numeric_limits<T>::is_integral;//change for is_integral
+
+template<bool Cond, class T = void>
+struct enable_if {};
+
+template<class T>
+struct enable_if<true, T> {
+
+	typedef T type;
+};
 
 // Equal compare
 template <class InputIterator1, class InputIterator2>
@@ -65,7 +75,15 @@ template <class InputIterator1, class InputIterator2>
 	while (first1 != last1) {
 
 		if (first2 == last2 || *(first2) < *(first1))//test this
+		{
+			print("ICICICICICIIC")
+			print("\n")
+			print(*first2)
+			print(*first1)
+			print("\n")
+			print("ICICICICICIIC")
 			return (false);
+		}
 		else if (*(first1) < *(first2))
 			return (true);
 		++first1;

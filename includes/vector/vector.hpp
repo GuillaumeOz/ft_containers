@@ -6,20 +6,19 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/04 13:24:36 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/04 17:30:05 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 
-# define print(x) std::cout << x << std::endl;
+// # define print(x) std::cout << x << std::endl;
 
 # include <iostream>
-# include "utils.hpp"
+# include "../utils/utils.hpp"
 # include "vectorIterator.hpp"
 # include "vectorReverseIterator.hpp"
-// # include <tgmath.h>
 
 namespace ft {
 
@@ -73,8 +72,7 @@ class vector {
 	}
 
 	// Range constructor
-	template <class InputIterator>
-	// typename ft::enable_if<InputIt::input_iter, InputIt>::type = NULL)
+	template <class InputIterator, typename ft::enable_if<InputIterator::value, InputIterator>::type>
 	vector (InputIterator first, InputIterator last,
 		const allocator_type& alloc = allocator_type()) {
 
@@ -178,7 +176,6 @@ class vector {
 
 	void resize (size_type n, value_type val = value_type()) {
 
-		value_type		*new_arr;
 		allocator_type	newAlloc;
 		pointer			newStart;
 		pointer			newEnd;
@@ -314,8 +311,7 @@ class vector {
 
 //---------------------------MODIFIER FUNCTIONS-------------------------------//
 
-	// Range Assign
-	template <class InputIterator>
+	template <class InputIterator, typename ft::enable_if<InputIterator::value, InputIterator>::type>
 	void assign (InputIterator first, InputIterator last) {
 
 		this->clear();
@@ -436,7 +432,7 @@ class vector {
 	}
 
 	// Insert range
-	template <class InputIterator>
+	template <class InputIterator, typename ft::enable_if<InputIterator::value, InputIterator>::type>
 	void insert (iterator position, InputIterator first, InputIterator last) {
 
 		vector				newVector(this->begin(), position);
@@ -500,10 +496,10 @@ class vector {
 		tmpEnd = this->_end;
 
 		this->_alloc = x._alloc;
-		this->_size = x.size();
-		this->_capacity = x.capacity();
-		this->_start = x.begin();
-		this->_end = x.end();
+		this->_size = x._size;
+		this->_capacity = x._capacity;
+		this->_start = x._start;
+		this->_end = x._end;
 
 		x._alloc = tmpAlloc;
 		x._size = tmpSize;
@@ -512,7 +508,7 @@ class vector {
 		x._end = tmpEnd;
 	}
 
-	void clear(void) {//test this
+	void clear(void) {
 
 		iterator	itBegin = this->begin();
 		iterator	itEnd = this->end();
@@ -521,7 +517,6 @@ class vector {
 
 			while (itBegin != itEnd) {
 
-			// &(*it)
 				this->_alloc.destroy((&(*itBegin)));
 				++itBegin;
 			}
@@ -558,10 +553,7 @@ class vector {
 
 		if (lhs.size() == rhs.size()) {
 
-			// if (ft::is_integer<T>)
 			return (ft::equal(itLhsBegin, itLhsEnd, itRhsBegin));
-			// else
-			// 	return (ft::lexicographical_compare(itLhsBegin, itLhsEnd, itRhsBegin, itRhsEnd));
 		}
 		return (false);
 	}
@@ -583,11 +575,7 @@ class vector {
 		typename ft::vector<T>::iterator	itRhsBegin = rhs.begin();
 		typename ft::vector<T>::iterator	itRhsEnd = rhs.end();
 
-		if (lhs.size() != rhs.size()) {
-
-			return (ft::lexicographical_compare(itLhsBegin, itLhsEnd, itRhsBegin, itRhsEnd));
-		}
-		return (false);
+		return (ft::lexicographical_compare(itLhsBegin, itLhsEnd, itRhsBegin, itRhsEnd));
 	}
 
 	// Operator <=
@@ -618,33 +606,9 @@ class vector {
 	template <class T, class Alloc>
 	void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {
 
-		Alloc	tmpAlloc;
-		size_t	tmpSize;
-		size_t	tmpCapacity;
-		T		*tmpStart;
-		T		*tmpEnd;
-
-		tmpAlloc = y._alloc;
-		tmpSize = y._size;
-		tmpCapacity = y._capacity;
-		tmpStart = y._start;
-		tmpEnd = y._end;
-
-		y._alloc = x._alloc;
-		y._size = x.size();
-		y._capacity = x.capacity();
-		y._start = x.begin();
-		y._end = x.end();
-
-		x._alloc = tmpAlloc;
-		x._size = tmpSize;
-		x._capacity = tmpCapacity;
-		x._start = tmpStart;
-		x._end = tmpEnd;
+		x.swap(y);
 	}
 
 };
-
-
 
 #endif
