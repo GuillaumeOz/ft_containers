@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/04 13:11:46 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/05 21:42:35 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,3 +188,21 @@ int main(int ac, char **av) {
 
 	return (0);
 }
+
+
+	// typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
+	// typedef Alloc																	allocator_type;
+	// typedef typename ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
+	// typedef typename ft::iterator<random_access_iterator_tag, T>::pointer			pointer;
+	// typedef const typename ft::iterator<random_access_iterator_tag, T>::pointer		const_pointer;//
+	// typedef typename ft::iterator<random_access_iterator_tag, T>::reference			reference;
+	// typedef const typename ft::iterator<random_access_iterator_tag, T>::reference	const_reference;
+	// typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		iterator;
+	// typedef const typename ft::iterator<random_access_iterator_tag, T>::value_type	const_iterator;
+	// typedef typename ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
+
+
+	// typedef typename ft::reverseIterator<value_type>			reverse_iterator;
+	// typedef const typename ft::reverseIterator<value_type>		const_reverse_iterator;
+	// typedef std::ptrdiff_t										difference_type;//
+	// typedef size_t												size_type;

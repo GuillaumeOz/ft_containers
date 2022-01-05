@@ -1,27 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vectorIterator.hpp                                 :+:      :+:    :+:   */
+/*   reverseIterator.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/28 09:56:59 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/04 11:57:12 by gozsertt         ###   ########.fr       */
+/*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
+/*   Updated: 2022/01/05 19:00:58 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef VECTORITERATOR_HPP
-# define VECTORITERATOR_HPP
+#ifndef REVERSEITERATOR_HPP
+# define REVERSEITERATOR_HPP
 
 #include <iostream>
 
 namespace ft {
 
 template <class T, class Pointer = T*, class Reference = T&, class Distance = std::ptrdiff_t>
-class vectorIterator {
+class reverseIterator {
 
 	public:
-	
 //--------------------------------TYPEDEF-------------------------------------//
 
 		typedef T			value_type;
@@ -32,27 +31,27 @@ class vectorIterator {
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
-		vectorIterator(void) : _element(NULL){
+		reverseIterator(void) : _element(NULL){
 
 		}
 
-		vectorIterator(pointer element) : _element(element){
+		reverseIterator(pointer element) : _element(element){
 
 		}
 
-		vectorIterator(vectorIterator const & src) {
+		reverseIterator(reverseIterator const & src) {
 
 			*this = src;
 		}
 
-		virtual	~vectorIterator() {
+		virtual	~reverseIterator() {
 
 		}
 
 //---------------------------COMP_OPERATORS-----------------------------------//
 
 	//elem == rhs
-		bool	operator==(vectorIterator const & rhs) const {
+		bool	operator==(reverseIterator const & rhs) const {
 
 			if (this->_element == rhs._element)
 				return (true);
@@ -60,7 +59,7 @@ class vectorIterator {
 		}
 
 	//elem != rhs
-		bool	operator!=(vectorIterator const & rhs) const {
+		bool	operator!=(reverseIterator const & rhs) const {
 
 			if (this->_element != rhs._element)
 				return (true);
@@ -68,7 +67,7 @@ class vectorIterator {
 		}
 
 	//elem < rhs
-		bool	operator<(vectorIterator const & rhs) const {
+		bool	operator<(reverseIterator const & rhs) const {
 
 			if (this->_element < rhs._element)
 				return (true);
@@ -76,7 +75,7 @@ class vectorIterator {
 		}
 
 	//elem > rhs
-		bool	operator>(vectorIterator const & rhs) const {
+		bool	operator>(reverseIterator const & rhs) const {
 
 			if (this->_element > rhs._element)
 				return (true);
@@ -84,7 +83,7 @@ class vectorIterator {
 		}
 
 	//elem <= rhs
-		bool	operator<=(vectorIterator const & rhs) const {
+		bool	operator<=(reverseIterator const & rhs) const {
 
 			if (this->_element <= rhs._element)
 				return (true);
@@ -92,7 +91,7 @@ class vectorIterator {
 		}
 
 	//elem >= rhs
-		bool	operator>=(vectorIterator const & rhs) const {
+		bool	operator>=(reverseIterator const & rhs) const {
 
 			if (this->_element >= rhs._element)
 				return (true);
@@ -102,41 +101,41 @@ class vectorIterator {
 //---------------------------INCR_OPERATORS-----------------------------------//
 
 	//++elem
-		vectorIterator	operator++() {
-
-			this->_element++;
-			return (*this);
-		}
-
-	//elem++
-		vectorIterator	operator++(int) {
-
-			vectorIterator	tmp = (*this);
-
-			++(*this);
-			return (tmp);
-		}
-
-	//--elem
-		vectorIterator	operator--() {
+		reverseIterator	operator++() {
 
 			this->_element--;
 			return (*this);
 		}
 
-	//elem--
-		vectorIterator	operator--(int) {
+	//elem++
+		reverseIterator	operator++(int) {
 
-			vectorIterator	tmp = (*this);
+			reverseIterator	tmp = (*this);
 
 			--(*this);
 			return (tmp);
 		}
 
-	//elem + rhs
-		vectorIterator	operator+(difference_type const & rhs) const {
+	//--elem
+		reverseIterator	operator--() {
 
-			return (this->_element + rhs);
+			this->_element++;
+			return (*this);
+		}
+
+	//elem--
+		reverseIterator	operator--(int) {
+
+			reverseIterator	tmp = (*this);
+
+			++(*this);
+			return (tmp);
+		}
+
+	//elem + rhs
+		reverseIterator	operator+(difference_type const & rhs) const {
+
+			return (this->_element - rhs);
 		}
 
 	//elem += rhs
@@ -146,35 +145,21 @@ class vectorIterator {
 		}
 
 	//elem - rhs
-		vectorIterator	operator-(difference_type const & rhs) const {
+		reverseIterator	operator-(difference_type const & rhs) const {
 
-			return (this->_element - rhs);
+			return (this->_element + rhs);
 		}
 
 	//elem -= rhs
 		void			operator-=(difference_type const & rhs) {
 
-			this->_element -= rhs;
+			this->_element += rhs;
 		}
-
-//-----------------------------VALUES_OPERATORS-------------------------------//
-
-	// elem + rhs
-	difference_type		operator+(vectorIterator b) {
-
-		return (this->_element + b._element);
-	}
-
-	// elem - rhs
-	difference_type		operator-(vectorIterator b) {
-
-		return (this->_element - b._element);
-	}
 
 //------------------DEREFERENCING_AND_RANDOM_ACCESS_OPERATORS-----------------//
 
 	// *elem
-	reference	operator*() const {
+	reference	operator*(void) const {
 
 		return (*(this->_element));
 	}
@@ -186,7 +171,7 @@ class vectorIterator {
 	}
 
 	// &elem
-	pointer		operator->() const {
+	pointer		operator->(void) const {
 
 		return (this->_element);
 	}
@@ -200,9 +185,7 @@ class vectorIterator {
 		pointer		_element;
 
 };
-	
+
 };
 
 #endif
-
-

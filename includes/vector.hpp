@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/04 17:30:05 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/05 21:10:55 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,10 @@
 // # define print(x) std::cout << x << std::endl;
 
 # include <iostream>
-# include "../utils/utils.hpp"
-# include "vectorIterator.hpp"
-# include "vectorReverseIterator.hpp"
+# include <cstddef>
+# include "./utils/utils.hpp"
+# include "./utils/vectorIterator.hpp"
+# include "./utils/reverseIterator.hpp"
 
 namespace ft {
 
@@ -37,8 +38,8 @@ class vector {
 	typedef const value_type*									const_pointer;//
 	typedef typename ft::vectorIterator<value_type>				iterator;
 	typedef const typename ft::vectorIterator<value_type>		const_iterator;
-	typedef typename ft::vectorReveseIterator<value_type>		reverse_iterator;
-	typedef const typename ft::vectorReveseIterator<value_type>	const_reverse_iterator;
+	typedef typename ft::reverseIterator<value_type>			reverse_iterator;
+	typedef const typename ft::reverseIterator<value_type>		const_reverse_iterator;
 	typedef std::ptrdiff_t										difference_type;//
 	typedef size_t												size_type;
 
@@ -71,10 +72,14 @@ class vector {
 		}
 	}
 
+// vector(InputIterator first, InputIterator last, const allocator_type & alloc = allocator_type(),
+// 				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = ft_nullptr)
+// std::enable_if_t<std::is_floating_point<Floating>::value, bool> = true
+
 	// Range constructor
-	template <class InputIterator, typename ft::enable_if<InputIterator::value, InputIterator>::type>
-	vector (InputIterator first, InputIterator last,
-		const allocator_type& alloc = allocator_type()) {
+	template < class InputIterator >
+	vector (InputIterator first, InputIterator last, const allocator_type & alloc = allocator_type(),
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = ft_nullptr) {
 
 		this->_alloc = alloc;
 		this->_size = last - first;
@@ -311,9 +316,10 @@ class vector {
 
 //---------------------------MODIFIER FUNCTIONS-------------------------------//
 
-	template <class InputIterator, typename ft::enable_if<InputIterator::value, InputIterator>::type>
-	void assign (InputIterator first, InputIterator last) {
-
+	template <class InputIterator>
+	void assign(InputIterator first, InputIterator last,
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = ft_nullptr>) {
+		
 		this->clear();
 		while (first != last) {
 
@@ -397,12 +403,12 @@ class vector {
 
 		for (iterator it = this->begin(); it != position; ++it)
 			newDistanceIterator++;
-		newVector->push_back(val);
+		newVector.push_back(val);
 		newDistanceIterator++;
 		newPosIterator = this->begin() + newDistanceIterator;
 		while (newPosIterator != this->end()) {
 
-			newVector->push_back(*newPosIterator);
+			newVector.push_back((*newPosIterator));
 			++newPosIterator;
 		}
 		this = newVector;
@@ -419,21 +425,22 @@ class vector {
 			newDistanceIterator++;
 		for (size_type i = 0; i < n; i++) {
 
-			newVector->push_back(val);
+			newVector.push_back(val);
 			newDistanceIterator++;
 		}
 		newPosIterator = this->begin() + newDistanceIterator;
 		while (newPosIterator != this->end()) {
 
-			newVector->push_back(*newPosIterator);
+			newVector.push_back((*newPosIterator));
 			++newPosIterator;
 		}
-		this = newVector;
+		(*this) = newVector;
 	}
 
 	// Insert range
-	template <class InputIterator, typename ft::enable_if<InputIterator::value, InputIterator>::type>
-	void insert (iterator position, InputIterator first, InputIterator last) {
+	template < class InputIterator >
+	void insert(iterator position, InputIterator first, InputIterator last,
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = ft_nullptr) {
 
 		vector				newVector(this->begin(), position);
 		iterator			newPosIterator;
@@ -575,6 +582,8 @@ class vector {
 		typename ft::vector<T>::iterator	itRhsBegin = rhs.begin();
 		typename ft::vector<T>::iterator	itRhsEnd = rhs.end();
 
+		if (lhs == rhs)
+			return (false);//test this change for lhs != rhs
 		return (ft::lexicographical_compare(itLhsBegin, itLhsEnd, itRhsBegin, itRhsEnd));
 	}
 
@@ -583,6 +592,8 @@ class vector {
 	template <class T, class Alloc>
 	bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 
+		if (lhs == rhs)
+			return (true);
 		return (!(rhs < lhs));
 	}
 
@@ -591,6 +602,8 @@ class vector {
 	template <class T, class Alloc>
 	bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 
+		if (lhs == rhs)
+			return (false);//test this change for lhs != rhs
 		return (rhs < lhs);
 	}
 
@@ -599,6 +612,8 @@ class vector {
 	template <class T, class Alloc>
 	bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 
+		if (lhs == rhs)
+			return (true);
 		return (!(lhs < rhs));
 	}
 

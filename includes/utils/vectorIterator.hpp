@@ -1,57 +1,61 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vectorReverseIterator.hpp                          :+:      :+:    :+:   */
+/*   vectorIterator.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/03 11:27:40 by gozsertt         ###   ########.fr       */
+/*   Created: 2022/01/05 20:29:51 by gozsertt          #+#    #+#             */
+/*   Updated: 2022/01/05 21:10:38 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef VECTORREVERSEITERATOR_HPP
-# define VECTORREVERSEITERATOR_HPP
+#ifndef ITERATOR_HPP
+# define ITERATOR_HPP
 
 #include <iostream>
+#include "iteratorTraits.hpp"
 
 namespace ft {
 
-template <class T, class Pointer = T*, class Reference = T&, class Distance = std::ptrdiff_t>
-class vectorReveseIterator {
+template < class T >
+class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 
-	public:
+	public :
+
 //--------------------------------TYPEDEF-------------------------------------//
 
-		typedef T			value_type;
-		typedef Pointer		pointer;
-		typedef Reference	reference;
-		typedef Distance	difference_type;
-		//add const ptr? for member function return
+		typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::pointer			pointer;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::reference			reference;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
+
+		// typedef const value_type*		const_iterator;
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
-		vectorReveseIterator(void) : _element(NULL){
+		vectorIterator(void) : _element(NULL){
 
 		}
 
-		vectorReveseIterator(pointer element) : _element(element){
+		vectorIterator(pointer element) : _element(element){
 
 		}
 
-		vectorReveseIterator(vectorReveseIterator const & src) {
+		vectorIterator(vectorIterator const & src) {
 
 			*this = src;
 		}
 
-		virtual	~vectorReveseIterator() {
+		virtual	~vectorIterator() {
 
 		}
 
 //---------------------------COMP_OPERATORS-----------------------------------//
 
 	//elem == rhs
-		bool	operator==(vectorReveseIterator const & rhs) const {
+		bool	operator==(vectorIterator const & rhs) const {
 
 			if (this->_element == rhs._element)
 				return (true);
@@ -59,7 +63,7 @@ class vectorReveseIterator {
 		}
 
 	//elem != rhs
-		bool	operator!=(vectorReveseIterator const & rhs) const {
+		bool	operator!=(vectorIterator const & rhs) const {
 
 			if (this->_element != rhs._element)
 				return (true);
@@ -67,7 +71,7 @@ class vectorReveseIterator {
 		}
 
 	//elem < rhs
-		bool	operator<(vectorReveseIterator const & rhs) const {
+		bool	operator<(vectorIterator const & rhs) const {
 
 			if (this->_element < rhs._element)
 				return (true);
@@ -75,7 +79,7 @@ class vectorReveseIterator {
 		}
 
 	//elem > rhs
-		bool	operator>(vectorReveseIterator const & rhs) const {
+		bool	operator>(vectorIterator const & rhs) const {
 
 			if (this->_element > rhs._element)
 				return (true);
@@ -83,7 +87,7 @@ class vectorReveseIterator {
 		}
 
 	//elem <= rhs
-		bool	operator<=(vectorReveseIterator const & rhs) const {
+		bool	operator<=(vectorIterator const & rhs) const {
 
 			if (this->_element <= rhs._element)
 				return (true);
@@ -91,7 +95,7 @@ class vectorReveseIterator {
 		}
 
 	//elem >= rhs
-		bool	operator>=(vectorReveseIterator const & rhs) const {
+		bool	operator>=(vectorIterator const & rhs) const {
 
 			if (this->_element >= rhs._element)
 				return (true);
@@ -101,41 +105,41 @@ class vectorReveseIterator {
 //---------------------------INCR_OPERATORS-----------------------------------//
 
 	//++elem
-		vectorReveseIterator	operator++() {
-
-			this->_element--;
-			return (*this);
-		}
-
-	//elem++
-		vectorReveseIterator	operator++(int) {
-
-			vectorReveseIterator	tmp = (*this);
-
-			--(*this);
-			return (tmp);
-		}
-
-	//--elem
-		vectorReveseIterator	operator--() {
+		vectorIterator	operator++() {
 
 			this->_element++;
 			return (*this);
 		}
 
-	//elem--
-		vectorReveseIterator	operator--(int) {
+	//elem++
+		vectorIterator	operator++(int) {
 
-			vectorReveseIterator	tmp = (*this);
+			vectorIterator	tmp = (*this);
 
 			++(*this);
 			return (tmp);
 		}
 
-	//elem + rhs
-		vectorReveseIterator	operator+(difference_type const & rhs) const {
+	//--elem
+		vectorIterator	operator--() {
 
-			return (this->_element - rhs);
+			this->_element--;
+			return (*this);
+		}
+
+	//elem--
+		vectorIterator	operator--(int) {
+
+			vectorIterator	tmp = (*this);
+
+			--(*this);
+			return (tmp);
+		}
+
+	//elem + rhs
+		vectorIterator	operator+(difference_type const & rhs) const {
+
+			return (this->_element + rhs);
 		}
 
 	//elem += rhs
@@ -145,21 +149,35 @@ class vectorReveseIterator {
 		}
 
 	//elem - rhs
-		vectorReveseIterator	operator-(difference_type const & rhs) const {
+		vectorIterator	operator-(difference_type const & rhs) const {
 
-			return (this->_element + rhs);
+			return (this->_element - rhs);
 		}
 
 	//elem -= rhs
 		void			operator-=(difference_type const & rhs) {
 
-			this->_element += rhs;
+			this->_element -= rhs;
 		}
+
+//-----------------------------VALUES_OPERATORS-------------------------------//
+
+	// elem + rhs
+	difference_type		operator+(vectorIterator b) {
+
+		return (this->_element + b._element);
+	}
+
+	// elem - rhs
+	difference_type		operator-(vectorIterator b) {
+
+		return (this->_element - b._element);
+	}
 
 //------------------DEREFERENCING_AND_RANDOM_ACCESS_OPERATORS-----------------//
 
 	// *elem
-	reference	operator*(void) const {
+	reference	operator*() const {
 
 		return (*(this->_element));
 	}
@@ -171,7 +189,7 @@ class vectorReveseIterator {
 	}
 
 	// &elem
-	pointer		operator->(void) const {
+	pointer		operator->() const {
 
 		return (this->_element);
 	}
@@ -185,7 +203,9 @@ class vectorReveseIterator {
 		pointer		_element;
 
 };
-
+	
 };
 
 #endif
+
+
