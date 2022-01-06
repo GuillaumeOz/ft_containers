@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:41:02 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/05 21:11:13 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/06 16:24:06 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,33 +17,33 @@
 
 namespace ft {
 
-	///  Marking input iterators.
+	///	Marking input iterators.
 	struct input_iterator_tag { };
-	///  Marking output iterators.
+	///	Marking output iterators.
 	struct output_iterator_tag { };
-	/// Forward iterators support a superset of input iterator operations.
+	///	Forward iterators support a superset of input iterator operations.
 	struct forward_iterator_tag : public input_iterator_tag { };
-	/// Bidirectional iterators support a superset of forward iterator
-	/// operations.
+	///	Bidirectional iterators support a superset of forward iterator
+	///	operations.
 	struct bidirectional_iterator_tag : public forward_iterator_tag { };
-	/// Random-access iterators support a superset of bidirectional
-	/// iterator operations.
+	///	Random-access iterators support a superset of bidirectional
+	///	iterator operations.
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
 	template<typename _Category, typename _Tp, typename _Distance = ptrdiff_t,
 			typename _Pointer = _Tp*, typename _Reference = _Tp&>
 	struct iterator {
 
-	  /// One of the @link iterator_tags tag types@endlink.
-	  typedef _Category  iterator_category;
-	  /// The type "pointed to" by the iterator.
-	  typedef _Tp        value_type;
-	  /// Distance between iterators is represented as this type.
-	  typedef _Distance  difference_type;
-	  /// This type represents a pointer-to-value_type.
-	  typedef _Pointer   pointer;
-	  /// This type represents a reference-to-value_type.
-	  typedef _Reference reference;
+		/// One of the @link iterator_tags tag types@endlink.
+		typedef _Category  iterator_category;
+		/// The type "pointed to" by the iterator.
+		typedef _Tp        value_type;
+		/// Distance between iterators is represented as this type.
+		typedef _Distance  difference_type;
+		/// This type represents a pointer-to-value_type.
+		typedef _Pointer   pointer;
+		/// This type represents a reference-to-value_type.
+		typedef _Reference reference;
 	};
 
 	template<typename Iterator>
@@ -78,11 +78,13 @@ namespace ft {
 		typedef const Tp&					reference;
 	};
 
-	template<typename _Iter>
-		inline _GLIBCXX_CONSTEXPR
+	template<typename _Iter>//suppr this
+		inline _GLIBCXX_CONSTEXPR//here -> constexpr C++11
 	typename iterator_traits<_Iter>::iterator_category
-		__iterator_category(const _Iter&)
-	{ return typename iterator_traits<_Iter>::iterator_category(); }
+		__iterator_category(const _Iter&) {
+
+		return (typename iterator_traits<_Iter>::iterator_category());
+	}
 
 	//Work on this part
 

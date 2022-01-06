@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/05 21:10:55 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/06 20:20:20 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,6 @@
 
 // # define print(x) std::cout << x << std::endl;
 
-# include <iostream>
-# include <cstddef>
-# include "./utils/utils.hpp"
-# include "./utils/vectorIterator.hpp"
-# include "./utils/reverseIterator.hpp"
 
 namespace ft {
 
@@ -72,9 +67,7 @@ class vector {
 		}
 	}
 
-// vector(InputIterator first, InputIterator last, const allocator_type & alloc = allocator_type(),
-// 				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = ft_nullptr)
-// std::enable_if_t<std::is_floating_point<Floating>::value, bool> = true
+// typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = NULL
 
 	// Range constructor
 	template < class InputIterator >
@@ -258,6 +251,10 @@ class vector {
 
 //------------------------ELEMENT ACCESS FUNCTIONS----------------------------//
 
+	operator	vectorIterator<const value_type>() const {
+		return _element;
+	};//test this
+
 	reference operator[] (size_type n) {
 
 		return (this->_start[n]);
@@ -318,7 +315,7 @@ class vector {
 
 	template <class InputIterator>
 	void assign(InputIterator first, InputIterator last,
-		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = ft_nullptr>) {
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = ft_nullptr >) {
 		
 		this->clear();
 		while (first != last) {

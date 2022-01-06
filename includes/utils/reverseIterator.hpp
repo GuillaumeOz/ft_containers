@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/05 19:00:58 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:52:18 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,12 @@
 # define REVERSEITERATOR_HPP
 
 #include <iostream>
+#include "iteratorTraits.hpp"
 
 namespace ft {
 
-template <class T, class Pointer = T*, class Reference = T&, class Distance = std::ptrdiff_t>
-class reverseIterator {
+template < class T >
+class reverseIterator : public ft::iterator<random_access_iterator_tag, T{
 
 	public:
 //--------------------------------TYPEDEF-------------------------------------//

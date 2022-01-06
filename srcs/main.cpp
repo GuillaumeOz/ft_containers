@@ -6,16 +6,13 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/05 21:42:35 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/06 20:22:30 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <fstream>
-#include <limits>
-#include "utils.hpp"
-#include <vector>
-#include "vector.hpp"
+# include "ft_containers.hpp"
+# include <vector>
+
 
 #define bothvector(x)	vectorFile << x ; ftVectorFile << x ;
 #define VECTFILE(x,y)	vectorFile << x << y << std::endl;
