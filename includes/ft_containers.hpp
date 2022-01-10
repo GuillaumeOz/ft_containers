@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 08:59:15 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/06 20:21:57 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/10 20:23:09 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,51 +19,25 @@
 # include <fstream>
 # include <limits>
 
-
-namespace ft {
-
-	struct  nullptr_t {
-		void *_ptr;
-
-		struct __nat { int __for_bool_; };
-
-		nullptr_t() : _ptr(0) {}
-		nullptr_t(int __nat::*) : _ptr(0) {}
-
-		operator int __nat::*() const { return 0; }
-
-		template <class _T>
-		operator _T* () const {return 0;}
-
-		template <class _T, class _U>
-		operator _T _U::* () const {return 0;}
-
-		friend	bool operator==(nullptr_t, nullptr_t) {
-
-			return (true);
-		}
-
-		friend	bool operator!=(nullptr_t, nullptr_t) {
-
-			return (false);
-		}
-	};
-
-	#define ft_nullptr nullptr_t(0)
-
-};
-
 #define print(x)	std::cout << x << std::endl;
 
-# include "equal_compare.hpp"
-# include "lexicographical_compare.hpp"
-# include "enable_if.hpp"
-# include "is_integral.hpp"
-# include "iteratorTraits.hpp"
-# include "vectorIterator.hpp"
-# include "reverseIterator.hpp"
+# include "utils/lexicographical_compare.hpp"
+# include "utils/equal_compare.hpp"
+# include "utils/enable_if.hpp"
+# include "utils/is_integral.hpp"
+# include "utils/iteratorTraits.hpp"
+# include "utils/vectorIterator.hpp"
+# include "utils/reverseIterator.hpp"
+# include "vector.hpp"
 
 // std::pair -> for map
 // std::make_pair -> for map
+
+
+	// operator	vectorIterator<const value_type>() const {
+
+	// 	return (this->_element);
+	// };
+
 
 #endif

@@ -6,13 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/06 20:22:30 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/10 17:49:56 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "ft_containers.hpp"
 # include <vector>
-
+# include "ft_containers.hpp"
 
 #define bothvector(x)	vectorFile << x ; ftVectorFile << x ;
 #define VECTFILE(x,y)	vectorFile << x << y << std::endl;
@@ -140,7 +139,7 @@ static void	vectorTests() {
 	std::vector<int>::iterator			endIteratorVector3 = vector3.end();
 	ft::vector<int>						ftVector3(ftVector2);
 	ft::vector<int>::iterator			beginIteratorftVector3 = ftVector3.begin();
-	ft::vector<int>::iterator			endIteratorftVector3 = ftVector2.end();
+	ft::vector<int>::iterator			endIteratorftVector3 = ftVector3.end();
 
 	VECTFILE("size = ", vector3.size());
 	FTVECTFILE("size = ",ftVector3.size());
@@ -161,9 +160,6 @@ static void	vectorTests() {
 		FTVECTFILE("Iterator value = ", *beginIteratorftVector3)
 		++beginIteratorftVector3;
 	}
-	
-
-	// std::numeric_limits<int>
 
 	vectorFile.close();
 	ftVectorFile.close();

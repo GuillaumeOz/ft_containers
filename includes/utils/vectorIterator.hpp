@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:29:51 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/06 20:55:58 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/10 18:51:02 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,8 +193,6 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 
 		return (this->_element);
 	}
-
-	// static const bool input_iter = true; // Check this ?
 
 //--------------------------------VARIABLES-----------------------------------//
 

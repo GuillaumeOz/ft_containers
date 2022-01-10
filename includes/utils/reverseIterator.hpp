@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/06 14:52:18 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/10 16:07:49 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,16 @@
 namespace ft {
 
 template < class T >
-class reverseIterator : public ft::iterator<random_access_iterator_tag, T{
+class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
 
 	public:
 //--------------------------------TYPEDEF-------------------------------------//
 
-		typedef T			value_type;
-		typedef Pointer		pointer;
-		typedef Reference	reference;
-		typedef Distance	difference_type;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::pointer			pointer;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::reference			reference;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
+		typedef typename ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
 		//add const ptr? for member function return
 
 //-------------------------------CONSTRUCTOR----------------------------------//
@@ -176,8 +177,6 @@ class reverseIterator : public ft::iterator<random_access_iterator_tag, T{
 
 		return (this->_element);
 	}
-
-	// static const bool input_iter = true; // Check this ?
 
 //--------------------------------VARIABLES-----------------------------------//
 
