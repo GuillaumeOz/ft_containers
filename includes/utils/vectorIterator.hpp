@@ -6,14 +6,13 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:29:51 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/10 18:51:02 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/12 07:03:28 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ITERATOR_HPP
 # define ITERATOR_HPP
 
-#include <iostream>
 #include "iteratorTraits.hpp"
 
 namespace ft {
@@ -25,6 +24,7 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 
 //--------------------------------TYPEDEF-------------------------------------//
 
+		// typedef typename ft::iterator<random_access_iterator_tag, T>::iterator			iterator_type;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::pointer			pointer;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::reference			reference;
@@ -45,7 +45,7 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 
 		vectorIterator(vectorIterator const & src) {
 
-			*this = src;
+			this->_element = src._element;
 		}
 
 		virtual	~vectorIterator() {
@@ -53,6 +53,11 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 		}
 
 //---------------------------COMP_OPERATORS-----------------------------------//
+
+	operator	vectorIterator<const value_type>() const {
+
+		return (this->_element);
+	};
 
 	//elem == rhs
 		bool	operator==(vectorIterator const & rhs) const {
@@ -105,9 +110,9 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 //---------------------------INCR_OPERATORS-----------------------------------//
 
 	//++elem
-		vectorIterator	operator++() {
+		vectorIterator&	operator++(void) {
 
-			this->_element++;
+			++(this->_element);
 			return (*this);
 		}
 
@@ -121,16 +126,16 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 		}
 
 	//--elem
-		vectorIterator	operator--() {
+		vectorIterator&	operator--() {
 
-			this->_element--;
+			--(this->_element);
 			return (*this);
 		}
 
 	//elem--
 		vectorIterator	operator--(int) {
 
-			vectorIterator	tmp = (*this);
+			vectorIterator	tmp(*this);
 
 			--(*this);
 			return (tmp);
@@ -147,6 +152,17 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 
 			this->_element += rhs;
 		}
+
+			// friend difference_type operator- (const reverse_iterator<Iterator>& lhs,
+			// 	const reverse_iterator<Iterator>& rhs) {
+			// 	return rhs.base() - lhs.base();
+			// }
+
+			// template < class _IteratorR >
+			// friend difference_type operator- (const reverse_iterator<Iterator>& lhs,
+			// 	const reverse_iterator<_IteratorR>& rhs) {
+			// 	return rhs.base() - lhs.base();
+			// }
 
 	//elem - rhs
 		vectorIterator	operator-(difference_type const & rhs) const {
@@ -169,9 +185,9 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 	}
 
 	// elem - rhs
-	difference_type		operator-(vectorIterator b) {
+	friend difference_type		operator-(vectorIterator a, vectorIterator b) {
 
-		return (this->_element - b._element);
+		return (a._element - b._element);//remove friend word, try non member function
 	}
 
 //------------------DEREFERENCING_AND_RANDOM_ACCESS_OPERATORS-----------------//
@@ -185,7 +201,7 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 	// elem[]
 	reference	operator[](difference_type value) const {
 
-		return ((this->_element + value));
+		return (this->_element + value);
 	}
 
 	// &elem
@@ -201,7 +217,7 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 		pointer		_element;
 
 };
-	
+
 };
 
 #endif

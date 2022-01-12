@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/10 16:07:49 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/12 06:52:33 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,11 @@ class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
 		}
 
 //---------------------------COMP_OPERATORS-----------------------------------//
+
+	operator	reverseIterator<const value_type>() const {
+
+		return (this->_element);
+	};
 
 	//elem == rhs
 		bool	operator==(reverseIterator const & rhs) const {

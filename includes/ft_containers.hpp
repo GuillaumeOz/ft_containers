@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 08:59:15 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/10 20:23:09 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/12 06:50:43 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <fstream>
 # include <limits>
 
+# include <cstdlib>//remove
+
 #define print(x)	std::cout << x << std::endl;
 
 # include "utils/lexicographical_compare.hpp"
@@ -28,16 +30,11 @@
 # include "utils/iteratorTraits.hpp"
 # include "utils/vectorIterator.hpp"
 # include "utils/reverseIterator.hpp"
+# include "utils/utils.hpp"
 # include "vector.hpp"
 
 // std::pair -> for map
 // std::make_pair -> for map
-
-
-	// operator	vectorIterator<const value_type>() const {
-
-	// 	return (this->_element);
-	// };
 
 
 #endif

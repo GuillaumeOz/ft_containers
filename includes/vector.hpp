@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/10 20:38:49 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/12 06:45:23 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class vector {
 	typedef typename ft::vectorIterator<const value_type>		const_iterator;
 	typedef typename ft::reverseIterator<value_type>			reverse_iterator;
 	typedef typename ft::reverseIterator<const value_type>		const_reverse_iterator;
-	typedef std::ptrdiff_t										difference_type;//
+	typedef typename allocator_type::difference_type			difference_type;//
 	typedef size_t												size_type;
 
 //------------------------------CONSTRUCTORS----------------------------------//
@@ -75,7 +75,7 @@ class vector {
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
 
 		this->_alloc = alloc;
-		this->_size = last - first;
+		this->_size = ft::itDiff(first, last);
 		this->_capacity = this->_size;
 		this->_start = this->_alloc.allocate(this->_capacity);
 		this->_end = this->_start;
@@ -121,7 +121,7 @@ class vector {
 	vector &operator=(const vector& rhs) {
 
 		if (*this == rhs)
-			return (*this);
+			return (*this);//remove this?
 		this->clear();
 		this->insert(this->end(), rhs.begin(), rhs.end());
 		return (*this);
@@ -186,7 +186,6 @@ class vector {
 		allocator_type	newAlloc;
 		pointer			newStart;
 		pointer			newEnd;
-		
 
 		newStart = newAlloc.allocate(n);
 		if (this->_size < n) {
@@ -194,7 +193,7 @@ class vector {
 			for (size_t i = 0; i < this->_size; i++) {
 
 				newAlloc.construct(newStart + i, *(this->_start + i));
-				newEnd = newStart + i;
+				newEnd = newStart + i + 1;
 			}
 			for (size_t i = 0; i < n - this->_size; i++) {
 
@@ -206,16 +205,21 @@ class vector {
 			for (size_t i = 0; i < n; i++) {
 
 				newAlloc.construct(newStart + i, *(this->_start + i));
-				newEnd = newStart + i;
+				newEnd = newStart + i + 1;
 			}
 		}
 		if (this->_size > 0) {
-			this->_alloc.destroy(this->_start);
+
+			this->clear();
+		}
+		if (this->_capacity > 0) {
+
 			this->_alloc.deallocate(this->_start, this->_capacity);
 		}
 		this->_alloc = newAlloc;
 		this->_size = n;
-		this->_capacity = n;
+		if (this->_capacity <= this->_size)
+			this->_capacity = n;
 		this->_start = newStart;
 		this->_end = newEnd;
 	}
@@ -246,7 +250,7 @@ class vector {
 				newAlloc.construct(newStart + i, *(this->_start + i));
 				newEnd = newStart + i;
 			}
-			if (this->_size > 0) {
+			if (this->_size > 0) {//check leaks with capacity
 
 				this->_alloc.destroy(this->_start);
 				this->_alloc.deallocate(this->_start, this->_capacity);
@@ -385,50 +389,42 @@ class vector {
 
 			this->_alloc.destroy(this->_end);
 			this->_size--;
+			this->_end--;
 		}
 	}
 
 	// Insert single element
 	iterator insert (iterator position, const value_type& val) {
 
-		vector				newVector(this->begin(), position);
-		iterator			newPosIterator;
-		size_type			newDistanceIterator = 0;
+		//test this
+		difference_type			newSize = ft::itDiff(this->begin(), position);
 
-		for (iterator it = this->begin(); it != position; ++it)
-			newDistanceIterator++;
-		newVector.push_back(val);
-		newDistanceIterator++;
-		newPosIterator = this->begin() + newDistanceIterator;
-		while (newPosIterator != this->end()) {
-
-			newVector.push_back((*newPosIterator));
-			++newPosIterator;
-		}
-		this = newVector;
+		insert(position, 1, val);
+		return iterator(this->begin() + newSize);
 	}
 
 	// Insert fill
 	void insert (iterator position, size_type n, const value_type& val) {
 
-		vector				newVector(this->begin(), position);
-		iterator			newPosIterator;
-		size_type			newDistanceIterator = 0;
+		difference_type			beginToPosition = ft::itDiff(this->begin(), position);
+		difference_type			beginToEnd = ft::itDiff(this->begin(), this->end());
+		difference_type			newSize = n;
+		iterator				previousEnd;
+		iterator				end;
 
-		for (iterator it = this->begin(); it != position; ++it)
-			newDistanceIterator++;
-		for (size_type i = 0; i < n; i++) {
+		this->resize(this->_size + newSize);
 
-			newVector.push_back(val);
-			newDistanceIterator++;
+		previousEnd = this->begin() + beginToEnd;
+		position = this->begin() + beginToPosition;
+		end = this->end();
+		while (previousEnd != position)
+			*(--end) = *(--previousEnd);
+		while (0 < n) {
+
+			*position++ = val;
+			n--;
 		}
-		newPosIterator = this->begin() + newDistanceIterator;
-		while (newPosIterator != this->end()) {
-
-			newVector.push_back((*newPosIterator));
-			++newPosIterator;
-		}
-		(*this) = newVector;
+		this->_end = this->_start + this->_size;
 	}
 
 	// Insert range
@@ -436,32 +432,37 @@ class vector {
 	void insert(iterator position, InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
 
-		vector				newVector(this->begin(), position);
-		iterator			newPosIterator;
-		size_type			newDistanceIterator = 0;
+		difference_type			beginToPosition = ft::itDiff(this->begin(), position);
+		difference_type			beginToEnd = ft::itDiff(this->begin(), this->end());
+		difference_type			newSize = ft::itDiff(first, last);
+		iterator				previousEnd;
+		iterator				end;
 
-		for (iterator it = this->begin(); it != position; ++it)
-			newDistanceIterator++;
-		while (first != last) {
+		this->resize(this->_size + newSize);
+		// print("POPOPOPOPO")
+		// print(beginToPosition)
+		// print(beginToEnd)
+		// print(newSize)
+		// print(*(--previousEnd))
+		// print(*(--end))
+		// print("POPOPOPOPO")
 
-			newVector.push_back(*first);
-			++first;
-			newDistanceIterator++;
-		}
-		newPosIterator = this->begin() + newDistanceIterator;
-		while (newPosIterator != this->end()) {
-
-			newVector.push_back(*newPosIterator);
-			++newPosIterator;
-		}
-		(*this) = newVector;
+		previousEnd = this->begin() + beginToEnd;
+		position = this->begin() + beginToPosition;
+		end = this->end();
+		while (previousEnd != position)
+			*(--end) = *(--previousEnd);
+		while (first != last)
+			*position++ = *first++;
+		this->_end = this->_start + this->_size;
 	}
 
 	// Iterator erase
-	iterator erase (iterator position) {
+	template< class InputIterator >
+		InputIterator erase (InputIterator position) {
 
 		iterator	newPostion = (position + 1);
-		vector		tmp(newPostion, this->_end);
+		vector		tmp(newPostion, this->end());
 
 		for (size_t i = 0; i < tmp.size(); i++)
 			this->pop_back();
@@ -511,19 +512,11 @@ class vector {
 
 	void clear(void) {
 
-		iterator	itBegin = this->begin();
-		iterator	itEnd = this->end();
+		size_type len = this->size();
 
-		if (this->empty() == false) {
-
-			while (itBegin != itEnd) {
-
-				this->_alloc.destroy((&(*itBegin)));
-				++itBegin;
-			}
-			this->_end = this->_start;
-			this->_size = 0;
-		}
+		for (size_type i = 0; i < len; i++)
+			this->_alloc.destroy(--this->_end);
+		this->_size = 0;
 	}
 
 //---------------------------ALLOCATOR FUNCTION-------------------------------//
@@ -540,12 +533,6 @@ class vector {
 		pointer			_start;
 		pointer			_end;
 
-	// class out_of_range : public logic_error {
-	// public:
-	// explicit out_of_range (const string& what_arg);
-
-	// };
-
 };
 
 //--------------------------RELATIONAL OPERATOR-------------------------------//
@@ -554,14 +541,9 @@ class vector {
 	template <class T, class Alloc>
 	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {// const ?
 
-		typename ft::vectorIterator<T>::iterator	itLhsBegin = lhs.begin();
-		typename ft::vectorIterator<T>::iterator	itLhsEnd = lhs.end();
-		typename ft::vectorIterator<T>::iterator	itRhsBegin = rhs.begin();
-		typename ft::vectorIterator<T>::iterator	itRhsEnd = rhs.end();
-
 		if (lhs.size() == rhs.size()) {
 
-			return (ft::equal(itLhsBegin, itLhsEnd, itRhsBegin));
+			return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 		}
 		return (false);
 	}
@@ -578,14 +560,11 @@ class vector {
 	template <class T, class Alloc>
 	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 
-		typename ft::vectorIterator<T>::iterator	itLhsBegin = lhs.begin();
-		typename ft::vectorIterator<T>::iterator	itLhsEnd = lhs.end();
-		typename ft::vectorIterator<T>::iterator	itRhsBegin = rhs.begin();
-		typename ft::vectorIterator<T>::iterator	itRhsEnd = rhs.end();
+		if (lhs != rhs) {
 
-		if (lhs == rhs)
-			return (false);//test this change for lhs != rhs
-		return (ft::lexicographical_compare(itLhsBegin, itLhsEnd, itRhsBegin, itRhsEnd));
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
+		return (false);
 	}
 
 	// Operator <=
