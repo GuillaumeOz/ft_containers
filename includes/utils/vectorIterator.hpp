@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:29:51 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/12 07:03:28 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/14 06:14:18 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,11 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 
 //--------------------------------TYPEDEF-------------------------------------//
 
-		// typedef typename ft::iterator<random_access_iterator_tag, T>::iterator			iterator_type;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::pointer			pointer;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::reference			reference;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
-
-		// typedef const value_type*		const_iterator;
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
@@ -54,55 +51,69 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 
 //---------------------------COMP_OPERATORS-----------------------------------//
 
-	operator	vectorIterator<const value_type>() const {
+	pointer base(void) const {
 
 		return (this->_element);
+	}
+
+	operator	vectorIterator<const value_type>() const {
+
+		return (vectorIterator<const value_type>(this->_element));
 	};
 
-	//elem == rhs
-		bool	operator==(vectorIterator const & rhs) const {
+	//elem = rhs
+		vectorIterator &operator=(const vectorIterator& rhs) {
 
-			if (this->_element == rhs._element)
+			if (this == &rhs)
+				return (*this);
+			this->_element = rhs._elem;
+			return (*this);
+		}
+
+	//elem == rhs
+		friend bool	operator==(vectorIterator const & lhs, vectorIterator const & rhs) {
+
+			if (lhs._element == rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem != rhs
-		bool	operator!=(vectorIterator const & rhs) const {
+		friend bool	operator!=(vectorIterator const & lhs, vectorIterator const & rhs) {
 
-			if (this->_element != rhs._element)
+			if (lhs._element != rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem < rhs
-		bool	operator<(vectorIterator const & rhs) const {
+		friend bool	operator<(vectorIterator const & lhs, vectorIterator const & rhs) {
 
-			if (this->_element < rhs._element)
+			if (lhs._element < rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem > rhs
-		bool	operator>(vectorIterator const & rhs) const {
+		friend bool	operator>(vectorIterator const & lhs, vectorIterator const & rhs) {
 
-			if (this->_element > rhs._element)
+			if (lhs._element > rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem <= rhs
-		bool	operator<=(vectorIterator const & rhs) const {
+		friend bool	operator<=(vectorIterator const & lhs, vectorIterator const & rhs) {
 
-			if (this->_element <= rhs._element)
+			if (lhs._element <= rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem >= rhs
-		bool	operator>=(vectorIterator const & rhs) const {
+		friend bool	operator>=(vectorIterator const & lhs, vectorIterator const & rhs) {
 
-			if (this->_element >= rhs._element)
+			if (lhs._element >= rhs._element)
 				return (true);
 			return (false);
 		}
@@ -110,7 +121,7 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 //---------------------------INCR_OPERATORS-----------------------------------//
 
 	//++elem
-		vectorIterator&	operator++(void) {
+		vectorIterator	operator++(void) {
 
 			++(this->_element);
 			return (*this);
@@ -126,16 +137,16 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 		}
 
 	//--elem
-		vectorIterator&	operator--() {
+		vectorIterator&	operator--(void) {
 
-			--(this->_element);
+			this->_element--;
 			return (*this);
 		}
 
 	//elem--
 		vectorIterator	operator--(int) {
 
-			vectorIterator	tmp(*this);
+			vectorIterator	tmp = (*this);
 
 			--(*this);
 			return (tmp);
@@ -147,22 +158,23 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 			return (this->_element + rhs);
 		}
 
+	// rhs(Integral) + elem
+		friend vectorIterator	operator+(difference_type n, vectorIterator const &rhs) {
+
+			return (rhs._element + n);
+		};
+
+	// Iter - Iter
+		friend difference_type	operator+(vectorIterator const &lhs, vectorIterator const &rhs) {
+
+			return (lhs._element + rhs._element);
+		};
+
 	//elem += rhs
-		void			operator+=(difference_type const & rhs) {
+		vectorIterator			operator+=(difference_type rhs) {
 
-			this->_element += rhs;
+			return(vectorIterator(this->_element += rhs));
 		}
-
-			// friend difference_type operator- (const reverse_iterator<Iterator>& lhs,
-			// 	const reverse_iterator<Iterator>& rhs) {
-			// 	return rhs.base() - lhs.base();
-			// }
-
-			// template < class _IteratorR >
-			// friend difference_type operator- (const reverse_iterator<Iterator>& lhs,
-			// 	const reverse_iterator<_IteratorR>& rhs) {
-			// 	return rhs.base() - lhs.base();
-			// }
 
 	//elem - rhs
 		vectorIterator	operator-(difference_type const & rhs) const {
@@ -170,45 +182,58 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 			return (this->_element - rhs);
 		}
 
-	//elem -= rhs
-		void			operator-=(difference_type const & rhs) {
+	// rhs(Integral) - elem
+		friend vectorIterator	operator-(difference_type n, vectorIterator const &rhs) {
 
-			this->_element -= rhs;
+			return (rhs._element - n);
+		};
+
+	// Iter - Iter
+		friend difference_type	operator-(vectorIterator const &lhs, vectorIterator const &rhs) {
+
+			return (lhs._element - rhs._element);
+		};
+
+	//elem -= rhs
+		vectorIterator			operator-=(difference_type const & rhs) {
+
+			return(vectorIterator(this->_element -= rhs));
 		}
 
 //-----------------------------VALUES_OPERATORS-------------------------------//
 
 	// elem + rhs
-	difference_type		operator+(vectorIterator b) {
+		difference_type		operator+(vectorIterator b) {
 
-		return (this->_element + b._element);
-	}
+			return (this->_element + b._element);
+		}
 
 	// elem - rhs
-	friend difference_type		operator-(vectorIterator a, vectorIterator b) {
+		difference_type		operator-(vectorIterator b) {
 
-		return (a._element - b._element);//remove friend word, try non member function
-	}
+			return (this->_element - b._element);
+		}
+
 
 //------------------DEREFERENCING_AND_RANDOM_ACCESS_OPERATORS-----------------//
 
 	// *elem
-	reference	operator*() const {
+		reference	operator*(void) const {
 
-		return (*(this->_element));
-	}
+			return (*(this->_element));
+		}
 
 	// elem[]
-	reference	operator[](difference_type value) const {
+		reference	operator[](difference_type value) const {
 
-		return (this->_element + value);
-	}
+			return (*(this->_element + value));
+		}
 
 	// &elem
-	pointer		operator->() const {
+		pointer		operator->(void) const {
 
-		return (this->_element);
-	}
+			return (this->_element);
+		}
 
 //--------------------------------VARIABLES-----------------------------------//
 
@@ -217,6 +242,7 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 		pointer		_element;
 
 };
+
 
 };
 

@@ -6,14 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/12 06:45:23 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/14 06:21:08 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
-
-// # define print(x) std::cout << x << std::endl;
 
 #include "ft_containers.hpp"
 
@@ -151,22 +149,22 @@ class vector {
 
 	reverse_iterator	rbegin() {
 
-		return (reverse_iterator(this->end()));
+		return (reverse_iterator(this->_end));
 	}
 
 	const_reverse_iterator	rbegin() const {
 
-		return (const_reverse_iterator(this->end()));
+		return (const_reverse_iterator(this->_end));
 	}
 
 	reverse_iterator	rend() {
 
-		return (reverse_iterator(this->begin()));//check pointer position
+		return (reverse_iterator(this->_start));
 	}
 
 	const_reverse_iterator	rend() const {
 
-		return (reverse_iterator(this->begin()));
+		return (reverse_iterator(this->_start));
 	}
 
 //--------------------------CAPACITY FUNCTIONS--------------------------------//
@@ -181,47 +179,25 @@ class vector {
 		return (allocator_type().max_size());
 	}
 
-	void resize (size_type n, value_type val = value_type()) {
+	void resize (size_type size, value_type val = value_type()) {//check value type
+//rebuild
 
-		allocator_type	newAlloc;
-		pointer			newStart;
-		pointer			newEnd;
-
-		newStart = newAlloc.allocate(n);
-		if (this->_size < n) {
-
-			for (size_t i = 0; i < this->_size; i++) {
-
-				newAlloc.construct(newStart + i, *(this->_start + i));
-				newEnd = newStart + i + 1;
-			}
-			for (size_t i = 0; i < n - this->_size; i++) {
-
-				newAlloc.construct(newStart + this->_size + i, val);
-			}
+		if (size < this->_size)
+		{
+			while (size < this->_size)
+				this->_alloc.destroy(&this->_start[--this->_size]);
 		}
-		else {
-
-			for (size_t i = 0; i < n; i++) {
-
-				newAlloc.construct(newStart + i, *(this->_start + i));
-				newEnd = newStart + i + 1;
-			}
+		else
+		{
+			if (size <= this->_capacity)
+				;
+			else if (size <= this->_size * 2)
+				this->reserve(this->_size * 2);
+			else
+				this->reserve(size);
+			while (this->_size < size)
+				this->_alloc.construct(&this->_start[this->_size++], val);
 		}
-		if (this->_size > 0) {
-
-			this->clear();
-		}
-		if (this->_capacity > 0) {
-
-			this->_alloc.deallocate(this->_start, this->_capacity);
-		}
-		this->_alloc = newAlloc;
-		this->_size = n;
-		if (this->_capacity <= this->_size)
-			this->_capacity = n;
-		this->_start = newStart;
-		this->_end = newEnd;
 	}
 
 	size_type	capacity(void) const {
@@ -236,30 +212,39 @@ class vector {
 		return (false);
 	}
 
-	void reserve (size_type n) {
+	void reserve (size_type capacity) {
+//rebuild
+		vector		res;
+		iterator	itBegin = this->begin();
+		iterator	itEnd = this->end();
 
-		allocator_type	newAlloc;
-		pointer			newStart;
-		pointer			newEnd;
+		if (capacity > this->max_size())
+			throw std::length_error("Alloc size is greater than max_size");
+		if (capacity <= this->capacity())
+			return ;//change
 
-		if (this->_capacity < n) {
+		difference_type len = ft::itDiff(itBegin, itEnd);
 
-			newStart = newAlloc.allocate(n);
-			for (size_t i = 0; i < this->_size; i++) {
+		if (capacity < (size_t)len || capacity < 0)
+			throw std::bad_alloc();
+		res._alloc = this->_alloc;
+		res._size = len; res._capacity = capacity;
+		res._start = res._alloc.allocate(capacity);
+		for (size_type i = 0; itBegin != itEnd; ++itBegin)
+			res._alloc.construct(&res._start[i++], *itBegin);
 
-				newAlloc.construct(newStart + i, *(this->_start + i));
-				newEnd = newStart + i;
-			}
-			if (this->_size > 0) {//check leaks with capacity
-
-				this->_alloc.destroy(this->_start);
-				this->_alloc.deallocate(this->_start, this->_capacity);
-			}
-			this->_alloc = newAlloc;
-			this->_capacity = n;
-			this->_start = newStart;
-			this->_end = newEnd;
+		if (this->_start) {
+			
+			this->clear();
+			this->_alloc.deallocate(this->_start, this->_capacity);
+			this->_start = NULL; this->_size = 0; this->_capacity = 0;
 		}
+
+		this->_start = res._start;
+		this->_alloc = res._alloc;
+		this->_size = res._size;
+		this->_capacity = res._capacity;
+		res._start = NULL; res._size = 0; res._capacity = 0;
 	}
 
 //------------------------ELEMENT ACCESS FUNCTIONS----------------------------//
@@ -396,7 +381,6 @@ class vector {
 	// Insert single element
 	iterator insert (iterator position, const value_type& val) {
 
-		//test this
 		difference_type			newSize = ft::itDiff(this->begin(), position);
 
 		insert(position, 1, val);
@@ -416,15 +400,17 @@ class vector {
 
 		previousEnd = this->begin() + beginToEnd;
 		position = this->begin() + beginToPosition;
-		end = this->end();
-		while (previousEnd != position)
+		end = this->_start + this->_size;
+		this->_end = this->_start + this->_size;
+		while (previousEnd != position) {
+
 			*(--end) = *(--previousEnd);
+		}
 		while (0 < n) {
 
 			*position++ = val;
 			n--;
 		}
-		this->_end = this->_start + this->_size;
 	}
 
 	// Insert range
@@ -439,48 +425,48 @@ class vector {
 		iterator				end;
 
 		this->resize(this->_size + newSize);
-		// print("POPOPOPOPO")
-		// print(beginToPosition)
-		// print(beginToEnd)
-		// print(newSize)
-		// print(*(--previousEnd))
-		// print(*(--end))
-		// print("POPOPOPOPO")
 
 		previousEnd = this->begin() + beginToEnd;
 		position = this->begin() + beginToPosition;
 		end = this->end();
-		while (previousEnd != position)
+		while (previousEnd != position) {
+
 			*(--end) = *(--previousEnd);
-		while (first != last)
-			*position++ = *first++;
+		}
+		while (first != last) {
+
+			*position = *first;
+			position++;
+			first++;
+		}
 		this->_end = this->_start + this->_size;
 	}
 
 	// Iterator erase
-	template< class InputIterator >
-		InputIterator erase (InputIterator position) {
+		iterator erase (iterator position) {
 
-		iterator	newPostion = (position + 1);
-		vector		tmp(newPostion, this->end());
-
-		for (size_t i = 0; i < tmp.size(); i++)
-			this->pop_back();
-		this->pop_back();
-		for (iterator it = tmp.begin(); it != tmp.end(); it++)
-			this->push_back(*it);
-		return (position);
+		return (this->erase(position, position + 1));
 	}
 
 	// Range erase
-	iterator erase (iterator first, iterator last) {//test this
+	iterator erase (iterator first, iterator last) {
 
-		while (first != last)
-		{
-			erase(first);
+		size_type	rangeToDelete = ft::itDiff(first, last);
+		iterator	tmp = first;
+
+		while (last != this->end()) {
+
+			*first = *last;
 			++first;
+			++last;
 		}
-		return (first);
+		for (size_type i = 0; i < rangeToDelete; i++) {
+
+			this->_alloc.destroy((this->_start + this->_size));
+			this->_size--;
+			this->_end--;
+		}
+		return (tmp);
 	}
 
 	void swap (vector& x) {

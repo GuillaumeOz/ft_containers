@@ -6,22 +6,22 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/12 06:52:33 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/14 06:19:18 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REVERSEITERATOR_HPP
 # define REVERSEITERATOR_HPP
 
-#include <iostream>
 #include "iteratorTraits.hpp"
 
 namespace ft {
 
-template < class T >
-class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
+template < typename T >
+class reverseIterator : ft::iterator<ft::random_access_iterator_tag, T>{
 
 	public:
+
 //--------------------------------TYPEDEF-------------------------------------//
 
 		typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
@@ -29,21 +29,25 @@ class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
 		typedef typename ft::iterator<random_access_iterator_tag, T>::reference			reference;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
-		//add const ptr? for member function return
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
+		//default
 		reverseIterator(void) : _element(NULL){
 
 		}
 
-		reverseIterator(pointer element) : _element(element){
+		//initialization
+		template <class Type>
+		reverseIterator(Type *element) : _element(element._element){
 
 		}
 
-		reverseIterator(reverseIterator const & src) {
+		//copy
+		// template <class Iter>
+		reverseIterator(reverseIterator const & rev_it) {
 
-			*this = src;
+			*this = rev_it;
 		}
 
 		virtual	~reverseIterator() {
@@ -52,55 +56,68 @@ class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
 
 //---------------------------COMP_OPERATORS-----------------------------------//
 
-	operator	reverseIterator<const value_type>() const {
+	pointer base(void) const {
 
 		return (this->_element);
+	}
+
+	operator	reverseIterator<const value_type>() const {
+
+		return (reverseIterator<const value_type>(this->_element));
 	};
 
-	//elem == rhs
-		bool	operator==(reverseIterator const & rhs) const {
+	reverseIterator &operator=(const reverseIterator& rhs) {
 
-			if (this->_element == rhs._element)
+		if (this == &rhs)
+			return (*this);
+		this->_element = rhs._elem;
+		return (*this);
+	}
+
+	//elem == rhs
+		friend bool	operator==(reverseIterator const & lhs, reverseIterator const & rhs) {
+
+			if (lhs._element == rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem != rhs
-		bool	operator!=(reverseIterator const & rhs) const {
+		friend bool	operator!=(reverseIterator const & lhs, reverseIterator const & rhs) {
 
-			if (this->_element != rhs._element)
+			if (lhs._element != rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem < rhs
-		bool	operator<(reverseIterator const & rhs) const {
+		friend bool	operator<(reverseIterator const & lhs, reverseIterator const & rhs) {
 
-			if (this->_element < rhs._element)
+			if (lhs._element < rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem > rhs
-		bool	operator>(reverseIterator const & rhs) const {
+		friend bool	operator>(reverseIterator const & lhs, reverseIterator const & rhs) {
 
-			if (this->_element > rhs._element)
+			if (lhs._element > rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem <= rhs
-		bool	operator<=(reverseIterator const & rhs) const {
+		friend bool	operator<=(reverseIterator const & lhs, reverseIterator const & rhs) {
 
-			if (this->_element <= rhs._element)
+			if (lhs._element <= rhs._element)
 				return (true);
 			return (false);
 		}
 
 	//elem >= rhs
-		bool	operator>=(reverseIterator const & rhs) const {
+		friend bool	operator>=(reverseIterator const & lhs, reverseIterator const & rhs) {
 
-			if (this->_element >= rhs._element)
+			if (lhs._element >= rhs._element)
 				return (true);
 			return (false);
 		}
@@ -108,7 +125,7 @@ class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
 //---------------------------INCR_OPERATORS-----------------------------------//
 
 	//++elem
-		reverseIterator	operator++() {
+		reverseIterator	operator++(void) {
 
 			this->_element--;
 			return (*this);
@@ -124,7 +141,7 @@ class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
 		}
 
 	//--elem
-		reverseIterator	operator--() {
+		reverseIterator	operator--(void) {
 
 			this->_element++;
 			return (*this);
@@ -142,13 +159,26 @@ class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
 	//elem + rhs
 		reverseIterator	operator+(difference_type const & rhs) const {
 
-			return (this->_element - rhs);
+			return (reverseIterator(this->_element - rhs));
 		}
 
-	//elem += rhs
-		void			operator+=(difference_type const & rhs) {
+	// rhs(Integral) + elem
+		friend reverseIterator	operator+(difference_type n, const reverseIterator &rhs) {
 
-			this->_element += rhs;
+			return (rhs._element - n);
+		};
+
+	// Iter - Iter
+		friend difference_type	operator+(reverseIterator const &lhs, reverseIterator const &rhs) {
+
+			return (lhs._element - rhs._element);
+		};
+
+	//elem += rhs
+		reverseIterator&	operator+=(difference_type const & rhs) {
+
+			(this->_element -= rhs);
+			return(*this);
 		}
 
 	//elem - rhs
@@ -157,38 +187,64 @@ class reverseIterator : public ft::iterator< random_access_iterator_tag, T >{
 			return (this->_element + rhs);
 		}
 
-	//elem -= rhs
-		void			operator-=(difference_type const & rhs) {
+	// rhs(Integral) - elem
+		friend reverseIterator	operator-(difference_type n, reverseIterator const &rhs) {
 
-			this->_element += rhs;
+			return (rhs._element + n);
+		};
+
+	// Iter - Iter
+		friend difference_type	operator-(reverseIterator const &lhs, reverseIterator const &rhs) {
+
+			return (lhs._element + rhs._element);
+		};
+
+	//elem -= rhs
+		reverseIterator			operator-=(difference_type const & rhs) {
+
+			(this->_element += rhs);
+			return(*(this));
+		}
+
+//-----------------------------VALUES_OPERATORS-------------------------------//
+
+	// elem + rhs
+		difference_type		operator+(reverseIterator b) {
+
+			return (this->_element - b._element);
+		}
+
+	// elem - rhs
+		difference_type		operator-(reverseIterator b) {
+
+			return (this->_element + b._element);
 		}
 
 //------------------DEREFERENCING_AND_RANDOM_ACCESS_OPERATORS-----------------//
 
 	// *elem
-	reference	operator*(void) const {
+		reference	operator*(void) const {
 
-		return (*(this->_element));
-	}
+			return (*(this->_element));
+		}
 
 	// elem[]
-	reference	operator[](difference_type value) const {
+		reference	operator[](difference_type value) const {
 
-		return ((this->_element + value));
-	}
+			return (*(this->_element - value));
+		}
 
 	// &elem
-	pointer		operator->(void) const {
+		pointer		operator->(void) const {
 
-		return (this->_element);
-	}
+			return (this->_element);
+		}
 
 //--------------------------------VARIABLES-----------------------------------//
 
 	private:
 
-		pointer		_element;
-
+		pointer			_element;
 };
 
 };
