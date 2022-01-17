@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/14 06:19:18 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/17 18:10:32 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,37 +17,37 @@
 
 namespace ft {
 
-template < typename T >
-class reverseIterator : ft::iterator<ft::random_access_iterator_tag, T>{
-
-	public:
+template < typename Iterator >
+class reverseIterator {
 
 //--------------------------------TYPEDEF-------------------------------------//
 
-		typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
-		typedef typename ft::iterator<random_access_iterator_tag, T>::pointer			pointer;
-		typedef typename ft::iterator<random_access_iterator_tag, T>::reference			reference;
-		typedef typename ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
-		typedef typename ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
+	public:
+
+		typedef Iterator													iterator_type;
+
+		typedef typename ft::iterator_traits<Iterator>::value_type			value_type;
+		typedef typename ft::iterator_traits<Iterator>::pointer				pointer;
+		typedef typename ft::iterator_traits<Iterator>::reference			reference;
+		typedef typename ft::iterator_traits<Iterator>::difference_type		difference_type;
+		typedef typename ft::iterator_traits<Iterator>::iterator_category	iterator_category;
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
 		//default
-		reverseIterator(void) : _element(NULL){
+		reverseIterator(void) : _element(){
 
 		}
 
 		//initialization
-		template <class Type>
-		reverseIterator(Type *element) : _element(element._element){
+		explicit reverseIterator(iterator_type it) : _element(it){
 
 		}
 
 		//copy
-		// template <class Iter>
-		reverseIterator(reverseIterator const & rev_it) {
+		template<class _Iter>
+		reverseIterator(const reverseIterator<_Iter>& revIt) : _element(revIt.base()) {
 
-			*this = rev_it;
 		}
 
 		virtual	~reverseIterator() {
@@ -61,16 +61,19 @@ class reverseIterator : ft::iterator<ft::random_access_iterator_tag, T>{
 		return (this->_element);
 	}
 
-	operator	reverseIterator<const value_type>() const {
+	// operator	reverseIterator<const value_type>() const {
 
-		return (reverseIterator<const value_type>(this->_element));
-	};
+	// 	return (reverseIterator<const value_type>(this->_element));
+	// };
+
+	template <class U> reverseIterator &operator=(const reverseIterator<U> &u);
+
 
 	reverseIterator &operator=(const reverseIterator& rhs) {
 
 		if (this == &rhs)
 			return (*this);
-		this->_element = rhs._elem;
+		this->_element = rhs._element;
 		return (*this);
 	}
 
@@ -244,7 +247,8 @@ class reverseIterator : ft::iterator<ft::random_access_iterator_tag, T>{
 
 	private:
 
-		pointer			_element;
+		iterator_type											_element;
+
 };
 
 };

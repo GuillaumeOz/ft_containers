@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:29:51 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/14 06:14:18 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/17 16:39:13 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 namespace ft {
 
 template < class T >
-class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
+class vectorIterator : public ft::iterator<random_access_iterator_tag, T> {
 
 	public :
 
@@ -66,7 +66,7 @@ class vectorIterator: public ft::iterator<random_access_iterator_tag, T> {
 
 			if (this == &rhs)
 				return (*this);
-			this->_element = rhs._elem;
+			this->_element = rhs._element;
 			return (*this);
 		}
 

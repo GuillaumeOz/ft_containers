@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:41:02 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/13 20:39:12 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/17 18:10:56 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,17 @@
 
 namespace ft {
 
-	///	Marking input iterators.
+	///  Marking input iterators.
 	struct input_iterator_tag { };
-	///	Marking output iterators.
+	///  Marking output iterators.
 	struct output_iterator_tag { };
-	///	Forward iterators support a superset of input iterator operations.
+	/// Forward iterators support a superset of input iterator operations.
 	struct forward_iterator_tag : public input_iterator_tag { };
-	///	Bidirectional iterators support a superset of forward iterator
-	///	operations.
+	/// Bidirectional iterators support a superset of forward iterator
+	/// operations.
 	struct bidirectional_iterator_tag : public forward_iterator_tag { };
-	///	Random-access iterators support a superset of bidirectional
-	///	iterator operations.
+	/// Random-access iterators support a superset of bidirectional
+	/// iterator operations.
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
 	template<typename _Category, typename _Tp, typename _Distance = ptrdiff_t,
@@ -46,14 +46,14 @@ namespace ft {
 		typedef _Reference reference;
 	};
 
-	template<typename Iterator>
+	template<typename _Iterator>
 	struct iterator_traits {
 
-		typedef typename Iterator::iterator_category	iterator_category;
-		typedef typename Iterator::value_type			value_type;
-		typedef typename Iterator::difference_type		difference_type;
-		typedef typename Iterator::pointer				pointer;
-		typedef typename Iterator::reference			reference;
+		typedef typename _Iterator::iterator_category	iterator_category;
+		typedef typename _Iterator::value_type			value_type;
+		typedef typename _Iterator::difference_type		difference_type;
+		typedef typename _Iterator::pointer				pointer;
+		typedef typename _Iterator::reference			reference;
 	};
 
 	/// Partial specialization for pointer types.
@@ -78,15 +78,13 @@ namespace ft {
 		typedef const Tp&					reference;
 	};
 
-	template<typename _Iter>//suppr this
-		inline _GLIBCXX_CONSTEXPR//here -> constexpr C++11
-	typename iterator_traits<_Iter>::iterator_category
-		__iterator_category(const _Iter&) {
+	// template<typename _Iter>//suppr this
+	// 	inline _GLIBCXX_CONSTEXPR//here -> constexpr C++11
+	// typename iterator_traits<_Iter>::iterator_category
+	// 	__iterator_category(const _Iter&) {
 
-		return (typename iterator_traits<_Iter>::iterator_category());
-	}
-
-	//Work on this part
+	// 	return (typename iterator_traits<_Iter>::iterator_category());
+	// }
 
 };
 

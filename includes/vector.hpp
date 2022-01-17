@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/14 06:21:08 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/17 18:14:20 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,24 +180,30 @@ class vector {
 	}
 
 	void resize (size_type size, value_type val = value_type()) {//check value type
-//rebuild
 
-		if (size < this->_size)
-		{
-			while (size < this->_size)
-				this->_alloc.destroy(&this->_start[--this->_size]);
+		if (size < this->_size) {
+
+			while (size < this->_size) {
+
+				this->_size--;
+				this->_alloc.destroy((this->_start + this->_size));
+			}
 		}
-		else
-		{
+		else {
+
 			if (size <= this->_capacity)
 				;
 			else if (size <= this->_size * 2)
 				this->reserve(this->_size * 2);
 			else
 				this->reserve(size);
-			while (this->_size < size)
-				this->_alloc.construct(&this->_start[this->_size++], val);
+			while (this->_size < size) {
+
+				this->_alloc.construct(this->_start + this->_size, val);
+				this->_size++;
+			}
 		}
+		this->_end = this->_start + this->_size;
 	}
 
 	size_type	capacity(void) const {
@@ -213,38 +219,48 @@ class vector {
 	}
 
 	void reserve (size_type capacity) {
-//rebuild
+
 		vector		res;
 		iterator	itBegin = this->begin();
 		iterator	itEnd = this->end();
 
 		if (capacity > this->max_size())
-			throw std::length_error("Alloc size is greater than max_size");
+			throw std::length_error("Error : Alloc size is greater than max_size");
 		if (capacity <= this->capacity())
-			return ;//change
+			return ;
 
 		difference_type len = ft::itDiff(itBegin, itEnd);
 
 		if (capacity < (size_t)len || capacity < 0)
 			throw std::bad_alloc();
 		res._alloc = this->_alloc;
-		res._size = len; res._capacity = capacity;
+		res._size = len;
+		res._capacity = capacity;
 		res._start = res._alloc.allocate(capacity);
-		for (size_type i = 0; itBegin != itEnd; ++itBegin)
-			res._alloc.construct(&res._start[i++], *itBegin);
+		res._end = res._start + res._size;
+		for (size_type i = 0; itBegin != itEnd; ++itBegin) {
 
-		if (this->_start) {
-			
-			this->clear();
-			this->_alloc.deallocate(this->_start, this->_capacity);
-			this->_start = NULL; this->_size = 0; this->_capacity = 0;
+			res._alloc.construct(res._start + i, *itBegin);
+			i++;
 		}
 
-		this->_start = res._start;
+		if (this->_start != NULL) {
+
+			this->clear();
+			this->_alloc.deallocate(this->_start, this->_capacity);
+			this->_start = NULL;
+			this->_size = 0;
+			this->_capacity = 0;
+		}
+
 		this->_alloc = res._alloc;
+		this->_start = res._start;
+		this->_end = res._end;
 		this->_size = res._size;
 		this->_capacity = res._capacity;
-		res._start = NULL; res._size = 0; res._capacity = 0;
+		res._start = NULL;
+		res._size = 0;
+		res._capacity = 0;
 	}
 
 //------------------------ELEMENT ACCESS FUNCTIONS----------------------------//
@@ -263,7 +279,7 @@ class vector {
 
 		if (n >= this->size()) {
 
-			throw std::out_of_range("at range error");
+			throw std::out_of_range("Error : at range error");
 		}
 		return (this->_start[n]);
 	}
@@ -272,7 +288,7 @@ class vector {
 
 		if (n >= this->size()) {
 
-			throw std::out_of_range("at range error");
+			throw std::out_of_range("Error : at range error");
 		}
 		return (this->_start[n]);
 	}
@@ -304,68 +320,41 @@ class vector {
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
 
 		this->clear();
+		difference_type n = ft::itDiff(first, last);
+		reserve(n);
 		while (first != last) {
 
-			this->push_back(*first);
+			this->_alloc.construct(this->_start + this->_size, *first);
 			++first;
+			this->_size++;
 		}
+		this->_end = this->_start + this->_size;
 	}
 
-	// Fill Assign	
+	// Fill Assign
 	void assign (size_type n, const value_type& val) {
 
 		this->clear();
-		while (n-- != 0) {
+		reserve(n);
+		while (n != 0) {
 
-			this->push_back(val);
+			this->_alloc.construct(this->_start + this->_size, val);
+			this->_size++;
+			n--;
 		}
+		this->_end = this->_start + this->_size;
 	}
 
 	void push_back (const value_type& val) {
 
-		allocator_type	newAlloc;
-		size_type		newCapacity;
-		pointer			newStart;
-		pointer			newEnd;
-		pointer			tmpStart;
-
-		newCapacity = this->_capacity == 0 ? 1 : this->_capacity * 2;
-		if (newCapacity == 1) {
-
-			newStart = newAlloc.allocate(newCapacity);
-			newEnd = newStart;
-			newAlloc.construct(newStart, val);
-			this->_alloc.deallocate(this->_start, this->_capacity);
-			this->_capacity++;
-		}
-		else if(this->_size == this->_capacity) {
-
-			newStart = newAlloc.allocate(newCapacity);
-			newEnd = newStart;
-			tmpStart = this->_start;
-			while (tmpStart != this->_end) {
-
-				newAlloc.construct(newEnd, *(tmpStart));
-				tmpStart++;
-				newEnd++;
-			}
-			newAlloc.construct(newEnd, val);
-			this->_alloc.deallocate(this->_start, this->_capacity);
-			this->_capacity = newCapacity;
-		}
+		if (this->_size == this->_capacity)
+			this->resize(this->_size + 1, val);
 		else {
 
-			tmpStart = this->_start + this->_size;
-			newAlloc.construct(tmpStart, val);
+			this->_alloc.construct(this->_start + this->_size, val);
 			this->_size++;
-			this->_end++;
-			return ;
 		}
-		newEnd++;
-		this->_alloc = newAlloc;
-		this->_size++;
-		this->_start = newStart;
-		this->_end = newEnd;
+		this->_end = this->_start + this->_size;
 	}
 
 	void pop_back() {
@@ -500,17 +489,22 @@ class vector {
 
 		size_type len = this->size();
 
-		for (size_type i = 0; i < len; i++)
-			this->_alloc.destroy(--this->_end);
+		for (size_type i = 0; i < len; i++) {
+
+			this->_end--;
+			this->_alloc.destroy(this->_end);
+		}
 		this->_size = 0;
 	}
 
 //---------------------------ALLOCATOR FUNCTION-------------------------------//
 
-	// allocator_type get_allocator() const {//have to do this ?
+	allocator_type get_allocator() const {
 
-		
-	// }
+		return (this->_alloc);
+	}
+
+//---------------------------PRIVATE ATTRIBUTES-------------------------------//
 
 	private:
 		allocator_type	_alloc;
@@ -525,7 +519,7 @@ class vector {
 
 	// Operator ==
 	template <class T, class Alloc>
-	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {// const ?
+	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 
 		if (lhs.size() == rhs.size()) {
 
