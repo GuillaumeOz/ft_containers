@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/17 18:14:20 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/18 15:24:00 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ namespace ft {
 template < class T, class Alloc = std::allocator<T> >
 class vector {
 
-	public:
 
 //--------------------------------TYPEDEF-------------------------------------//
+
+	public:
 
 	typedef T													value_type;
 	typedef Alloc												allocator_type;
@@ -86,7 +87,7 @@ class vector {
 		}
 	}
 
-	// Copy const
+	// Copy constructor
 	vector (const vector& src) {
 
 		size_type	n = src.size();
@@ -279,7 +280,7 @@ class vector {
 
 		if (n >= this->size()) {
 
-			throw std::out_of_range("Error : at range error");
+			throw std::out_of_range("Error : at out of range error");
 		}
 		return (this->_start[n]);
 	}
@@ -288,7 +289,7 @@ class vector {
 
 		if (n >= this->size()) {
 
-			throw std::out_of_range("Error : at range error");
+			throw std::out_of_range("Error : at out of range error");
 		}
 		return (this->_start[n]);
 	}
@@ -563,7 +564,7 @@ class vector {
 	bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 
 		if (lhs == rhs)
-			return (false);//test this change for lhs != rhs
+			return (false);
 		return (rhs < lhs);
 	}
 

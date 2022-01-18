@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 08:59:15 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/17 16:25:36 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/18 14:49:56 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,9 @@
 # include "utils/reverseIterator.hpp"
 # include "utils/utils.hpp"
 # include "vector.hpp"
-
-// std::pair -> for map
-// std::make_pair -> for map
+# include "stack.hpp"
+# include "pair.hpp"
+# include "make_pair.hpp"
+# include "map.hpp"
 
 #endif
