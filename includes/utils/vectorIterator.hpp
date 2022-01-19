@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:29:51 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/17 16:39:13 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/19 09:05:26 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ namespace ft {
 template < class T >
 class vectorIterator : public ft::iterator<random_access_iterator_tag, T> {
 
-	public :
 
 //--------------------------------TYPEDEF-------------------------------------//
+
+	public :
 
 		typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
 		typedef typename ft::iterator<random_access_iterator_tag, T>::pointer			pointer;

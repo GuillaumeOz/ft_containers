@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/17 18:10:32 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/19 10:27:30 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,16 @@ class reverseIterator {
 
 		}
 
+//-------------------------ASSIGNATION OPERATOR-------------------------------//
+
+	reverseIterator &operator=(const reverseIterator& rhs) {
+
+		if (this == &rhs)
+			return (*this);
+		this->_element = rhs._element;
+		return (*this);
+	}
+
 //---------------------------COMP_OPERATORS-----------------------------------//
 
 	pointer base(void) const {
@@ -65,17 +75,6 @@ class reverseIterator {
 
 	// 	return (reverseIterator<const value_type>(this->_element));
 	// };
-
-	template <class U> reverseIterator &operator=(const reverseIterator<U> &u);
-
-
-	reverseIterator &operator=(const reverseIterator& rhs) {
-
-		if (this == &rhs)
-			return (*this);
-		this->_element = rhs._element;
-		return (*this);
-	}
 
 	//elem == rhs
 		friend bool	operator==(reverseIterator const & lhs, reverseIterator const & rhs) {

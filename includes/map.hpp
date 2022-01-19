@@ -6,80 +6,104 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/18 16:09:53 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/19 18:04:06 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
 
+#include <map>
+
 namespace ft {
 
 template <typename Key, typename T, typename Compare = std::less<Key>,
-typename _Alloc = std::allocator<std::pair<const Key, T> > >
+typename Alloc = std::allocator<std::pair<const Key, T> > >
 class map {
 
 //--------------------------------TYPEDEF-------------------------------------//
 
 	public:
 
-	typedef Key											key_type;
-	typedef T											mapped_type;
-	typedef std::pair<const key_type, mapped_type>		value_type;
-	typedef Compare										key_compare;
-	typedef _Alloc										allocator_type;
+	typedef Key													key_type;
+	typedef T													mapped_type;
+	typedef std::pair<const key_type, mapped_type>				value_type;//change for ft
+	typedef Compare												key_compare;
+	typedef Alloc												allocator_type;
+	//create value_compare class later
 
+	typedef typename allocator_type::reference					reference;
+	typedef typename allocator_type::const_reference			const_reference;
+	typedef typename allocator_type::pointer					pointer;
+	typedef typename allocator_type::const_pointer				const_pointer;
 
-// value_compare	Nested function class to compare elements	see value_comp
-// allocator_type	The fourth template parameter (Alloc)	defaults to: allocator<value_type>
-// reference	allocator_type::reference	for the default allocator: value_type&
-// const_reference	allocator_type::const_reference	for the default allocator: const value_type&
-// pointer	allocator_type::pointer	for the default allocator: value_type*
-// const_pointer	allocator_type::const_pointer	for the default allocator: const value_type*
-// iterator	a bidirectional iterator to value_type	convertible to const_iterator
-// const_iterator	a bidirectional iterator to const value_type	
-// reverse_iterator	reverse_iterator<iterator>	
-// const_reverse_iterator	reverse_iterator<const_iterator>	
-// difference_type	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
-// size_type	an unsigned integral type that can represent any non-negative value of difference_type	usually the same as size_t
+	typedef ft::mapNode<value_type>								node_type;
+	typedef node_type*											node_ptr;
 
+	typedef ft::redBlackIterator<value_type, node_type>			iterator;
+	typedef ft::redBlackIterator<const value_type, node_type>	const_iterator;
+	typedef ft::reverseIterator<iterator>						reverse_iterator;
+	typedef ft::reverseIterator<const_iterator>					const_reverse_iterator;
+	typedef ptrdiff_t											difference_type;
+	typedef size_t												size_type;
 
+//------------------------------CONSTRUCTORS----------------------------------//
+	
+	// Default constructor
+	map(key_compare const &comp, allocator_type const &alloc) {
+
+		this->_root = NULL;
+		this->_keyCompare = comp;
+		this->_alloc = alloc;
+		this->_size = 0;
+
+		this->_root = new node_type;
+	}
+
+	// Range constructor
+	template <class InputIterator>
+	map (InputIterator first, InputIterator last,
+		const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
+
+	// Range constructor overload, at runtime, C++14 implementation, check if necessary
+	template <class InputIterator>
+	map(typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first,
+		InputIterator last, key_compare const &comp, allocator_type const &alloc) {
+
+		this->_root = NULL;
+		this->_keyCompare = comp;
+		this->_alloc = alloc;
+		this->_size = 0;
+
+		this->_root = new node_type;
+		//create the node content with range
+	}
+
+	// Copy Constructor
+	map(map const &src) {
+
+		this->_root = NULL;
+		this->_keyCompare = key_compare();
+		this->_alloc = allocator_type();
+		this->_size = 0;
+
+		this->_root = new node_type;
+		*this = src;
+	}
+
+	~map(void) {
+
+		this->clear();//delete all nodes
+		delete (this->_root);
+	}
 
 	private:
 
-	typedef typename _Alloc::value_type		_Alloc_value_type;
-
-	static_assert(is_same<typename _Alloc::value_type, value_type>::value,
-		"std::map must have the same value_type as its allocator");
-
-    typedef rb_tree<key_type, value_type, 
-                    select1st<value_type, key_type>, key_compare> rep_type;
-    rep_type t;  // red-black tree representing map
-
-
-	public:
-
-
-	empty (1)
-	explicit map (const key_compare& comp = key_compare(),
-	const allocator_type& alloc = allocator_type());
-
-	range (2)
-	template <class InputIterator>
-	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
-		const allocator_type& alloc = allocator_type());
-
-	copy (3)
-	map (const map& x);
-
-    // map(const Compare& comp = Compare()) : t(comp, false) {}
-    // map(const value_type* first, const value_type* last, 
-    //     const Compare& comp = Compare()) : t(first, last, comp, false) {}
-    // map(const map<Key, T, Compare>& x) : t(x.t, false) {}
-    // map<Key, T, Compare>& operator=(const map<Key, T, Compare>& x) {
-    //     t = x.t;
-    //     return *this; 
-    // }
+	node_ptr				_root;
+	allocator_type			_alloc;
+	key_compare				_keyCompare;
+	size_type				_size;
+	size_type				_maxSize;
 
 };
 

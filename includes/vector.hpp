@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/18 15:24:00 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/19 17:23:10 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,9 +229,7 @@ class vector {
 			throw std::length_error("Error : Alloc size is greater than max_size");
 		if (capacity <= this->capacity())
 			return ;
-
 		difference_type len = ft::itDiff(itBegin, itEnd);
-
 		if (capacity < (size_t)len || capacity < 0)
 			throw std::bad_alloc();
 		res._alloc = this->_alloc;
@@ -244,7 +242,6 @@ class vector {
 			res._alloc.construct(res._start + i, *itBegin);
 			i++;
 		}
-
 		if (this->_start != NULL) {
 
 			this->clear();
@@ -253,7 +250,6 @@ class vector {
 			this->_size = 0;
 			this->_capacity = 0;
 		}
-
 		this->_alloc = res._alloc;
 		this->_start = res._start;
 		this->_end = res._end;
@@ -316,6 +312,7 @@ class vector {
 
 //---------------------------MODIFIER FUNCTIONS-------------------------------//
 
+	// Range Assign
 	template <class InputIterator>
 	void assign(InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {

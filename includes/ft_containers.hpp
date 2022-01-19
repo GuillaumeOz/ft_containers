@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 08:59:15 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/18 14:49:56 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/19 09:43:38 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@
 # include "utils/utils.hpp"
 # include "vector.hpp"
 # include "stack.hpp"
-# include "pair.hpp"
-# include "make_pair.hpp"
+# include "utils/pair.hpp"
+# include "utils/make_pair.hpp"
+# include "utils/redBlackIterator.hpp"
 # include "map.hpp"
 
 #endif
