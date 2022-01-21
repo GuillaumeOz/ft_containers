@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:41:02 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/17 18:10:56 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/21 16:36:21 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ namespace ft {
 	/// iterator operations.
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
-	template<typename _Category, typename _Tp, typename _Distance = ptrdiff_t,
+	template<typename _Category, typename _Tp, typename _Distance = std::ptrdiff_t,
 			typename _Pointer = _Tp*, typename _Reference = _Tp&>
 	struct iterator {
 
@@ -49,8 +49,8 @@ namespace ft {
 	template<typename _Iterator>
 	struct iterator_traits {
 
-		typedef typename _Iterator::iterator_category	iterator_category;
-		typedef typename _Iterator::value_type			value_type;
+		// typedef typename _Iterator::iterator_category	iterator_category;
+		// typedef typename _Iterator::value_type			value_type;
 		typedef typename _Iterator::difference_type		difference_type;
 		typedef typename _Iterator::pointer				pointer;
 		typedef typename _Iterator::reference			reference;
@@ -62,7 +62,7 @@ namespace ft {
 
 		typedef random_access_iterator_tag	iterator_category;
 		typedef Tp							value_type;
-		typedef ptrdiff_t					difference_type;
+		typedef std::ptrdiff_t				difference_type;
 		typedef Tp*							pointer;
 		typedef Tp&							reference;
 	};
@@ -73,7 +73,7 @@ namespace ft {
 
 		typedef random_access_iterator_tag	iterator_category;
 		typedef Tp							value_type;
-		typedef ptrdiff_t					difference_type;
+		typedef std::ptrdiff_t				difference_type;
 		typedef const Tp*					pointer;
 		typedef const Tp&					reference;
 	};

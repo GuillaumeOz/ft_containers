@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/10 17:49:56 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/21 15:46:58 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,8 @@ int main(int ac, char **av) {
 		mapTests();
 
 	return (0);
+
+	std::vector<int>::reverse_iterator	it;
 }
 
 

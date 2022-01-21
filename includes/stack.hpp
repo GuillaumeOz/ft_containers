@@ -6,18 +6,20 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:20:21 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/18 14:29:32 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/21 15:39:56 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STACK_HPP
 # define STACK_HPP
 
-#include "ft_containers.hpp"
+// #include "ft_containers.hpp"
+
+#include "./vector.hpp"
 
 namespace ft {
 
-template < class T, class Container = vector<T>  >
+template < class T, class Container = ft::vector<T> >
 class stack {
 
 //--------------------------------TYPEDEF-------------------------------------//

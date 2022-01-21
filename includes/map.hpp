@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/19 18:04:06 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/21 16:49:17 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ class map {
 		this->_size = 0;
 
 		this->_root = new node_type;
-		//create the node content with range
+		this->insert(first, last);
 	}
 
 	// Copy Constructor
@@ -91,11 +91,57 @@ class map {
 		*this = src;
 	}
 
+//-------------------------------DESTRUCTOR-----------------------------------//
+
 	~map(void) {
 
 		this->clear();//delete all nodes
 		delete (this->_root);
 	}
+
+//--------------------------ITERATORS FUNCTIONS-------------------------------//
+
+	iterator begin() {
+
+		return (iterator(lastLeft(this->_root)));
+	}
+
+	const_iterator begin() const {
+
+		return (const_iterator(lastLeft(this->_root)));
+	}
+
+	iterator end() {
+
+		return (iterator(lastRight(this->_root)));
+	}
+
+	const_iterator end() const {
+
+		return (const_iterator(lastRight(this->_root)));
+	}
+
+	reverse_iterator rbegin() {
+
+		return (reverse_iterator(lastRight(this->_root)));
+	}
+
+	const_reverse_iterator rbegin() const {
+
+		return (const_reverse_iterator(lastRight(this->_root)));
+	}
+
+	reverse_iterator rend() {
+
+		return (reverse_iterator(lastLeft(this->_root)));
+	}
+
+	const_reverse_iterator rend() const {
+
+		return (const_reverse_iterator(lastLeft(this->_root)));
+	}
+
+//---------------------------PRIVATE ATTRIBUTES-------------------------------//
 
 	private:
 

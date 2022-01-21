@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 08:40:05 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/19 17:00:45 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/21 15:21:47 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ namespace ft {
 
 enum e_tree_color {
 
-	NONE = -1,
 	RED = false,
 	BLACK = true
 };
@@ -37,7 +36,7 @@ struct setNode {//change for set node specification
 		parent(NULL);
 		left(NULL);
 		right(NULL);
-		color = NONE;
+		color = BLACK;
 	}
 };
 
@@ -56,7 +55,7 @@ struct mapNode {
 		parent(NULL);
 		left(NULL);
 		right(NULL);
-		color = NONE;
+		color = BLACK;
 	}
 };
 
@@ -94,7 +93,7 @@ class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
 
 		*this = src;
 	}
-	
+
 	virtual ~redBlackIterator(void) {
 
 	}
@@ -132,7 +131,7 @@ class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
 	redBlackIterator	&operator++(void) {
 
 		this->_node = rbTreeIncrement(this->_node);
-		return (*this)
+		return (*this);
 	}
 
 	//node++
@@ -148,7 +147,7 @@ class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
 	redBlackIterator	&operator--(void) {
 
 		this->_node = rbTreeDecrement(this->_node);
-		return (*this)
+		return (*this);
 	}
 
 	//node--

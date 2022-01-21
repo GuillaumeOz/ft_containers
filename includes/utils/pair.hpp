@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 12:00:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/18 15:11:49 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/21 15:25:06 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ struct pair {
 	// Default constructor
 	pair() : first(), second() {
 
-		
 	}
 
 	// Copy constructor	
