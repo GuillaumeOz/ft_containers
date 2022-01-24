@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:29:51 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/21 16:43:18 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/24 12:36:11 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ class vectorIterator : public ft::iterator<random_access_iterator_tag, T> {
 
 //---------------------------COMP_OPERATORS-----------------------------------//
 
-	operator	vectorIterator<const value_type>() const {
+		operator	vectorIterator<const value_type>() const {
 
-		return (vectorIterator<const value_type>(this->_element));
-	};
+			return (vectorIterator<const value_type>(this->_element));
+		};
 
 	//elem = rhs
 		vectorIterator &operator=(const vectorIterator& rhs) {
@@ -227,18 +227,6 @@ class vectorIterator : public ft::iterator<random_access_iterator_tag, T> {
 
 	// &elem
 		pointer		operator->(void) const {
-
-			return (this->_element);
-		}
-
-//-----------------------------CUSTOM FUNCTION--------------------------------//
-
-		pointer		getElement() {
-
-			return (this->_element);
-		}
-
-		pointer base(void) const {
 
 			return (this->_element);
 		}
