@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 08:40:05 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/24 16:04:14 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/26 16:12:17 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ enum e_tree_color {
 template <typename T>
 struct setNode {//change for set node specification
 
-	T*							valptr;//switch for element if its too slow
+	T							value;
 	setNode*					parent;
 	setNode*					left;
 	setNode*					right;
@@ -32,7 +32,7 @@ struct setNode {//change for set node specification
 
 	setNode(T* src = T()) {
 
-		valptr = src;
+		value = src;
 		parent(NULL);
 		left(NULL);
 		right(NULL);
@@ -43,7 +43,7 @@ struct setNode {//change for set node specification
 template <typename T>
 struct mapNode {
 
-	T*							valptr;//switch for element if its too slow
+	T							value;
 	mapNode*					parent;
 	mapNode*					left;
 	mapNode*					right;
@@ -51,7 +51,7 @@ struct mapNode {
 
 	mapNode(T* src = T()) {
 
-		valptr = src;
+		value = src;
 		parent(NULL);
 		left(NULL);
 		right(NULL);
@@ -161,16 +161,16 @@ class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
 
 //------------------DEREFERENCING_AND_RANDOM_ACCESS_OPERATORS-----------------//
 
-	//*(node->valptr)
+	//*(node->value)
 	reference	operator*(void) const {
 
-		return (*this->_node->valptr);
+		return (this->_node->value);
 	}
 
-	//node->valptr
+	//node->value
 	pointer		operator->(void) const {
 
-		return (this->operator*());
+		return (&(this->operator*()));
 	}
 
 //--------------------------------VARIABLES-----------------------------------//

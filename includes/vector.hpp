@@ -6,23 +6,23 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/24 13:15:36 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/26 18:16:52 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 
-#include "ft_containers.hpp"
+// #include "ft_containers.hpp"
 
-// # include "utils/lexicographical_compare.hpp"
-// # include "utils/equal_compare.hpp"
-// # include "utils/enable_if.hpp"
-// # include "utils/is_integral.hpp"
-// # include "utils/iteratorTraits.hpp"
-// # include "utils/vectorIterator.hpp"
-// # include "utils/reverseIterator.hpp"
-// # include "utils/utils.hpp"
+# include "utils/lexicographical_compare.hpp"
+# include "utils/equal_compare.hpp"
+# include "utils/enable_if.hpp"
+# include "utils/is_integral.hpp"
+# include "utils/iteratorTraits.hpp"
+# include "utils/vectorIterator.hpp"
+# include "utils/reverseIterator.hpp"
+# include "utils/utils.hpp"
 
 namespace ft {
 
