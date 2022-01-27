@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 08:40:05 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/26 16:12:17 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/27 18:01:32 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,11 @@ struct setNode {//change for set node specification
 	setNode*					right;
 	e_tree_color				color;
 
-	setNode(T* src = T()) {
+	setNode(T src = T()) : value(src) {
 
-		value = src;
-		parent(NULL);
-		left(NULL);
-		right(NULL);
+		parent = NULL;
+		left = NULL;
+		right = NULL;
 		color = BLACK;
 	}
 };
@@ -49,30 +48,42 @@ struct mapNode {
 	mapNode*					right;
 	e_tree_color				color;
 
-	mapNode(T* src = T()) {
+	mapNode(T src = T()) : value(src) {
 
-		value = src;
-		parent(NULL);
-		left(NULL);
-		right(NULL);
+		parent = NULL;
+		left = NULL;
+		right = NULL;
 		color = BLACK;
 	}
 };
 
 template<typename T, typename Node>
-class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
+class redBlackIterator {
+// template<typename T, typename Node>
+// class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
+
+// //--------------------------------TYPEDEF-------------------------------------//
+
+// 	public :
+
+// 	typedef T																					value_type;
+// 	typedef Node																				node_type;
+// 	typedef Node*																				node_pointer;
+// 	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::difference_type	difference_type;
+// 	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::pointer			pointer;
+// 	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::reference			reference;
+// 	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
 
 //--------------------------------TYPEDEF-------------------------------------//
 
 	public :
 
-	typedef T																					value_type;
-	typedef Node																				node_type;
-	typedef Node*																				node_pointer;
-	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::difference_type	difference_type;
-	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::pointer			pointer;
-	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::reference			reference;
-	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
+		typedef T						value_type;
+		typedef Node					node_type;
+		typedef Node*					node_pointer;
+		typedef value_type&				reference;
+		typedef value_type*				pointer;
+		typedef std::ptrdiff_t			difference_type;
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
@@ -99,6 +110,11 @@ class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
 	}
 
 //-------------------------ASSIGNATION OPERATOR-------------------------------//
+
+	//const overload
+	operator redBlackIterator<const T, node_type>(void) const {
+		return (redBlackIterator<const T, node_type>(this->_node));
+	}
 
 	//node = node
 	redBlackIterator	&operator=(redBlackIterator const &rhs) {
@@ -177,23 +193,10 @@ class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
 
 	private:
 
-	node_pointer		_node;
+	Node		*_node;
+	// redBlackIterator(node_type *src);
 
 //----------------------------PRIVATE FUNCTION--------------------------------//
-
-	node_pointer	lastRight(node_pointer head) {
-
-		while (head->right != NULL)
-			head = head->right;
-		return (head);
-	}
-
-	node_pointer	lastLeft(node_pointer head) {
-
-		while (head->left != NULL)
-			head = head->left;
-		return (head);
-	}
 
 	node_pointer	rbTreeIncrement(node_pointer head) {
 
@@ -244,6 +247,22 @@ class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
 	}
 
 };
+
+	template <typename T>
+	mapNode<T>		*lastRight(mapNode<T>	*head) {
+
+		while (head->right != NULL)
+			head = head->right;
+		return (head);
+	}
+
+	template <typename T>
+	mapNode<T>		*lastLeft(mapNode<T>	*head) {
+
+		while (head->left != NULL)
+			head = head->left;
+		return (head);
+	}
 
 };
 

@@ -6,19 +6,32 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/26 18:24:26 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/27 18:02:36 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
 
+
+# include "utils/lexicographical_compare.hpp"
+# include "utils/equal_compare.hpp"
+# include "utils/enable_if.hpp"
+# include "utils/is_integral.hpp"
+# include "utils/iteratorTraits.hpp"
+# include "utils/vectorIterator.hpp"
+# include "utils/reverseIterator.hpp"
+# include "utils/utils.hpp"
+# include "vector.hpp"
+# include "stack.hpp"
+# include "utils/pair.hpp"
+# include "utils/make_pair.hpp"
+# include "utils/redBlackIterator.hpp"
 #include "ft_containers.hpp"
 
 namespace ft {
 
-template <typename Key, typename T, typename Compare = std::less<Key>,
-typename Alloc = std::allocator<std::pair<const Key, T> > >
+template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key, T> > >
 class map {
 
 //--------------------------------TYPEDEF-------------------------------------//
@@ -27,11 +40,14 @@ class map {
 
 	typedef Key													key_type;
 	typedef T													mapped_type;
-	typedef ft::pair<const key_type, mapped_type>				value_type;//change for ft ?
+	typedef pair<const key_type, mapped_type>					value_type;
 	typedef Compare												key_compare;
 	typedef Alloc												allocator_type;
-	// typedef				Compare									value_compare;
-	//create value_compare class later
+
+	typedef typename __gnu_cxx::__alloc_traits<Alloc>::template
+			rebind<mapNode<T> >::other _Node_allocator;
+
+	typedef __gnu_cxx::__alloc_traits<_Node_allocator> _Alloc_traits;
 
 	typedef typename allocator_type::reference					reference;
 	typedef typename allocator_type::const_reference			const_reference;
@@ -45,23 +61,22 @@ class map {
 	typedef ft::redBlackIterator<const value_type, node_type>	const_iterator;
 	typedef ft::reverseIterator<iterator>						reverse_iterator;
 	typedef ft::reverseIterator<const_iterator>					const_reverse_iterator;
-	typedef ptrdiff_t											difference_type;
+	typedef std::ptrdiff_t										difference_type;
 	typedef size_t												size_type;
 
 //------------------------NESTED VALUE COMPARE CLASS--------------------------//
 
-	public://its necessary ?
+	public:
 		class value_compare : public std::binary_function<value_type, value_type, bool> {
 
-			friend class map<Key, T, Compare, Alloc>;//remove friend here later
-		protected:
+			// friend class map<Key, T, Compare, Alloc>;//remove friend here
+		public:
 			Compare comp;
 
 			value_compare(Compare __c) : comp(__c) {
 
 			}
 
-		public:
 			bool operator()(const value_type& __x, const value_type& __y) const {
 
 				return comp(__x.first, __y.first);
@@ -71,6 +86,11 @@ class map {
 //------------------------------CONSTRUCTORS----------------------------------//
 
 	// Default constructor
+	map(void) {
+
+	}
+
+	// Comparison object Allocator object constructor
 	map(key_compare const &comp, allocator_type const &alloc) {
 
 		this->_root = NULL;
@@ -84,12 +104,7 @@ class map {
 	// Range constructor
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last,
-		const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
-
-	// Range constructor overload, at runtime, C++14 implementation, check if necessary
-	template <class InputIterator>
-	map(typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first,
-		InputIterator last, key_compare const &comp, allocator_type const &alloc) {
+		const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()){
 
 		this->_root = NULL;
 		this->_keyCompare = comp;
@@ -99,6 +114,20 @@ class map {
 		this->_root = new node_type;
 		this->insert(first, last);
 	}
+
+	// Range constructor overload, at runtime, C++14 implementation, check if necessary
+	// template <class InputIterator>
+	// map(typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first,
+	// 	InputIterator last, key_compare const &comp, allocator_type const &alloc) {
+
+	// 	this->_root = NULL;
+	// 	this->_keyCompare = comp;
+	// 	this->_alloc = alloc;
+	// 	this->_size = 0;
+
+	// 	this->_root = new node_type;
+	// 	this->insert(first, last);
+	// }
 
 	// Copy Constructor
 	map(map const &src) {
@@ -117,7 +146,7 @@ class map {
 	~map(void) {
 
 		this->clear();//delete all nodes
-		// delete (this->_root);//not necessary
+		delete (this->_root);//not necessary ?
 	}
 
 //--------------------------ITERATORS FUNCTIONS-------------------------------//
@@ -178,7 +207,7 @@ class map {
 
 	size_type	max_size() const {
 
-		return (this->_max_size);
+		return (std::numeric_limits<difference_type>::max() / (sizeof(node_type)));
 	}
 
 //-------------------------ELEMENT ACCESS FUNCTION----------------------------//
@@ -258,8 +287,8 @@ class map {
 
 	void clear() {
 
-		this->_destroyNode(this->root);
-		this->root = NULL;
+		this->_destroyNode(this->_root);
+		this->_root = NULL;
 	}
 
 //--------------------------OBSERVERS FUNCTIONS-------------------------------//
@@ -335,7 +364,7 @@ class map {
 
 		for (iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
-			if (this->_key_cmp(k, itBegin->first))
+			if (this->_keyCompare(k, itBegin->first))
 				return (itBegin);
 		}
 		return (itEnd);
@@ -347,15 +376,15 @@ class map {
 
 		for (const_iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
-			if (this->_key_cmp(k, itBegin->first))
+			if (this->_keyCompare(k, itBegin->first))
 				return (itBegin);
 		}
 		return (itEnd);
 	}
 
-	ft::pair<iterator,iterator>				equal_range (const key_type& k) {
+	pair<iterator,iterator>				equal_range (const key_type& k) {
 
-		ft::pair<const_iterator, const_iterator> ret;//keep ft here ?
+		pair<iterator, iterator> ret;
 
 		ret.first = this->lower_bound(k);
 		ret.second = this->upper_bound(k);
@@ -363,9 +392,9 @@ class map {
 		return (ret);
 	}
 
-	ft::pair<const_iterator,const_iterator>	equal_range (const key_type& k) const {
+	pair<const_iterator,const_iterator>	equal_range (const key_type& k) const {
 
-		ft::pair<const_iterator, const_iterator> ret;//keep ft here ?
+		pair<const_iterator, const_iterator> ret;
 
 		ret.first = this->lower_bound(k);
 		ret.second = this->upper_bound(k);
@@ -388,7 +417,6 @@ class map {
 	allocator_type			_alloc;
 	key_compare				_keyCompare;
 	size_type				_size;
-	size_type				_maxSize;
 
 	pair<iterator, bool>	_mapInsertUnique(const value_type &x) {
 
@@ -398,10 +426,10 @@ class map {
 		if (ret.second == false) {
 
 			node_ptr newNode = new node_type(x);
-			newNode->_M_parent = NULL;
-			newNode->_M_left = 0;
-			newNode->_M_right = 0;
-			newNode->_M_color = RED;
+			newNode->parent = NULL;
+			newNode->left = 0;
+			newNode->right = 0;
+			newNode->color = RED;
 			this->_redBlackTreeInsertAndRebalance(newNode);
 		}
 		ret.first = this->find(x.first);
@@ -496,34 +524,35 @@ class map {
 
 	void	_redBlackTreeInsertAndRebalance(node_ptr newNode) {
 
-		node_ptr	parentNode = this->_root;//rebalance the tree if needed
-		node_ptr	currentNode = this->_root;
-		node_ptr	lastNode = this->end();
+		node_ptr	*parentNode = &this->_root;//rebalance the tree if needed
+		node_ptr	*currentNode = &this->_root;
+		node_ptr	lastNode = lastRight(this->_root);
 		bool		leftWay = 0;
 
-		while (currentNode != NULL && currentNode != lastNode) {
+		while ((*currentNode) != NULL && (*currentNode) != lastNode) {
 
 			parentNode = currentNode;
-			leftWay = this->_keyCompare(newNode->data.first, currentNode->data.first);
+			leftWay = this->_keyCompare(newNode->value.first, (*currentNode)->value.first);
 			if (leftWay == true)
-				currentNode = currentNode->left;
+				currentNode = &(*currentNode)->left;
 			else
-				currentNode = currentNode->right;
+				currentNode = &(*currentNode)->right;
 		}
 		if (currentNode != NULL) {
 
-			currentNode = newNode;
+			(*currentNode) = newNode;
 			newNode->parent = lastNode->parent;
 			lastNode->parent = lastRight(newNode);
 			lastRight(newNode)->right = lastNode;
 		}
 		else {
 
-			newNode->parent = parentNode;
-			currentNode = newNode;
+			newNode->parent = (*parentNode);
+			(*currentNode) = newNode;
 		}
 		this->_size++;
 	}
+
 
 //   _Rb_tree_node_base*
 //   _Rb_tree_rebalance_for_erase(_Rb_tree_node_base* const __z,
@@ -686,13 +715,14 @@ class map {
 // 		return __y;
 // 	}
 
+
 	void	_destroyNode(node_ptr node) {
 
 		if (node == NULL)//fix const
 			return ;
 		_destroyNode(node->right);
 		_destroyNode(node->left);
-		delete node;//test leaks
+		delete node;//test leaks -> there are some leaks
 	}
 
 };

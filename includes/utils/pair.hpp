@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 12:00:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/21 15:25:06 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/27 14:15:18 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 namespace ft {
 
-template<typename T1, typename T2>
+template<class T1, class T2>
 struct pair {
 
 //--------------------------------TYPEDEF-------------------------------------//
@@ -25,8 +25,8 @@ struct pair {
 
 //-------------------------------ATTRIBUTES-----------------------------------//
 
-	T1 first;
-	T2 second;
+	first_type first;
+	second_type second;
 
 //------------------------------CONSTRUCTORS----------------------------------//
 
@@ -35,24 +35,23 @@ struct pair {
 
 	}
 
-	// Copy constructor	
+	// Copy constructor
 	template<class U, class V>
-	pair (const pair<U,V>& pr) {
+	pair (const pair<U,V>& pr) : first(pr.first), second(pr.second){
 
-		(*this) = pr;
 	}
 
 	// Initialization constructor
-	pair (const first_type& a, const second_type& b) {
+	pair (const first_type& a, const second_type& b) : first(a), second(b){
 
-		this->first = a;
-		this->second = b;
 	}
 
 //-----------------------------MEMBER FUNCTIONS-------------------------------//
 
 	pair& operator= (const pair& pr) {
 
+		if (this == &pr)
+			return (*this);
 		this->first = pr.first;
 		this->second = pr.second;
 		return (*this);
