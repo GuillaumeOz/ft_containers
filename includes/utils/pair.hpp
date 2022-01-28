@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 12:00:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/27 14:15:18 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/28 15:07:15 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ struct pair {
 
 //-----------------------------MEMBER FUNCTIONS-------------------------------//
 
-	pair& operator= (const pair& pr) {
+	pair&	operator= (const pair& pr) {
 
 		if (this == &pr)
 			return (*this);

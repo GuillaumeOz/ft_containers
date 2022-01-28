@@ -6,12 +6,16 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 08:40:05 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/27 18:01:32 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/28 19:17:11 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REDBLACKITERATOR_HPP
 # define REDBLACKITERATOR_HPP
+
+#ifndef COUCOU
+# define print(x)	std::cout << x << std::endl;
+#endif
 
 namespace ft {
 
@@ -86,6 +90,12 @@ class redBlackIterator {
 		typedef std::ptrdiff_t			difference_type;
 
 //-------------------------------CONSTRUCTOR----------------------------------//
+
+	// redBlackIterator(value_compare const & comp = value_compare()) : _comp(comp) {
+	// 	_null = allocator_type().allocate(1);
+	// 	allocator_type().construct(_null, node_type());
+	// 	_root = _null;
+	// }
 
 	//Default constructor
 	redBlackIterator(void) : _node(NULL) {
@@ -200,10 +210,10 @@ class redBlackIterator {
 
 	node_pointer	rbTreeIncrement(node_pointer head) {
 
-		if (head->right != NULL) {
+		if (head->right != 0) {
 
 			head = head->right;
-			while (head->left != NULL)
+			while (head->left != 0)
 				head = head->left;
 		}
 		else {
@@ -219,7 +229,52 @@ class redBlackIterator {
 				head = tmpRoot;
 		}
 		return (head);
+		
+		// while (head->left != 0){}
+		// 		head = head->left;
+		// return (head);
+
+	// if (this->_node->right != NULL)
+	// 	this->_node = lastLeft(this->_node->right);
+	// else
+	// {
+	// 	node_type	*child = this->_node;
+
+	// 	this->_node = this->_node->parent;
+	// 	while (this->_node && child == this->_node->right)
+	// 	{
+	// 		child = this->_node;
+	// 		this->_node = this->_node->parent;
+	// 	}
+	// }
+	// return (*this);
 	}
+
+//   static _Rb_tree_node_base*
+//   local_Rb_tree_decrement(_Rb_tree_node_base* __x) throw ()
+//   {
+//     if (__x->_M_color == _S_red
+//         && __x->_M_parent->_M_parent == __x)
+//       __x = __x->_M_right;
+//     else if (__x->_M_left != 0)
+//       {
+//         _Rb_tree_node_base* __y = __x->_M_left;
+//         while (__y->_M_right != 0)
+//           __y = __y->_M_right;
+//         __x = __y;
+//       }
+//     else
+//       {
+//         _Rb_tree_node_base* __y = __x->_M_parent;
+//         while (__x == __y->_M_left)
+//           {
+//             __x = __y;
+//             __y = __y->_M_parent;
+//           }
+//         __x = __y;
+//       }
+//     return __x;
+//   }
 
 	node_pointer	rbTreeDecrement(node_pointer head) {
 
@@ -228,15 +283,17 @@ class redBlackIterator {
 			head = head->right;
 		else if (head->left != 0) {
 
-			node_pointer	tmpLeft =  lastRight(head->left);
+			node_pointer	tmpLeft =  head->left;
 
+			while (tmpLeft->right != 0)
+				tmpLeft = tmpLeft->right;
 			head = tmpLeft;
 		}
 		else {
 
 			node_pointer tmpRoot = head->parent;
 
-			while (head == tmpRoot->left) {
+			while (tmpRoot && head == tmpRoot->left) {
 
 				head = tmpRoot;
 				tmpRoot = tmpRoot->parent;

@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/27 18:02:36 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/28 19:32:45 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 
 namespace ft {
 
-template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key, T> > >
+template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::mapNode<ft::pair<const Key, T> > > >
 class map {
 
 //--------------------------------TYPEDEF-------------------------------------//
@@ -40,14 +40,9 @@ class map {
 
 	typedef Key													key_type;
 	typedef T													mapped_type;
-	typedef pair<const key_type, mapped_type>					value_type;
+	typedef ft::pair<const key_type, mapped_type>				value_type;
 	typedef Compare												key_compare;
 	typedef Alloc												allocator_type;
-
-	typedef typename __gnu_cxx::__alloc_traits<Alloc>::template
-			rebind<mapNode<T> >::other _Node_allocator;
-
-	typedef __gnu_cxx::__alloc_traits<_Node_allocator> _Alloc_traits;
 
 	typedef typename allocator_type::reference					reference;
 	typedef typename allocator_type::const_reference			const_reference;
@@ -71,9 +66,10 @@ class map {
 
 			// friend class map<Key, T, Compare, Alloc>;//remove friend here
 		public:
-			Compare comp;
+			Compare		comp;
 
-			value_compare(Compare __c) : comp(__c) {
+			// std::less<Key>
+			value_compare(Compare __c = key_compare()) : comp(__c) {
 
 			}
 
@@ -86,19 +82,23 @@ class map {
 //------------------------------CONSTRUCTORS----------------------------------//
 
 	// Default constructor
-	map(void) {
+	// map(void) {
 
-	}
+	// 	this->_root = NULL;
+	// 	this->_size = 0;
+
+	// 	this->_root = new node_type;
+	// }
 
 	// Comparison object Allocator object constructor
-	map(key_compare const &comp, allocator_type const &alloc) {
+	explicit map(key_compare const &comp, allocator_type const &alloc) {
 
-		this->_root = NULL;
+		// this->_root = NULL;
 		this->_keyCompare = comp;
 		this->_alloc = alloc;
-		this->_size = 0;
+		// this->_size = 0;
 
-		this->_root = new node_type;
+		// this->_root = new node_type;
 	}
 
 	// Range constructor
@@ -106,39 +106,25 @@ class map {
 	map (InputIterator first, InputIterator last,
 		const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()){
 
-		this->_root = NULL;
+		// this->_root = NULL;
 		this->_keyCompare = comp;
 		this->_alloc = alloc;
-		this->_size = 0;
+		// this->_size = 0;
 
-		this->_root = new node_type;
+		// this->_root = new node_type;
 		this->insert(first, last);
 	}
-
-	// Range constructor overload, at runtime, C++14 implementation, check if necessary
-	// template <class InputIterator>
-	// map(typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first,
-	// 	InputIterator last, key_compare const &comp, allocator_type const &alloc) {
-
-	// 	this->_root = NULL;
-	// 	this->_keyCompare = comp;
-	// 	this->_alloc = alloc;
-	// 	this->_size = 0;
-
-	// 	this->_root = new node_type;
-	// 	this->insert(first, last);
-	// }
 
 	// Copy Constructor
 	map(map const &src) {
 
-		this->_root = NULL;
+		// this->_root = NULL;
 		this->_keyCompare = key_compare();
 		this->_alloc = allocator_type();
-		this->_size = 0;
+		// this->_size = 0;
 
 		this->_root = new node_type;
-		*this = src;
+		*this = src;//Improve later
 	}
 
 //-------------------------------DESTRUCTOR-----------------------------------//
@@ -207,7 +193,8 @@ class map {
 
 	size_type	max_size() const {
 
-		return (std::numeric_limits<difference_type>::max() / (sizeof(node_type)));
+	// std::numeric_limits<difference_type>::max() / (sizeof(node_type))
+		return (this->_alloc.max_size());
 	}
 
 //-------------------------ELEMENT ACCESS FUNCTION----------------------------//
@@ -225,29 +212,46 @@ class map {
 
 //---------------------------MODIFIERS FUNCTIONS------------------------------//
 
-	// single element insert
-	ft::pair<iterator,bool>	insert(const value_type& x) {
+	// // single element insert
+	// ft::pair<iterator,bool>	insert(const value_type& x) {
 
-		return (this->_mapInsertUnique(x));
+	// 	return (this->_mapInsertUnique(x));
+	// }
+
+	// // with hint insert
+	// iterator insert (iterator position, const value_type& val) {
+
+	// 	// static_cast<void>(position);
+	// 	(void)position;
+	// 	return this->insert(val).first;//redo
+	// }
+
+	// // range insert
+	// template<typename InputIterator>
+	// void insert(InputIterator first, InputIterator last) {
+
+	// 	while (first != last) {
+
+	// 		this->insert(*first);
+	// 		first++;
+	// 	}
+	// }
+
+	ft::pair<iterator, bool> insert(const value_type& val) {
+		if (this->_mapInsertUnique(val) == false)
+			return ft::make_pair(find(val.first), false);
+		return ft::make_pair(find(val.first), true);
 	}
 
-	// with hint insert
-	iterator insert (iterator position, const value_type& val) {
-
-		// static_cast<void>(position);
+	iterator insert(iterator position, const value_type& val) {
 		(void)position;
-		return this->insert(val).first;//redo
+		return insert(val).first;
 	}
 
-	// range insert
-	template<typename InputIterator>
+	template <class InputIterator>
 	void insert(InputIterator first, InputIterator last) {
-
-		while (first != last) {
-
-			this->insert(*first);
-			first++;
-		}
+		for (; first != last; first++)
+			insert(*first);
 	}
 
 	// iterator erase
@@ -418,140 +422,301 @@ class map {
 	key_compare				_keyCompare;
 	size_type				_size;
 
-	pair<iterator, bool>	_mapInsertUnique(const value_type &x) {
+	// void	_redBlackTreeInsertAndRebalance(node_ptr newNode) {
 
-		ft::pair<iterator, bool>	ret;
+	// 	node_ptr	*parentNode = &this->_root;//rebalance the tree if needed
+	// 	node_ptr	*currentNode = &this->_root;
+	// 	node_ptr	lastNode = lastRight(this->_root);
+	// 	bool		leftWay = 0;
 
-		ret.second = this->count(x.first);
-		if (ret.second == false) {
+	// 	while ((*currentNode) && (*currentNode) != lastNode) {
 
-			node_ptr newNode = new node_type(x);
-			newNode->parent = NULL;
-			newNode->left = 0;
-			newNode->right = 0;
-			newNode->color = RED;
-			this->_redBlackTreeInsertAndRebalance(newNode);
-		}
-		ret.first = this->find(x.first);
-		return (ret);
+	// 		parentNode = currentNode;
+	// 		leftWay = this->_keyCompare(newNode->value.first, (*currentNode)->value.first);
+	// 		if (leftWay == true)
+	// 			currentNode = &(*currentNode)->left;
+	// 		else
+	// 			currentNode = &(*currentNode)->right;
+	// 	}
+	// 	if (currentNode) {
+
+	// 		(*currentNode) = newNode;
+	// 		newNode->parent = lastNode->parent;
+	// 		lastNode->parent = lastRight(newNode);
+	// 		lastRight(newNode)->right = lastNode;
+	// 	}
+	// 	else {
+
+	// 		newNode->parent = (*parentNode);
+	// 		(*currentNode) = newNode;
+	// 	}
+	// 	this->_size++;
+	// }
+
+	void	leftRotate(node_ptr node) {
+		node_ptr	tmp = node->right;
+		
+		node->right = tmp->left;
+		if (tmp->left != NULL)
+			tmp->left->parent = node;
+
+		tmp->parent = node->parent;
+		if (node->parent == NULL)
+			_root = tmp;
+		else if (node == node->parent->left)
+			node->parent->left = tmp;
+		else
+			node->parent->right = tmp;
+
+		tmp->left = node;
+		node->parent = tmp;
 	}
 
-// 	void
-//   _Rb_tree_insert_and_rebalance(const bool          __insert_left,
-//                                 _Rb_tree_node_base* __x,
-//                                 _Rb_tree_node_base* __p,
-//                                 _Rb_tree_node_base& __header) throw ()
-//   {
-//     _Rb_tree_node_base *& __root = __header._M_parent;
-//     // Initialize fields in new node to insert.
-//     __x->_M_parent = __p;
-//     __x->_M_left = 0;
-//     __x->_M_right = 0;
-//     __x->_M_color = _S_red;
-//     // Insert.
-//     // Make new node child of parent and maintain root, leftmost and
-//     // rightmost nodes.
-//     // N.B. First node is always inserted left.
-//     if (__insert_left)
-//       {
-//         __p->_M_left = __x; // also makes leftmost = __x when __p == &__header
-//         if (__p == &__header)
-//         {
-//             __header._M_parent = __x;
-//             __header._M_right = __x;
-//         }
-//         else if (__p == __header._M_left)
-//           __header._M_left = __x; // maintain leftmost pointing to min node
-//       }
-//     else
-//       {
-//         __p->_M_right = __x;
-//         if (__p == __header._M_right)
-//           __header._M_right = __x; // maintain rightmost pointing to max node
-//       }
-//     // Rebalance.
-//     while (__x != __root
-//            && __x->_M_parent->_M_color == _S_red)
-//       {
-//         _Rb_tree_node_base* const __xpp = __x->_M_parent->_M_parent;
-//         if (__x->_M_parent == __xpp->_M_left)
-//           {
-//             _Rb_tree_node_base* const __y = __xpp->_M_right;
-//             if (__y && __y->_M_color == _S_red)
-//               {
-//                 __x->_M_parent->_M_color = _S_black;
-//                 __y->_M_color = _S_black;
-//                 __xpp->_M_color = _S_red;
-//                 __x = __xpp;
-//               }
-//             else
-//               {
-//                 if (__x == __x->_M_parent->_M_right)
-//                   {
-//                     __x = __x->_M_parent;
-//                     local_Rb_tree_rotate_left(__x, __root);
-//                   }
-//                 __x->_M_parent->_M_color = _S_black;
-//                 __xpp->_M_color = _S_red;
-//                 local_Rb_tree_rotate_right(__xpp, __root);
-//               }
-//           }
-//         else
-//           {
-//             _Rb_tree_node_base* const __y = __xpp->_M_left;
-//             if (__y && __y->_M_color == _S_red)
-//               {
-//                 __x->_M_parent->_M_color = _S_black;
-//                 __y->_M_color = _S_black;
-//                 __xpp->_M_color = _S_red;
-//                 __x = __xpp;
-//               }
-//             else
-//               {
-//                 if (__x == __x->_M_parent->_M_left)
-//                   {
-//                     __x = __x->_M_parent;
-//                     local_Rb_tree_rotate_right(__x, __root);
-//                   }
-//                 __x->_M_parent->_M_color = _S_black;
-//                 __xpp->_M_color = _S_red;
-//                 local_Rb_tree_rotate_left(__xpp, __root);
-//               }
-//           }
-//       }
-//     __root->_M_color = _S_black;
-//   }
+	void	rightRotate(node_ptr node) {
 
-	void	_redBlackTreeInsertAndRebalance(node_ptr newNode) {
+		node_ptr	tmp = node->left;
 
-		node_ptr	*parentNode = &this->_root;//rebalance the tree if needed
-		node_ptr	*currentNode = &this->_root;
-		node_ptr	lastNode = lastRight(this->_root);
-		bool		leftWay = 0;
+		node->left = tmp->right;
+		if (tmp->right != NULL)
+			tmp->right->parent = node;
 
-		while ((*currentNode) != NULL && (*currentNode) != lastNode) {
+		tmp->parent = node->parent;
+		if (node->parent == NULL)
+			_root = tmp;
+		else if (node == node->parent->right)
+			node->parent->right = tmp;
+		else
+			node->parent->left = tmp;
 
-			parentNode = currentNode;
-			leftWay = this->_keyCompare(newNode->value.first, (*currentNode)->value.first);
-			if (leftWay == true)
-				currentNode = &(*currentNode)->left;
-			else
-				currentNode = &(*currentNode)->right;
-		}
-		if (currentNode != NULL) {
-
-			(*currentNode) = newNode;
-			newNode->parent = lastNode->parent;
-			lastNode->parent = lastRight(newNode);
-			lastRight(newNode)->right = lastNode;
-		}
-		else {
-
-			newNode->parent = (*parentNode);
-			(*currentNode) = newNode;
-		}
-		this->_size++;
+		tmp->right = node;
+		node->parent = tmp;
 	}
+
+	// bool	insert(value_type const & val) {
+	// 	pointer toInsert = allocator_type().allocate(1);
+	// 	allocator_type().construct(toInsert, node_type(val, RED, ft_nullptr, _null, _null)); // new node must be red
+
+	// 	pointer current = ft_nullptr;
+	// 	pointer root = _root;
+
+	// 	while (root != _null) {
+	// 		current = root;
+	// 		if (this->_keyCompare(toInsert->val, root->val))
+	// 			root = root->left;
+	// 		else if (this->_keyCompare(root->val, toInsert->val))
+	// 			root = root->right;
+	// 		else {
+	// 			allocator_type().destroy(toInsert);
+	// 			allocator_type().deallocate(toInsert, 1);
+	// 			return false;
+	// 		}
+	// 	}
+
+	// 	toInsert->parent = current;
+	// 	if (current == ft_nullptr)
+	// 		_root = toInsert;
+	// 	else if (this->_keyCompare(toInsert->val, current->val))
+	// 		current->left = toInsert;
+	// 	else
+	// 		current->right = toInsert;
+
+	// 	if (toInsert->parent == ft_nullptr) {
+	// 		toInsert->color = BLACK_NODE;
+	// 		return true;
+	// 	}
+
+	// 	if (toInsert->parent->parent == ft_nullptr)
+	// 		return true;
+
+	// 	fixInsert(toInsert);
+	// 	return true;
+	// }
+
+	bool	_mapInsertUnique(const value_type &val) {
+
+		// node_ptr toInsert = allocator_type().allocate(1);
+		// allocator_type().construct(toInsert, node_type(val, RED, NULL, NULL, NULL)); // new node must be red
+
+		node_ptr toInsert = new node_type(val);
+		toInsert->color = RED;
+
+		value_compare comp;
+
+		node_ptr current = NULL;
+		node_ptr root = _root;
+
+		while (root != NULL) {
+			current = root;
+			if (comp(toInsert->value, root->value))
+				root = root->left;
+			else if (comp(root->value, toInsert->value))
+				root = root->right;
+			else {
+				// allocator_type().destroy(toInsert);
+				// allocator_type().deallocate(toInsert, 1);
+				delete toInsert;
+				return false;
+			}
+		}
+
+		toInsert->parent = current;
+		if (current == NULL)
+			_root = toInsert;
+		else if (comp(toInsert->value, current->value))
+			current->left = toInsert;
+		else
+			current->right = toInsert;
+
+		if (toInsert->parent == NULL) {
+			toInsert->color = BLACK;
+			return true;
+		}
+
+		if (toInsert->parent->parent == NULL)
+			return true;
+
+		_redBlackTreeInsertAndRebalance(toInsert);
+		return true;
+	}
+
+	void	_redBlackTreeInsertAndRebalance(node_ptr toFix) {
+
+		node_ptr	tmp;
+
+		while (toFix->parent->color == RED) {
+			if (toFix->parent == toFix->parent->parent->right) {
+				tmp = toFix->parent->parent->left;
+				if (tmp->color == RED) {
+					tmp->color = BLACK;
+					toFix->parent->color = BLACK;
+					toFix->parent->parent->color = RED;
+					toFix = toFix->parent->parent;
+				}
+				else {
+					if (toFix == toFix->parent->left) {
+						toFix = toFix->parent;
+						rightRotate(toFix);
+					}
+					toFix->parent->color = BLACK;
+					toFix->parent->parent->color = RED;
+					leftRotate(toFix->parent->parent);
+				}
+			}
+			else {
+				tmp = toFix->parent->parent->right;
+
+				if (tmp->color == RED) {
+					tmp->color = BLACK;
+					toFix->parent->color = BLACK;
+					toFix->parent->parent->color = RED;
+					toFix = toFix->parent->parent;	
+				}
+				else {
+					if (toFix == toFix->parent->right) {
+						toFix = toFix->parent;
+						leftRotate(toFix);
+					}
+					toFix->parent->color = BLACK;
+					toFix->parent->parent->color = RED;
+					rightRotate(toFix->parent->parent);
+				}
+			}
+			if (toFix == _root)
+				break ;
+		}
+		this->_root->color = BLACK;
+	}
+
+	void	_redBlackTreeEraseAndRebalance(node_ptr rmNode) {
+		node_ptr	replaceNode = NULL;
+		node_ptr	*rmPlace = &this->_root;
+
+		--this->_size;
+		if (rmNode->parent)
+			rmPlace = (rmNode->parent->left == rmNode ? &rmNode->parent->left : &rmNode->parent->right);
+		if (rmNode->left == NULL && rmNode->right == NULL)
+			;
+		else if (rmNode->left == NULL) // left == NULL && right != NULL
+			replaceNode = rmNode->right;
+		else // left != NULL && right ?= NULL
+		{
+			replaceNode = lastRight(rmNode->left);
+			if (replaceNode != rmNode->left)
+				if ((replaceNode->parent->right = replaceNode->left))
+					replaceNode->left->parent = replaceNode->parent;
+		}
+		if (replaceNode)
+		{
+			replaceNode->parent = rmNode->parent;
+			if (rmNode->left && rmNode->left != replaceNode)
+			{
+				replaceNode->left = rmNode->left;
+				replaceNode->left->parent = replaceNode;
+			}
+			if (rmNode->right && rmNode->right != replaceNode)
+			{
+				replaceNode->right = rmNode->right;
+				replaceNode->right->parent = replaceNode;
+			}
+		}
+		*rmPlace = replaceNode;
+		delete rmNode;
+	}
+
+	void	_destroyNode(node_ptr node) {
+
+		if (node == NULL)//fix const
+			return ;
+		_destroyNode(node->right);
+		_destroyNode(node->left);
+		delete node;//test leaks -> there are some leaks
+	}
+
+};
+
+};
+
+#endif
+
+
+
+
+		// print("ROOT")
+
+		// node_ptr	testNode = this->_root;
+
+		// 	print("key :");print(testNode->value.first)
+		// 	print("value :");print(testNode->value.second)
+
+		// print("RIGHT")
+
+		// testNode = this->_root->right;
+
+		// while (testNode != NULL) {
+
+		// 	print("key :");print(testNode->value.first)
+		// 	print("value :");print(testNode->value.second)
+		// 	testNode = testNode->right;
+		// }
+
+		// print("LEFT")
+
+		// testNode = this->_root->left;
+
+		// while (testNode != NULL) {
+
+		// 	print("key :");print(testNode->value.first)
+		// 	print("value :");print(testNode->value.second)
+		// 	testNode = testNode->left;
+		// }
+
+		// print("OUT")
+
+
+
+
+
+
 
 
 //   _Rb_tree_node_base*
@@ -716,17 +881,89 @@ class map {
 // 	}
 
 
-	void	_destroyNode(node_ptr node) {
 
-		if (node == NULL)//fix const
-			return ;
-		_destroyNode(node->right);
-		_destroyNode(node->left);
-		delete node;//test leaks -> there are some leaks
-	}
-
-};
-
-};
-
-#endif
+// 	void
+//   _Rb_tree_insert_and_rebalance(const bool          __insert_left,
+//                                 _Rb_tree_node_base* __x,
+//                                 _Rb_tree_node_base* __p,
+//                                 _Rb_tree_node_base& __header) throw ()
+//   {
+//     _Rb_tree_node_base *& __root = __header._M_parent;
+//     // Initialize fields in new node to insert.
+//     __x->_M_parent = __p;
+//     __x->_M_left = 0;
+//     __x->_M_right = 0;
+//     __x->_M_color = _S_red;
+//     // Insert.
+//     // Make new node child of parent and maintain root, leftmost and
+//     // rightmost nodes.
+//     // N.B. First node is always inserted left.
+//     if (__insert_left)
+//       {
+//         __p->_M_left = __x; // also makes leftmost = __x when __p == &__header
+//         if (__p == &__header)
+//         {
+//             __header._M_parent = __x;
+//             __header._M_right = __x;
+//         }
+//         else if (__p == __header._M_left)
+//           __header._M_left = __x; // maintain leftmost pointing to min node
+//       }
+//     else
+//       {
+//         __p->_M_right = __x;
+//         if (__p == __header._M_right)
+//           __header._M_right = __x; // maintain rightmost pointing to max node
+//       }
+//     // Rebalance.
+//     while (__x != __root
+//            && __x->_M_parent->_M_color == _S_red)
+//       {
+//         _Rb_tree_node_base* const __xpp = __x->_M_parent->_M_parent;
+//         if (__x->_M_parent == __xpp->_M_left)
+//           {
+//             _Rb_tree_node_base* const __y = __xpp->_M_right;
+//             if (__y && __y->_M_color == _S_red)
+//               {
+//                 __x->_M_parent->_M_color = _S_black;
+//                 __y->_M_color = _S_black;
+//                 __xpp->_M_color = _S_red;
+//                 __x = __xpp;
+//               }
+//             else
+//               {
+//                 if (__x == __x->_M_parent->_M_right)
+//                   {
+//                     __x = __x->_M_parent;
+//                     local_Rb_tree_rotate_left(__x, __root);
+//                   }
+//                 __x->_M_parent->_M_color = _S_black;
+//                 __xpp->_M_color = _S_red;
+//                 local_Rb_tree_rotate_right(__xpp, __root);
+//               }
+//           }
+//         else
+//           {
+//             _Rb_tree_node_base* const __y = __xpp->_M_left;
+//             if (__y && __y->_M_color == _S_red)
+//               {
+//                 __x->_M_parent->_M_color = _S_black;
+//                 __y->_M_color = _S_black;
+//                 __xpp->_M_color = _S_red;
+//                 __x = __xpp;
+//               }
+//             else
+//               {
+//                 if (__x == __x->_M_parent->_M_left)
+//                   {
+//                     __x = __x->_M_parent;
+//                     local_Rb_tree_rotate_right(__x, __root);
+//                   }
+//                 __x->_M_parent->_M_color = _S_black;
+//                 __xpp->_M_color = _S_red;
+//                 local_Rb_tree_rotate_left(__xpp, __root);
+//               }
+//           }
+//       }
+//     __root->_M_color = _S_black;
+//   }
