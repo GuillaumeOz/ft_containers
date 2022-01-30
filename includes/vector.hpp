@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/28 19:34:38 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/30 18:23:02 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ class vector {
 		if (capacity <= this->capacity())
 			return ;
 		difference_type len = ft::itDiff(itBegin, itEnd);
-		if (capacity < (size_t)len || capacity < 0)
+		if (capacity < (size_t)len)// || capacity < 0
 			throw std::bad_alloc();
 		res._alloc = this->_alloc;
 		res._size = len;

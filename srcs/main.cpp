@@ -6,11 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/27 17:35:23 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/30 18:02:21 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include <vector>
+# include <map>
 # include "ft_containers.hpp"
 
 #define bothvector(x)	vectorFile << x ; ftVectorFile << x ;
@@ -22,6 +23,20 @@
 static void mapTests() {
 
 	print("-----------------------------MAP----------------------------------");
+	std::map<int, int> mtest;
+
+	mtest.insert(std::pair<char,int>(4,8));
+	mtest.insert(std::pair<char,int>(5,10));
+	mtest.insert(std::pair<char,int>(6,2));
+	mtest.insert(std::pair<char,int>(3,6));
+
+	std::map<int,int>::iterator it = mtest.begin(), ite = mtest.end();
+	std::cout << std::endl << "Content is:" << std::endl;
+	for (; it != ite; ++it) {
+
+		std::cout << "|  key: " << it->first << "   |" << std::endl;
+		std::cout << "| value: " << it->second << " |" << std::endl;
+	}
 }
 
 static void stackTests() {
@@ -181,21 +196,3 @@ int main(int ac, char **av) {
 
 	return (0);
 }
-
-
-	// typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		value_type;
-	// typedef Alloc																	allocator_type;
-	// typedef typename ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
-	// typedef typename ft::iterator<random_access_iterator_tag, T>::pointer			pointer;
-	// typedef const typename ft::iterator<random_access_iterator_tag, T>::pointer		const_pointer;//
-	// typedef typename ft::iterator<random_access_iterator_tag, T>::reference			reference;
-	// typedef const typename ft::iterator<random_access_iterator_tag, T>::reference	const_reference;
-	// typedef typename ft::iterator<random_access_iterator_tag, T>::value_type		iterator;
-	// typedef const typename ft::iterator<random_access_iterator_tag, T>::value_type	const_iterator;
-	// typedef typename ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
-
-
-	// typedef typename ft::reverseIterator<value_type>			reverse_iterator;
-	// typedef const typename ft::reverseIterator<value_type>		const_reverse_iterator;
-	// typedef std::ptrdiff_t										difference_type;//
-	// typedef size_t												size_type;

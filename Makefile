@@ -6,13 +6,13 @@
 #    By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/21 15:17:38 by gozsertt          #+#    #+#              #
-#    Updated: 2022/01/27 17:35:26 by gozsertt         ###   ########.fr        #
+#    Updated: 2022/01/30 18:21:31 by gozsertt         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		=	containers
 
-CC			=	clang++
+CC			=	g++
 
 SRC_DIR		=	$(shell find srcs -type d)
 INC_DIR		=	$(shell find includes -type d)

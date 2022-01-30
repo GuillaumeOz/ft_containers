@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/28 19:32:45 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/30 18:35:03 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ class map {
 		public:
 			Compare		comp;
 
-			// std::less<Key>
 			value_compare(Compare __c = key_compare()) : comp(__c) {
 
 			}
@@ -82,13 +81,13 @@ class map {
 //------------------------------CONSTRUCTORS----------------------------------//
 
 	// Default constructor
-	// map(void) {
+	map(void) {
 
-	// 	this->_root = NULL;
-	// 	this->_size = 0;
+		this->_root = NULL;
+		this->_size = 0;
 
-	// 	this->_root = new node_type;
-	// }
+		this->_root = new node_type;
+	}
 
 	// Comparison object Allocator object constructor
 	explicit map(key_compare const &comp, allocator_type const &alloc) {
@@ -123,7 +122,7 @@ class map {
 		this->_alloc = allocator_type();
 		// this->_size = 0;
 
-		this->_root = new node_type;
+		// this->_root = new node_type;
 		*this = src;//Improve later
 	}
 
@@ -422,36 +421,6 @@ class map {
 	key_compare				_keyCompare;
 	size_type				_size;
 
-	// void	_redBlackTreeInsertAndRebalance(node_ptr newNode) {
-
-	// 	node_ptr	*parentNode = &this->_root;//rebalance the tree if needed
-	// 	node_ptr	*currentNode = &this->_root;
-	// 	node_ptr	lastNode = lastRight(this->_root);
-	// 	bool		leftWay = 0;
-
-	// 	while ((*currentNode) && (*currentNode) != lastNode) {
-
-	// 		parentNode = currentNode;
-	// 		leftWay = this->_keyCompare(newNode->value.first, (*currentNode)->value.first);
-	// 		if (leftWay == true)
-	// 			currentNode = &(*currentNode)->left;
-	// 		else
-	// 			currentNode = &(*currentNode)->right;
-	// 	}
-	// 	if (currentNode) {
-
-	// 		(*currentNode) = newNode;
-	// 		newNode->parent = lastNode->parent;
-	// 		lastNode->parent = lastRight(newNode);
-	// 		lastRight(newNode)->right = lastNode;
-	// 	}
-	// 	else {
-
-	// 		newNode->parent = (*parentNode);
-	// 		(*currentNode) = newNode;
-	// 	}
-	// 	this->_size++;
-	// }
 
 	void	leftRotate(node_ptr node) {
 		node_ptr	tmp = node->right;
@@ -492,45 +461,21 @@ class map {
 		node->parent = tmp;
 	}
 
-	// bool	insert(value_type const & val) {
-	// 	pointer toInsert = allocator_type().allocate(1);
-	// 	allocator_type().construct(toInsert, node_type(val, RED, ft_nullptr, _null, _null)); // new node must be red
+	void	printTree() {
 
-	// 	pointer current = ft_nullptr;
-	// 	pointer root = _root;
+		if (this->_root == NULL)
+			return ;
+		iterator itBegin = this->begin();
+		iterator itEnd = this->end();
 
-	// 	while (root != _null) {
-	// 		current = root;
-	// 		if (this->_keyCompare(toInsert->val, root->val))
-	// 			root = root->left;
-	// 		else if (this->_keyCompare(root->val, toInsert->val))
-	// 			root = root->right;
-	// 		else {
-	// 			allocator_type().destroy(toInsert);
-	// 			allocator_type().deallocate(toInsert, 1);
-	// 			return false;
-	// 		}
-	// 	}
+		while (itBegin != itEnd) {
+			
+			std::cout << "Key :" << (*itBegin).first << " Value : " << (*itEnd).second << std::endl;
+			// print("ICIICICI")
+			++itBegin;
+		}
 
-	// 	toInsert->parent = current;
-	// 	if (current == ft_nullptr)
-	// 		_root = toInsert;
-	// 	else if (this->_keyCompare(toInsert->val, current->val))
-	// 		current->left = toInsert;
-	// 	else
-	// 		current->right = toInsert;
-
-	// 	if (toInsert->parent == ft_nullptr) {
-	// 		toInsert->color = BLACK_NODE;
-	// 		return true;
-	// 	}
-
-	// 	if (toInsert->parent->parent == ft_nullptr)
-	// 		return true;
-
-	// 	fixInsert(toInsert);
-	// 	return true;
-	// }
+	}
 
 	bool	_mapInsertUnique(const value_type &val) {
 
@@ -544,7 +489,13 @@ class map {
 
 		node_ptr current = NULL;
 		node_ptr root = _root;
+		// print(toInsert->value.first)
+		// if (toInsert->value.first == 28)
+		// 	print("ICICICICICICIICI")
+		// if (toInsert->value.first == 35)
+		// 	print("ICICICICICICIICI")
 
+		this->_size++;
 		while (root != NULL) {
 			current = root;
 			if (comp(toInsert->value, root->value))
@@ -552,10 +503,11 @@ class map {
 			else if (comp(root->value, toInsert->value))
 				root = root->right;
 			else {
+
 				// allocator_type().destroy(toInsert);
 				// allocator_type().deallocate(toInsert, 1);
 				delete toInsert;
-				return false;
+				return (false);
 			}
 		}
 
@@ -569,14 +521,14 @@ class map {
 
 		if (toInsert->parent == NULL) {
 			toInsert->color = BLACK;
-			return true;
+			return (true);
 		}
 
 		if (toInsert->parent->parent == NULL)
-			return true;
+			return (true);
 
 		_redBlackTreeInsertAndRebalance(toInsert);
-		return true;
+		return (true);
 	}
 
 	void	_redBlackTreeInsertAndRebalance(node_ptr toFix) {
@@ -586,7 +538,7 @@ class map {
 		while (toFix->parent->color == RED) {
 			if (toFix->parent == toFix->parent->parent->right) {
 				tmp = toFix->parent->parent->left;
-				if (tmp->color == RED) {
+				if (tmp != NULL && tmp->color == RED) {//add null protect
 					tmp->color = BLACK;
 					toFix->parent->color = BLACK;
 					toFix->parent->parent->color = RED;
@@ -605,7 +557,11 @@ class map {
 			else {
 				tmp = toFix->parent->parent->right;
 
-				if (tmp->color == RED) {
+				// print(toFix)
+				// print(toFix->parent)
+				// print(toFix->parent->parent)
+				// print(toFix->parent->parent->right)
+				if (tmp != NULL && tmp->color == RED) {//add null protect
 					tmp->color = BLACK;
 					toFix->parent->color = BLACK;
 					toFix->parent->parent->color = RED;
@@ -680,8 +636,51 @@ class map {
 
 
 
+	// bool	insert(value_type const & val) {
+	// 	pointer toInsert = allocator_type().allocate(1);
+	// 	allocator_type().construct(toInsert, node_type(val, RED, ft_nullptr, _null, _null)); // new node must be red
+
+	// 	pointer current = ft_nullptr;
+	// 	pointer root = _root;
+
+	// 	while (root != _null) {
+	// 		current = root;
+	// 		if (this->_keyCompare(toInsert->val, root->val))
+	// 			root = root->left;
+	// 		else if (this->_keyCompare(root->val, toInsert->val))
+	// 			root = root->right;
+	// 		else {
+	// 			allocator_type().destroy(toInsert);
+	// 			allocator_type().deallocate(toInsert, 1);
+	// 			return false;
+	// 		}
+	// 	}
+
+	// 	toInsert->parent = current;
+	// 	if (current == ft_nullptr)
+	// 		_root = toInsert;
+	// 	else if (this->_keyCompare(toInsert->val, current->val))
+	// 		current->left = toInsert;
+	// 	else
+	// 		current->right = toInsert;
+
+	// 	if (toInsert->parent == ft_nullptr) {
+	// 		toInsert->color = BLACK_NODE;
+	// 		return true;
+	// 	}
+
+	// 	if (toInsert->parent->parent == ft_nullptr)
+	// 		return true;
+
+	// 	fixInsert(toInsert);
+	// 	return true;
+	// }
+
+
+
 
 		// print("ROOT")
+
 
 		// node_ptr	testNode = this->_root;
 
@@ -711,10 +710,6 @@ class map {
 		// }
 
 		// print("OUT")
-
-
-
-
 
 
 
@@ -967,3 +962,36 @@ class map {
 //       }
 //     __root->_M_color = _S_black;
 //   }
+
+
+
+	// void	_redBlackTreeInsertAndRebalance(node_ptr newNode) {
+
+	// 	node_ptr	*parentNode = &this->_root;//rebalance the tree if needed
+	// 	node_ptr	*currentNode = &this->_root;
+	// 	node_ptr	lastNode = lastRight(this->_root);
+	// 	bool		leftWay = 0;
+
+	// 	while ((*currentNode) && (*currentNode) != lastNode) {
+
+	// 		parentNode = currentNode;
+	// 		leftWay = this->_keyCompare(newNode->value.first, (*currentNode)->value.first);
+	// 		if (leftWay == true)
+	// 			currentNode = &(*currentNode)->left;
+	// 		else
+	// 			currentNode = &(*currentNode)->right;
+	// 	}
+	// 	if (currentNode) {
+
+	// 		(*currentNode) = newNode;
+	// 		newNode->parent = lastNode->parent;
+	// 		lastNode->parent = lastRight(newNode);
+	// 		lastRight(newNode)->right = lastNode;
+	// 	}
+	// 	else {
+
+	// 		newNode->parent = (*parentNode);
+	// 		(*currentNode) = newNode;
+	// 	}
+	// 	this->_size++;
+	// }

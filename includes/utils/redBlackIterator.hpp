@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 08:40:05 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/28 19:17:11 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/01/30 16:21:37 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ struct mapNode {
 		parent = NULL;
 		left = NULL;
 		right = NULL;
-		color = BLACK;
+		color = RED;
 	}
 };
 
