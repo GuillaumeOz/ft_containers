@@ -27,7 +27,7 @@
 # include "utils/pair.hpp"
 # include "utils/make_pair.hpp"
 # include "utils/redBlackIterator.hpp"
-#include "ft_containers.hpp"
+# include "ft_containers.hpp"
 
 namespace ft {
 
@@ -81,23 +81,23 @@ class map {
 //------------------------------CONSTRUCTORS----------------------------------//
 
 	// Default constructor
-	map(void) {
+	// map(void) {
 
-		this->_root = NULL;
-		this->_size = 0;
+	// 	this->_root = NULL;
+	// 	this->_size = 0;
 
-		this->_root = new node_type;
-	}
+	// 	// this->_root = new node_type;
+	// }
 
 	// Comparison object Allocator object constructor
 	explicit map(key_compare const &comp, allocator_type const &alloc) {
 
-		// this->_root = NULL;
+		this->_empty_node = new node_type(value_type());
+
+		this->_root = NULL;
 		this->_keyCompare = comp;
 		this->_alloc = alloc;
-		// this->_size = 0;
-
-		// this->_root = new node_type;
+		this->_size = 0;
 	}
 
 	// Range constructor
@@ -105,25 +105,28 @@ class map {
 	map (InputIterator first, InputIterator last,
 		const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()){
 
-		// this->_root = NULL;
+		this->_empty_node = new node_type(value_type());
+
+		this->_root = NULL;
 		this->_keyCompare = comp;
 		this->_alloc = alloc;
-		// this->_size = 0;
+		this->_size = 0;
 
-		// this->_root = new node_type;
 		this->insert(first, last);
 	}
 
 	// Copy Constructor
 	map(map const &src) {
 
-		// this->_root = NULL;
-		this->_keyCompare = key_compare();
-		this->_alloc = allocator_type();
-		// this->_size = 0;
+		this->clear();
+		node_ptr tmp = this->_root;
 
-		// this->_root = new node_type;
-		*this = src;//Improve later
+		this->_root = src._root;
+		this->_keyCompare = src._keyCompare;
+		this->_alloc = src._alloc;
+		this->_size = src._size;
+		src._root = tmp; src._size = 0;//redo
+		tmp = NULL;
 	}
 
 //-------------------------------DESTRUCTOR-----------------------------------//
@@ -192,8 +195,10 @@ class map {
 
 	size_type	max_size() const {
 
-	// std::numeric_limits<difference_type>::max() / (sizeof(node_type))
-		return (this->_alloc.max_size());
+		// return (std::numeric_limits<difference_type>::max() / (sizeof(node_type)));
+		// return allocator_type().max_size();
+		return (std::numeric_limits<difference_type>::max() / 20);
+		// return (this->_alloc.max_size());
 	}
 
 //-------------------------ELEMENT ACCESS FUNCTION----------------------------//
@@ -285,7 +290,11 @@ class map {
 
 	void swap (map& x) {
 
-		(void)x;
+		node_type *tmp;
+
+		tmp->_root = x._root;
+		x._root = this->_root;
+		this->_root = tmp->_root;//test this
 	}
 
 	void clear() {
@@ -367,8 +376,11 @@ class map {
 
 		for (iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
-			if (this->_keyCompare(k, itBegin->first))
+			if (this->_keyCompare(k, itBegin->first)) {
+
+				// itBegin++;
 				return (itBegin);
+			}
 		}
 		return (itEnd);
 	}
@@ -379,8 +391,11 @@ class map {
 
 		for (const_iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
-			if (this->_keyCompare(k, itBegin->first))
+			if (this->_keyCompare(k, itBegin->first)) {
+
+				itBegin++;
 				return (itBegin);
+			}
 		}
 		return (itEnd);
 	}
@@ -417,6 +432,7 @@ class map {
 	private:
 
 	node_ptr				_root;
+	node_ptr				_empty_node;
 	allocator_type			_alloc;
 	key_compare				_keyCompare;
 	size_type				_size;
@@ -488,14 +504,15 @@ class map {
 		value_compare comp;
 
 		node_ptr current = NULL;
-		node_ptr root = _root;
-		// print(toInsert->value.first)
-		// if (toInsert->value.first == 28)
-		// 	print("ICICICICICICIICI")
-		// if (toInsert->value.first == 35)
-		// 	print("ICICICICICICIICI")
+		node_ptr root = this->_root;
 
 		this->_size++;
+		if (this->_root == NULL) {
+
+			this->_root = toInsert;
+			this->_root->color = BLACK;
+			return (true);
+		}
 		while (root != NULL) {
 			current = root;
 			if (comp(toInsert->value, root->value))
@@ -503,7 +520,6 @@ class map {
 			else if (comp(root->value, toInsert->value))
 				root = root->right;
 			else {
-
 				// allocator_type().destroy(toInsert);
 				// allocator_type().deallocate(toInsert, 1);
 				delete toInsert;
@@ -512,13 +528,15 @@ class map {
 		}
 
 		toInsert->parent = current;
-		if (current == NULL)
-			_root = toInsert;
+		if (current == NULL) {
+			this->_root = toInsert;
+		}
 		else if (comp(toInsert->value, current->value))
 			current->left = toInsert;
 		else
 			current->right = toInsert;
 
+		//Assign Black color to _root node
 		if (toInsert->parent == NULL) {
 			toInsert->color = BLACK;
 			return (true);
@@ -634,6 +652,52 @@ class map {
 
 #endif
 
+// std::stringstream    toString() {
+//             return (toString(_tree, 0));
+//         };
+
+//         std::string getSpaces(int n) {
+//             std::string spaces("");
+//             while (--n >= 0) {
+//                 spaces += "  ";
+//                 spaces += ((n > 0) ? "│" : "└");
+//             }
+//             return spaces + "─ ";
+//         }
+
+//         std::string colorizeOutput(std::string ouput, rbt *tree) {
+//             std::stringstream tmp;
+
+//             if (tree->color == RED)
+//                 tmp << std::internal << Format(tree->value.first).red().bold(); 
+//             if (tree->color == BLACK)
+//                 tmp << std::internal << Format(tree->value.first).black().bold();
+//             ouput += tmp.str();
+//             return (ouput);
+            
+//         }
+
+//         std::stringstream    toString(rbt *tmp, int depth) {
+//             std::stringstream     output;
+
+//             if (!tmp)
+//                 return (output);
+//             output << colorizeOutput(getSpaces(depth) + output.str(), tmp) << std::endl;
+//             if (tmp->left) output << toString(tmp->left, depth + 1).str();
+//             if (tmp->right) output << toString(tmp->right,depth + 1).str();
+//             return (output); 
+//         };
+//     };
+    
+
+//     /* -------------------------- non-member attributs -------------------------- */
+
+//     template <typename _Key, typename _Tp, class _Compare = std::less<_Key>,
+//             class _Alloc = std::allocator<ft::pair<const _Key, _Tp> > >
+//     std::ostream  & operator<<(std::ostream  &outStream, map< const _Key, _Tp, _Compare, _Alloc> &instance) {
+//         outStream << instance.toString().str();
+//         return (outStream);
+//     };
 
 
 	// bool	insert(value_type const & val) {

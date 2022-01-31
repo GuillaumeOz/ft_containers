@@ -308,6 +308,8 @@ class redBlackIterator {
 	template <typename T>
 	mapNode<T>		*lastRight(mapNode<T>	*head) {
 
+		while (head->parent != NULL)
+			head = head->parent;
 		while (head->right != NULL)
 			head = head->right;
 		return (head);
@@ -316,6 +318,8 @@ class redBlackIterator {
 	template <typename T>
 	mapNode<T>		*lastLeft(mapNode<T>	*head) {
 
+		while (head->parent != NULL)
+			head = head->parent;
 		while (head->left != NULL)
 			head = head->left;
 		return (head);
