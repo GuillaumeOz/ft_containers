@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 # include <vector>
+# include <stack>
 # include <map>
 # include "ft_containers.hpp"
 

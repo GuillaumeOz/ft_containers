@@ -21,7 +21,7 @@
 
 # include <cstdlib>//remove
 
-#define print(x)	std::cout << x << std::endl;
+// #define print(x)	std::cout << x << std::endl;
 
 # include "utils/lexicographical_compare.hpp"
 # include "utils/equal_compare.hpp"

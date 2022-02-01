@@ -14,15 +14,16 @@
 # define REDBLACKITERATOR_HPP
 
 #ifndef COUCOU
-# define print(x)	std::cout << x << std::endl;
+# define print(x)	std::cout << x << std::endl;//delete this
 #endif
 
 namespace ft {
 
 enum e_tree_color {
 
-	RED = false,
-	BLACK = true
+	NONE,
+	RED,
+	BLACK
 };
 
 template <typename T>
@@ -41,6 +42,15 @@ struct setNode {//change for set node specification
 		right = NULL;
 		color = BLACK;
 	}
+
+	setNode(e_tree_color pColor,\
+		setNode* pParent, setNode* pLeft, setNode* pRight) {
+
+		color = pColor;
+		parent = pParent;
+		left = pLeft;
+		right = pRight;
+	}
 };
 
 template <typename T>
@@ -52,32 +62,38 @@ struct mapNode {
 	mapNode*					right;
 	e_tree_color				color;
 
+	// Default constructor
 	mapNode(T src = T()) : value(src) {
 
+		color = RED;
 		parent = NULL;
 		left = NULL;
 		right = NULL;
-		color = RED;
+	}
+
+	// Fill constructor
+	mapNode(T src, e_tree_color pColor,\
+		mapNode* pParent, mapNode* pLeft, mapNode* pRight) : value(src){
+
+		color = pColor;
+		parent = pParent;
+		left = pLeft;
+		right = pRight;
+	}
+
+	// Sentinal node constructor
+	mapNode(e_tree_color pColor,\
+		mapNode* pParent, mapNode* pLeft, mapNode* pRight) {
+
+		color = pColor;
+		parent = pParent;
+		left = pLeft;
+		right = pRight;
 	}
 };
 
 template<typename T, typename Node>
 class redBlackIterator {
-// template<typename T, typename Node>
-// class redBlackIterator : public ft::iterator<bidirectional_iterator_tag, T> {
-
-// //--------------------------------TYPEDEF-------------------------------------//
-
-// 	public :
-
-// 	typedef T																					value_type;
-// 	typedef Node																				node_type;
-// 	typedef Node*																				node_pointer;
-// 	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::difference_type	difference_type;
-// 	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::pointer			pointer;
-// 	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::reference			reference;
-// 	typedef typename	ft::iterator<bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
-
 //--------------------------------TYPEDEF-------------------------------------//
 
 	public :
@@ -98,7 +114,7 @@ class redBlackIterator {
 	// }
 
 	//Default constructor
-	redBlackIterator(void) : _node(NULL) {
+	redBlackIterator(void) {
 
 		return ;
 	}
@@ -156,7 +172,7 @@ class redBlackIterator {
 	//++node
 	redBlackIterator	&operator++(void) {
 
-		this->_node = rbTreeIncrement(this->_node);
+		this->_node = _rbTreeIncrement(this->_node);
 		return (*this);
 	}
 
@@ -172,7 +188,7 @@ class redBlackIterator {
 	//--node
 	redBlackIterator	&operator--(void) {
 
-		this->_node = rbTreeDecrement(this->_node);
+		this->_node = _rbTreeDecrement(this->_node);
 		return (*this);
 	}
 
@@ -204,22 +220,36 @@ class redBlackIterator {
 	private:
 
 	Node		*_node;
-	// redBlackIterator(node_type *src);
 
 //----------------------------PRIVATE FUNCTION--------------------------------//
+	// if (head->right != NULL)
+	// 	head = lastLeft(head->right);
+	// else
+	// {
+	// 	node_type	*child = head;
 
-	node_pointer	rbTreeIncrement(node_pointer head) {
+	// 	head = head->parent;
+	// 	while (head && child == head->right)
+	// 	{
+	// 		child = head;
+	// 		head = head->parent;
+	// 	}
+	// }
+	// return (*this);
 
-		if (head->right != 0) {
+	node_pointer	_rbTreeIncrement(node_pointer head) {
+
+		if (head->right->color != NONE) {
 
 			head = head->right;
-			while (head->left != 0)
+			while (head->left->color != NONE)
 				head = head->left;
 		}
 		else {
 
 			node_pointer tmpRoot = head->parent;
 
+			// this->_node = this->_node->parent;
 			while (head == tmpRoot->right) {
 
 				head = tmpRoot;
@@ -229,63 +259,18 @@ class redBlackIterator {
 				head = tmpRoot;
 		}
 		return (head);
-		
-		// while (head->left != 0){}
-		// 		head = head->left;
-		// return (head);
-
-	// if (this->_node->right != NULL)
-	// 	this->_node = lastLeft(this->_node->right);
-	// else
-	// {
-	// 	node_type	*child = this->_node;
-
-	// 	this->_node = this->_node->parent;
-	// 	while (this->_node && child == this->_node->right)
-	// 	{
-	// 		child = this->_node;
-	// 		this->_node = this->_node->parent;
-	// 	}
-	// }
-	// return (*this);
 	}
 
-//   static _Rb_tree_node_base*
-//   local_Rb_tree_decrement(_Rb_tree_node_base* __x) throw ()
-//   {
-//     if (__x->_M_color == _S_red
-//         && __x->_M_parent->_M_parent == __x)
-//       __x = __x->_M_right;
-//     else if (__x->_M_left != 0)
-//       {
-//         _Rb_tree_node_base* __y = __x->_M_left;
-//         while (__y->_M_right != 0)
-//           __y = __y->_M_right;
-//         __x = __y;
-//       }
-//     else
-//       {
-//         _Rb_tree_node_base* __y = __x->_M_parent;
-//         while (__x == __y->_M_left)
-//           {
-//             __x = __y;
-//             __y = __y->_M_parent;
-//           }
-//         __x = __y;
-//       }
-//     return __x;
-//   }
-
-	node_pointer	rbTreeDecrement(node_pointer head) {
+	node_pointer	_rbTreeDecrement(node_pointer head) {
 
 		if (head->color == RED
 			&& head->parent->parent == head)
 			head = head->right;
-		else if (head->left != 0) {
+		else if (head->left->color != NONE) {
 
 			node_pointer	tmpLeft =  head->left;
 
-			while (tmpLeft->right != 0)
+			while (tmpLeft->right->color != NONE)
 				tmpLeft = tmpLeft->right;
 			head = tmpLeft;
 		}
@@ -293,7 +278,7 @@ class redBlackIterator {
 
 			node_pointer tmpRoot = head->parent;
 
-			while (tmpRoot && head == tmpRoot->left) {
+			while (tmpRoot->color != NONE && head == tmpRoot->left) {
 
 				head = tmpRoot;
 				tmpRoot = tmpRoot->parent;
@@ -308,19 +293,20 @@ class redBlackIterator {
 	template <typename T>
 	mapNode<T>		*lastRight(mapNode<T>	*head) {
 
-		while (head->parent != NULL)
+		while (head->parent->color != NONE)
 			head = head->parent;
-		while (head->right != NULL)
+		while (head->right->color != NONE)
 			head = head->right;
+		head = head->right;
 		return (head);
 	}
 
 	template <typename T>
 	mapNode<T>		*lastLeft(mapNode<T>	*head) {
 
-		while (head->parent != NULL)
+		while (head->parent->color != NONE)
 			head = head->parent;
-		while (head->left != NULL)
+		while (head->left->color != NONE)
 			head = head->left;
 		return (head);
 	}

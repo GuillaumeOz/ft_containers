@@ -10,9 +10,11 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME		=	containers
+NAME		=	ft_containers
 
-CC			=	g++
+NAME_STD	=	std_containers
+
+CC			=	clang++
 
 SRC_DIR		=	$(shell find srcs -type d)
 INC_DIR		=	$(shell find includes -type d)
@@ -28,22 +30,32 @@ OBJ			=	$(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 
 CFLAGS		=	-Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address #-Wshadow -Wno-shadow
 
+D_NO_STD  	=	-DSTD=0
+
+D_STD		=	-DSTD=1
+
 IFLAGS		=	$(foreach dir, $(INC_DIR), -I $(dir))
 
 # Colors
 
-_GREY=	$'\e[30m
-_RED=	$'\e[31m
-_GREEN=	$'\e[32m
-_YELLOW=$'\e[33m
-_BLUE=	$'\e[34m
-_PURPLE=$'\e[35m
-_CYAN=	$'\e[36m
-_WHITE=	$'\e[37m
+_GREY=	$' \033[30m
+_RED=	$' \033[31m
+_GREEN=	$' \033[32m
+_YELLOW=$' \033[33m
+_BLUE=	$' \033[34m
+_PURPLE=$' \033[35m
+_CYAN=	$' \033[36m
+_WHITE=	$' \033[37m
 
 # MAIN part --------------------------------------------------------
 
-all:	$(NAME)
+all:
+	@echo "\n$(_BLUE)___$(NAME) Setting___\n$(_WHITE)"
+	@make BONUS=$(D_NO_BONUS) $(NAME)
+
+std:
+	@echo "\n$(_BLUE)___$(NAME) Setting___\n$(_WHITE)"
+	@make BONUS=$(D_BONUS) $(NAME_STD)
 
 show:
 	@echo "$(_BLUE)SRC :\n$(_YELLOW)$(SRC)$(_WHITE)"
@@ -55,13 +67,18 @@ show:
 
 $(NAME): $(OBJ)
 	@echo "-----\nCreating Binary File $(_YELLOW)$@$(_WHITE) ... \c"
-	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@$(CC) $(CFLAGS) $(BONUS) $(OBJ) -o $(NAME)
+	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
+
+$(NAME_STD): $(OBJ)
+	@echo "-----\nCreating Binary File $(_YELLOW)$@$(_WHITE) ... \c"
+	@$(CC) $(CFLAGS) $(BONUS) $(OBJ) -o $(NAME_STD)
 	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 $(OBJ_DIR)/%.o : %.cpp
 	@echo "Compiling $(_YELLOW)$@$(_WHITE) ... \c"
 	@mkdir -p $(OBJ_DIR)
-	@$(CC) $(CFLAGS) $(IFLAGS) -o $@ -c $<
+	@$(CC) $(CFLAGS) $(BONUS) $(IFLAGS) -o $@ -c $<
 	@echo "$(_GREEN)DONE$(_WHITE)"
 
 re:	fclean all
@@ -69,12 +86,17 @@ re:	fclean all
 clean:
 	@echo "$(_WHITE)Deleting Objects Directory $(_YELLOW)$(OBJ_DIR)$(_WHITE) ... \c"
 	@$(foreach file, $(OBJ), rm -rf $(file))
-	@rm -rf vectorLog.txt ftVectorLog.txt
+	@rm -rf ftVectorLog.txt vectorLog.txt
 	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 fclean:	clean
 	@echo "Deleting Binary File $(_YELLOW)$(NAME)$(_WHITE) ... \c"
 	@rm -f $(NAME)
+	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
+
+fclean-std:	clean
+	@echo "Deleting Binary File $(_YELLOW)$(NAME_STD)$(_WHITE) ... \c"
+	@rm -f $(NAME_STD)
 	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 .PHONY: all show re clean flcean
