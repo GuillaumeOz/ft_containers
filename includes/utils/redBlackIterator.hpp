@@ -13,6 +13,8 @@
 #ifndef REDBLACKITERATOR_HPP
 # define REDBLACKITERATOR_HPP
 
+#include <sstream>//remove
+
 #ifndef COUCOU
 # define print(x)	std::cout << x << std::endl;//delete this
 #endif
@@ -107,22 +109,17 @@ class redBlackIterator {
 
 //-------------------------------CONSTRUCTOR----------------------------------//
 
-	// redBlackIterator(value_compare const & comp = value_compare()) : _comp(comp) {
-	// 	_null = allocator_type().allocate(1);
-	// 	allocator_type().construct(_null, node_type());
-	// 	_root = _null;
-	// }
-
 	//Default constructor
 	redBlackIterator(void) {
 
-		return ;
 	}
 
 	//Pointer constructor
-	redBlackIterator(node_type *src) {
+	redBlackIterator(node_type *src, node_type *sentinal = NULL) {
 
 		this->_node = src;
+		if (sentinal != NULL)
+			this->_sentinal = sentinal;
 	}
 
 	//Copy constructor
@@ -139,6 +136,7 @@ class redBlackIterator {
 
 	//const overload
 	operator redBlackIterator<const T, node_type>(void) const {
+
 		return (redBlackIterator<const T, node_type>(this->_node));
 	}
 
@@ -146,6 +144,8 @@ class redBlackIterator {
 	redBlackIterator	&operator=(redBlackIterator const &rhs) {
 
 		this->_node = rhs._node;
+		if (rhs._sentinal != NULL)
+			this->_sentinal = rhs._sentinal;
 		return (*this);
 	}
 
@@ -215,102 +215,235 @@ class redBlackIterator {
 		return (&(this->operator*()));
 	}
 
+//------------------------------PRINT TREE------------------------------------//
+
+	// template <typename _T>
+	std::string			printTree() {
+
+		Node *rootNode = this->_node;
+
+		while (rootNode->parent != this->_sentinal) {
+
+			rootNode = rootNode->parent;
+		}
+		return (toString(rootNode).str());
+	}
+
+	template <typename _T>
+	std::stringstream    toString(mapNode<_T> *root) {
+
+			return (toString(root, 0));
+	};
+
+	template <typename _T>
+	std::stringstream    toString(mapNode<_T> *tmp, int depth) {
+		std::stringstream     output;
+
+		if (tmp == this->_sentinal) {
+			
+			return (output);
+		}
+		output << colorizeOutput(getSpaces(depth) + output.str(), tmp) << std::endl;
+		if (tmp->left != this->_sentinal)
+			output << toString(tmp->left, depth + 1).str();
+		if (tmp->right != this->_sentinal)
+			output << toString(tmp->right,depth + 1).str();
+		return (output); 
+	};
+
+        std::string getSpaces(int n) {
+            std::string spaces("");
+            while (--n >= 0) {
+                spaces += "  ";
+                spaces += ((n > 0) ? "│" : "└");
+            }
+            return spaces + "─ ";
+        }
+
+		template <typename _T>
+        std::string colorizeOutput(std::string output, mapNode<_T> *tree) {
+            std::stringstream	tmp;
+			std::stringstream	content;
+
+			content << tree->value.first;
+            if (tree->color == RED)
+                tmp << std::internal << content.str() + "R"; 
+            if (tree->color == BLACK)
+                tmp << std::internal << content.str() + "B";
+            output += tmp.str();
+            return (output);
+        }
+
 //--------------------------------VARIABLES-----------------------------------//
 
-	private:
+	public://private later
 
 	Node		*_node;
+	Node		*_sentinal;
 
 //----------------------------PRIVATE FUNCTION--------------------------------//
-	// if (head->right != NULL)
-	// 	head = lastLeft(head->right);
-	// else
-	// {
-	// 	node_type	*child = head;
-
-	// 	head = head->parent;
-	// 	while (head && child == head->right)
-	// 	{
-	// 		child = head;
-	// 		head = head->parent;
-	// 	}
-	// }
-	// return (*this);
 
 	node_pointer	_rbTreeIncrement(node_pointer head) {
 
-		if (head->right->color != NONE) {
+		if (head->right != this->_sentinal)
+			head = lastLeft(head->right);
+		else
+		{
+			node_type	*child = head;
 
-			head = head->right;
-			while (head->left->color != NONE)
-				head = head->left;
-		}
-		else {
-
-			node_pointer tmpRoot = head->parent;
-
-			// this->_node = this->_node->parent;
-			while (head == tmpRoot->right) {
-
-				head = tmpRoot;
-				tmpRoot = tmpRoot->parent;
+			head = head->parent;
+			while (head != this->_sentinal
+				&& child == head->right)
+			{
+				child = head;
+				head = head->parent;
 			}
-			if (head->right != tmpRoot)
-				head = tmpRoot;
 		}
 		return (head);
 	}
+
+	// print(head)
+	// if (head->right == this->_sentinal)
+	// 	;
+	// if (head->right != this->_sentinal) {
+
+	// 	head = head->right;
+	// 		while (head->left != this->_sentinal)
+	// 			head = head->left;
+	// 	}
+	// 	else {
+
+	// 		node_pointer tmpRoot = head->parent;
+
+	// 		this->_node = this->_node->parent;
+	// 		while (head == tmpRoot->right) {
+
+	// 			head = tmpRoot;
+	// 			tmpRoot = tmpRoot->parent;
+	// 		}
+	// 		if (head->right != tmpRoot)
+	// 			head = tmpRoot;
+	// 	}
+	// 	return (head);
+	// }
+	// if (head->color == RED
+		// 	&& head->parent->parent == head)
+		// 	head = head->right;//test this 
+		// else if (head == this->_sentinal) {
+
+		// 	node_pointer	sentinalNode = head->parent;
+
+		// 	while (sentinalNode->right != this->_sentinal)
+		// 		sentinalNode = sentinalNode->right;
+		// 	// print(sentinalNode)
+		// 	head = sentinalNode->parent;
+		// }
+		// else if (head->left != this->_sentinal) {
+
+		// 	node_pointer	tmpLeft =  head->left;
+
+		// 	// if (head->color == NONE)
+		// 	// 	print("NONE")
+		// 	// print(head->left)
+		// 	while (tmpLeft->right != this->_sentinal)
+		// 		tmpLeft = tmpLeft->right;
+		// 	head = tmpLeft;
+		// }
+		// else {
+
+		// 	node_pointer tmpRoot = head->parent;
+
+		// 	while (tmpRoot != NULL && head == tmpRoot->left) {
+
+		// 		head = tmpRoot;
+		// 		tmpRoot = tmpRoot->parent;
+		// 	}
+		// 	head = tmpRoot;
+		// }
+		
+		// return (head);
+
+
 
 	node_pointer	_rbTreeDecrement(node_pointer head) {
 
-		if (head->color == RED
-			&& head->parent->parent == head)
-			head = head->right;
-		else if (head->left->color != NONE) {
+		if (head->left != this->_sentinal)
+			head = lastRight(head->left);
+		else
+		{
+			node_type	*child = head;
 
-			node_pointer	tmpLeft =  head->left;
-
-			while (tmpLeft->right->color != NONE)
-				tmpLeft = tmpLeft->right;
-			head = tmpLeft;
-		}
-		else {
-
-			node_pointer tmpRoot = head->parent;
-
-			while (tmpRoot->color != NONE && head == tmpRoot->left) {
-
-				head = tmpRoot;
-				tmpRoot = tmpRoot->parent;
+			head = head->parent;
+			while (head != this->_sentinal
+				&& child == head->left)
+			{
+				child = head;
+				head = head->parent;
 			}
-			head = tmpRoot;
 		}
 		return (head);
 	}
 
+	// if (head == this->_sentinal) {
+
+	// 	head = this->_sentinal->parent;
+	// }
+	// else
+	// {
+	// 	node_type	*child = this->_node;
+
+	// 	this->_node = this->_node->parent;
+	// 	while (this->_node && child == this->_node->left)
+	// 	{
+	// 		child = this->_node;
+	// 		this->_node = this->_node->parent;
+	// 	}
+	// }
+	// return (*this);
+		// return (*this);
+
 };
+		// else if (head->left != this->_sentinal) {
+
+		// 	// print("ICIC")
+		// 	print(head)
+		// 	// print(head->color)
+		// 	// print(this->_sentinal)
+		// 	// print(this->_sentinal->parent)
+		// 	// print(this->_sentinal->left)
+		// 	// print(this->_sentinal->right)
+		// 	head = lastRight(head->left);
+		// }
 
 	template <typename T>
 	mapNode<T>		*lastRight(mapNode<T>	*head) {
 
-		while (head->parent->color != NONE)
-			head = head->parent;
+		// print(head)
+		// while (head->parent->color != NONE)
+		// 	head = head->parent;
 		while (head->right->color != NONE)
 			head = head->right;
-		head = head->right;
+		// head = head->right;
 		return (head);
 	}
 
 	template <typename T>
 	mapNode<T>		*lastLeft(mapNode<T>	*head) {
 
-		while (head->parent->color != NONE)
-			head = head->parent;
+		// while (head->parent->color != NONE)
+		// 	head = head->parent;
+		// print(head)
 		while (head->left->color != NONE)
 			head = head->left;
 		return (head);
 	}
 
+};
+
+template <typename _T>
+inline std::ostream  &operator<<(std::ostream  &outStream, ft::mapNode<_T> &instance) {
+	outStream << instance.toString().str();
+	return (outStream);
 };
 
 #endif

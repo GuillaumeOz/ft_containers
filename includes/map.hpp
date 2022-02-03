@@ -80,20 +80,9 @@ class map {
 
 //------------------------------CONSTRUCTORS----------------------------------//
 
-	// Default constructor
-	map(void) {
-
-		this->_sentinal = allocator_type().allocate(1);
-		allocator_type().construct(this->_sentinal, node_type(NONE, NULL, NULL, NULL));
-
-		this->_root = NULL;
-		this->_size = 0;
-
-		// this->_root = new node_type;
-	}
-
-	// Comparison object Allocator object constructor
-	explicit map(key_compare const &comp, allocator_type const &alloc) {
+	// Empty constructor
+	explicit map(key_compare const &comp = key_compare(),
+				allocator_type const &alloc = allocator_type()) {
 
 		this->_sentinal = allocator_type().allocate(1);
 		allocator_type().construct(this->_sentinal, node_type(NONE, NULL, NULL, NULL));
@@ -123,14 +112,15 @@ class map {
 	// Copy Constructor
 	map(map const &src) {
 
-		this->clear();//redo this overload
-		// node_ptr tmp = this->_root;
+		this->_sentinal = allocator_type().allocate(1);
+		allocator_type().construct(this->_sentinal, node_type(NONE, NULL, NULL, NULL));
 
-		this->_root = src._root;
+		this->_root = NULL;
 		this->_keyCompare = src._keyCompare;
 		this->_alloc = src._alloc;
-		this->_size = src._size;
+		this->_size = 0;
 
+		this->insert(src.end(), src.begin());
 	}
 
 //-------------------------------DESTRUCTOR-----------------------------------//
@@ -138,50 +128,50 @@ class map {
 	~map(void) {
 
 		this->clear();//delete all nodes
-		allocator_type().destroy(this->_root);
-		allocator_type().deallocate(this->_root, 1);//not necessary ?
+		// allocator_type().destroy(this->_root);
+		// allocator_type().deallocate(this->_root, 1);//not necessary ?
 	}
 
 //--------------------------ITERATORS FUNCTIONS-------------------------------//
 
 	iterator begin() {
 
-		return (iterator(lastLeft(this->_root)));
+		return (iterator(lastLeft(this->_root), this->_sentinal));
 	}
 
 	const_iterator begin() const {
 
-		return (const_iterator(lastLeft(this->_root)));
+		return (const_iterator(lastLeft(this->_root), this->_sentinal));
 	}
 
 	iterator end() {
 
-		return ((iterator(lastRight(this->_root))));
+		return ((iterator(this->_sentinal)));
 	}
 
 	const_iterator end() const {
 
-		return ((const_iterator(lastRight(this->_root))));
+		return ((const_iterator(this->_sentinal)));
 	}
 
 	reverse_iterator rbegin() {
 
-		return (reverse_iterator(lastRight(this->_root)));
+		return (reverse_iterator(this->_sentinal));
 	}
 
 	const_reverse_iterator rbegin() const {
 
-		return (const_reverse_iterator(lasztRight(this->_root)));
+		return (const_reverse_iterator(this->_sentinal));
 	}
 
 	reverse_iterator rend() {
 
-		return (reverse_iterator(lastLeft(this->_root)));
+		return (reverse_iterator(lastLeft(this->_root), this->_sentinal));
 	}
 
 	const_reverse_iterator rend() const {
 
-		return (const_reverse_iterator(lastLeft(this->_root)));
+		return (const_reverse_iterator(lastLeft(this->_root), this->_sentinal));
 	}
 
 //---------------------------CAPACITY FUNCTIONS-------------------------------//
@@ -210,12 +200,7 @@ class map {
 
 	mapped_type&	operator[](const key_type& k) {
 
-		iterator it = lower_bound(k);
-
-		it = insert(it, value_type(k, mapped_type()));
-
-		return ((*it).second);
-		// return ((*((this->insert(make_pair(k,mapped_type()))).first)).second);
+		return ((*((this->insert(make_pair(k,mapped_type()))).first)).second);
 		// return (this->insert(value_type(k, mapped_type()))).first->second;
 	}
 
@@ -223,8 +208,8 @@ class map {
 
 	ft::pair<iterator, bool> insert(const value_type& val) {
 		if (this->_mapInsertUnique(val) == false)
-			return ft::make_pair(find(val.first), false);
-		return ft::make_pair(find(val.first), true);
+			return (ft::make_pair(find(val.first), false));
+		return (ft::make_pair(find(val.first), true));
 	}
 
 	iterator insert(iterator position, const value_type& val) {
@@ -283,8 +268,9 @@ class map {
 
 	void clear() {
 
-		//destroy empty node
-		this->_destroyNode(this->_root);
+		// this->_root->color = RED;
+		if (this->_root != NULL)
+			this->_destroyNode(this->_root);
 		this->_root = NULL;
 	}
 
@@ -304,12 +290,8 @@ class map {
 
 	iterator	find(const key_type& k) {
 
-		// print(this->_root->color)
-		// print(this->_root->parent->color)
-		// print(this->_root->parent)
-		// print(this->_sentinal)
 		iterator itEnd = this->end();
-		
+
 		for (iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
 			if (!this->_keyCompare(itBegin->first, k) && !this->_keyCompare(k, itBegin->first)) {
@@ -385,7 +367,7 @@ class map {
 
 			if (this->_keyCompare(k, itBegin->first)) {
 
-				itBegin++;
+				// itBegin++;
 				return (itBegin);
 			}
 		}
@@ -437,6 +419,8 @@ class map {
 			tmp->left->parent = node;
 
 		tmp->parent = node->parent;
+		// print("LALLA")
+
 		if (node->parent == this->_sentinal)
 			_root = tmp;
 		else if (node == node->parent->left)
@@ -457,6 +441,7 @@ class map {
 			tmp->right->parent = node;
 
 		tmp->parent = node->parent;
+		// print("ICICI")
 		if (node->parent == this->_sentinal)
 			_root = tmp;
 		else if (node == node->parent->right)
@@ -468,29 +453,14 @@ class map {
 		node->parent = tmp;
 	}
 
-	void	printTree() {//delete this
-
-		if (this->_root == NULL)
-			return ;
-		iterator itBegin = this->begin();
-		iterator itEnd = this->end();
-
-		while (itBegin != itEnd) {
-			
-			std::cout << "Key :" << (*itBegin).first << " Value : " << (*itEnd).second << std::endl;
-			++itBegin;
-		}
-
-	}
-
 	bool	_mapInsertUnique(const value_type &val) {
 
 		node_ptr toInsert = allocator_type().allocate(1);
-		allocator_type().construct(toInsert, node_type(val, RED, NULL, NULL, NULL)); // new node must be red
+		allocator_type().construct(toInsert, node_type(val, RED, NULL, NULL, NULL));
 
-			toInsert->parent = this->_sentinal;
-			toInsert->left = this->_sentinal;
-			toInsert->right = this->_sentinal;
+		toInsert->parent = this->_sentinal;
+		toInsert->left = this->_sentinal;
+		toInsert->right = this->_sentinal;
 
 		value_compare comp;
 
@@ -501,10 +471,12 @@ class map {
 		if (this->_root == NULL) {
 
 			this->_root = toInsert;
+			this->_sentinal->parent = this->_root;
 			this->_root->color = BLACK;
-			this->_root->parent = this->_sentinal;
-			this->_root->left = this->_sentinal;
-			this->_root->right = this->_sentinal;
+			// print("TRUE")
+			// print(this->_sentinal)
+			// print(this->_root)
+			// print("TRUE")
 			return (true);
 		}
 		while (root != this->_sentinal) {
@@ -588,7 +560,6 @@ class map {
 				break ;
 		}
 		this->_root->color = BLACK;
-		// _setSentinal(toFix);
 	}
 
 	void	_redBlackTreeEraseAndRebalance(node_ptr rmNode) {
@@ -631,10 +602,11 @@ class map {
 
 	void	_destroyNode(node_ptr node) {
 
-		if (node == this->_sentinal)//fix const
+		// print(node->color)
+		if (node == this->_sentinal)
 			return ;
-		_destroyNode(node->right);
-		_destroyNode(node->left);
+		this->_destroyNode(node->right);
+		this->_destroyNode(node->left);
 		allocator_type().destroy(node);
 		allocator_type().deallocate(node, 1);
 	}
