@@ -29,6 +29,7 @@ class reverseIterator: public iterator< typename iterator_traits<Iterator>::iter
 	private:
 
 		Iterator								current;
+		Iterator								redBlackTreeSentinal;
 
 		typedef iterator_traits<Iterator>		traits_type;
 
@@ -50,13 +51,14 @@ class reverseIterator: public iterator< typename iterator_traits<Iterator>::iter
 		}
 
 		//initialization
-		explicit reverseIterator(iterator_type x) : current(x) {
+		explicit reverseIterator(iterator_type x) : current(x) {//add sentinal
 
 		}
 
 		//copy
-		reverseIterator(reverseIterator const & x) : current(x.current) {
+		reverseIterator(reverseIterator const & x, reverseIterator const & sentinal = NULL) : current(x.current) {
 
+			redBlackTreeSentinal = sentinal;
 		}
 
 		//copy form InputIterator

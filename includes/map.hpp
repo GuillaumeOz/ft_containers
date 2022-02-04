@@ -120,7 +120,8 @@ class map {
 		this->_alloc = src._alloc;
 		this->_size = 0;
 
-		this->insert(src.end(), src.begin());
+		this->insert(src.begin(), src.end());
+
 	}
 
 //-------------------------------DESTRUCTOR-----------------------------------//
@@ -130,6 +131,26 @@ class map {
 		this->clear();//delete all nodes
 		// allocator_type().destroy(this->_root);
 		// allocator_type().deallocate(this->_root, 1);//not necessary ?
+	}
+
+//--------------------------ASSIGNATION OPERATOR------------------------------//
+
+	map& operator=(const map& rhs) {
+
+		// if (*this == rhs)
+		// 	return (*this);
+		this->clear();
+
+		iterator itBegin(lastLeft(rhs._sentinal->parent), rhs._sentinal);
+		iterator itEnd(lastRight(rhs._sentinal->parent), rhs._sentinal);
+
+		this->insert(itBegin, itEnd);
+		// while (itBegin != itEnd) {
+
+		// 	this->insert(itBegin.);
+		// 	++itBegin;
+		// }
+		return (*this);
 	}
 
 //--------------------------ITERATORS FUNCTIONS-------------------------------//
@@ -146,22 +167,22 @@ class map {
 
 	iterator end() {
 
-		return ((iterator(this->_sentinal)));
+		return ((iterator(lastRight(this->_root), this->_sentinal)));
 	}
 
 	const_iterator end() const {
 
-		return ((const_iterator(this->_sentinal)));
+		return ((const_iterator(lastRight(this->_root), this->_sentinal)));
 	}
 
 	reverse_iterator rbegin() {
 
-		return (reverse_iterator(this->_sentinal));
+		return (reverse_iterator(lastRight(this->_root), this->_sentinal));
 	}
 
 	const_reverse_iterator rbegin() const {
 
-		return (const_reverse_iterator(this->_sentinal));
+		return (const_reverse_iterator(lastRight(this->_root), this->_sentinal));
 	}
 
 	reverse_iterator rend() {
@@ -207,9 +228,12 @@ class map {
 //---------------------------MODIFIERS FUNCTIONS------------------------------//
 
 	ft::pair<iterator, bool> insert(const value_type& val) {
-		if (this->_mapInsertUnique(val) == false)
+	
+		if (this->_mapInsertUnique(val) == false) {
+
 			return (ft::make_pair(find(val.first), false));
-		return (ft::make_pair(find(val.first), true));
+		}
+		return (ft::make_pair(find(val.first), true));//here
 	}
 
 	iterator insert(iterator position, const value_type& val) {
@@ -272,6 +296,7 @@ class map {
 		if (this->_root != NULL)
 			this->_destroyNode(this->_root);
 		this->_root = NULL;
+		this->_size = 0;
 	}
 
 //--------------------------OBSERVERS FUNCTIONS-------------------------------//
@@ -289,6 +314,7 @@ class map {
 //--------------------------OPERATIONS FUNCTIONS------------------------------//
 
 	iterator	find(const key_type& k) {
+
 
 		iterator itEnd = this->end();
 
@@ -367,7 +393,6 @@ class map {
 
 			if (this->_keyCompare(k, itBegin->first)) {
 
-				// itBegin++;
 				return (itBegin);
 			}
 		}
@@ -419,8 +444,6 @@ class map {
 			tmp->left->parent = node;
 
 		tmp->parent = node->parent;
-		// print("LALLA")
-
 		if (node->parent == this->_sentinal)
 			_root = tmp;
 		else if (node == node->parent->left)
@@ -441,7 +464,6 @@ class map {
 			tmp->right->parent = node;
 
 		tmp->parent = node->parent;
-		// print("ICICI")
 		if (node->parent == this->_sentinal)
 			_root = tmp;
 		else if (node == node->parent->right)
@@ -473,10 +495,6 @@ class map {
 			this->_root = toInsert;
 			this->_sentinal->parent = this->_root;
 			this->_root->color = BLACK;
-			// print("TRUE")
-			// print(this->_sentinal)
-			// print(this->_root)
-			// print("TRUE")
 			return (true);
 		}
 		while (root != this->_sentinal) {

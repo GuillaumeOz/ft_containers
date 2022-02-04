@@ -21,23 +21,57 @@
 
 # define print(x) std::cout << x << std::endl;
 
+// static unsigned int i = 0;
+
 static void mapTests() {
 
 	print("-----------------------------MAP----------------------------------");
-	std::map<int, int> mtest;
+	ft::map<int, int> map;
 
-	mtest.insert(std::pair<char,int>(4,8));
-	mtest.insert(std::pair<char,int>(5,10));
-	mtest.insert(std::pair<char,int>(6,2));
-	mtest.insert(std::pair<char,int>(3,6));
+	map.insert(ft::pair<int,int>(4,8));
+	map.insert(ft::pair<int,int>(5,10));
+	map.insert(ft::pair<int,int>(6,2));
+	map.insert(ft::pair<int,int>(3,6));
 
-	std::map<int,int>::iterator it = mtest.begin(), ite = mtest.end();
-	std::cout << std::endl << "Content is:" << std::endl;
-	for (; it != ite; ++it) {
+	// ft::map<int,int>::iterator it = map.begin(), ite = map.end();
+	// std::cout << std::endl << "Content is:" << std::endl;
+	// for (; it != ite; ++it) {
 
-		std::cout << "|  key: " << it->first << "   |" << std::endl;
-		std::cout << "| value: " << it->second << " |" << std::endl;
-	}
+	// 	std::cout << "|  key: " << it->first << "   " << "value: " << it->second << "  |" << std::endl;
+	// }
+
+	map.clear();
+
+	print("")
+
+	// ft::map<char, float>	map2;
+
+	// map2['a'] = 2.3;
+	// map2['b'] = 1.4;
+	// map2['c'] = 0.3;
+	// map2['d'] = 4.2;
+
+	// ft::map<char, float>::const_iterator itBegin = map2.begin();
+	// ft::map<char, float>::const_iterator itBegin2 = map2.begin();
+
+	// ft::map<char,float>::iterator it5 = map2.begin();
+	// bool res[2];
+
+	// for (ft::map<char, float>::const_iterator itBegin = map2.begin(); itBegin != map2.end(); ++itBegin) {
+
+	// 	for (ft::map<char, float>::const_iterator itBegin2 = map2.begin(); itBegin2 != map2.end(); ++itBegin2){
+
+
+	// 		std::cout << "\t-- [" << ++i << "] --" << std::endl;
+	// 		res[0] = map2.key_comp()(itBegin->first, itBegin2->first);
+	// 		res[1] = map2.value_comp()(*itBegin, *itBegin2);
+	// 		std::cout << "with [" << itBegin->first << " and " << itBegin2->first << "]: ";
+	// 		std::cout << "key_comp: " << res[0] << " | " << "value_comp: " << res[1] << std::endl;
+	// 	}
+	// }
+
+
+
 }
 
 static void stackTests() {
