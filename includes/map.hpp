@@ -6,13 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/30 18:35:03 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/09 16:40:09 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
-
 
 # include "utils/lexicographical_compare.hpp"
 # include "utils/equal_compare.hpp"
@@ -64,7 +63,6 @@ class map {
 	public:
 		class value_compare : public std::binary_function<value_type, value_type, bool> {
 
-			// friend class map<Key, T, Compare, Alloc>;//remove friend here
 		public:
 			Compare		comp;
 
@@ -87,7 +85,7 @@ class map {
 		this->_sentinal = allocator_type().allocate(1);
 		allocator_type().construct(this->_sentinal, node_type(NONE, NULL, NULL, NULL));
 
-		this->_root = NULL;
+		this->_root = this->_sentinal;
 		this->_keyCompare = comp;
 		this->_alloc = alloc;
 		this->_size = 0;
@@ -101,7 +99,7 @@ class map {
 		this->_sentinal = allocator_type().allocate(1);
 		allocator_type().construct(this->_sentinal, node_type(NONE, NULL, NULL, NULL));
 
-		this->_root = NULL;
+		this->_root = this->_sentinal;
 		this->_keyCompare = comp;
 		this->_alloc = alloc;
 		this->_size = 0;
@@ -115,7 +113,7 @@ class map {
 		this->_sentinal = allocator_type().allocate(1);
 		allocator_type().construct(this->_sentinal, node_type(NONE, NULL, NULL, NULL));
 
-		this->_root = NULL;
+		this->_root = this->_sentinal;
 		this->_keyCompare = src._keyCompare;
 		this->_alloc = src._alloc;
 		this->_size = 0;
@@ -128,28 +126,19 @@ class map {
 
 	~map(void) {
 
-		this->clear();//delete all nodes
-		// allocator_type().destroy(this->_root);
-		// allocator_type().deallocate(this->_root, 1);//not necessary ?
+		this->clear();
+		allocator_type().destroy(this->_sentinal);
+		allocator_type().deallocate(this->_sentinal, 1);
 	}
 
 //--------------------------ASSIGNATION OPERATOR------------------------------//
 
 	map& operator=(const map& rhs) {
 
-		// if (*this == rhs)
-		// 	return (*this);
 		this->clear();
 
-		iterator itBegin(lastLeft(rhs._sentinal->parent), rhs._sentinal);
-		iterator itEnd(lastRight(rhs._sentinal->parent), rhs._sentinal);
+		_insertInputIterator(rhs.begin(), rhs.end());
 
-		this->insert(itBegin, itEnd);
-		// while (itBegin != itEnd) {
-
-		// 	this->insert(itBegin.);
-		// 	++itBegin;
-		// }
 		return (*this);
 	}
 
@@ -167,12 +156,12 @@ class map {
 
 	iterator end() {
 
-		return ((iterator(lastRight(this->_root), this->_sentinal)));
+		return ((iterator(this->_sentinal, this->_sentinal)));
 	}
 
 	const_iterator end() const {
 
-		return ((const_iterator(lastRight(this->_root), this->_sentinal)));
+		return ((const_iterator(this->_sentinal, this->_sentinal)));
 	}
 
 	reverse_iterator rbegin() {
@@ -211,18 +200,14 @@ class map {
 
 	size_type	max_size() const {
 
-		// return (std::numeric_limits<difference_type>::max() / (sizeof(node_type)));
-		// return allocator_type().max_size();
-		return (std::numeric_limits<difference_type>::max() / 20);
-		// return (this->_alloc.max_size());
+		return (std::numeric_limits<difference_type>::max() / (sizeof(node_type)));
 	}
 
 //-------------------------ELEMENT ACCESS FUNCTION----------------------------//
 
 	mapped_type&	operator[](const key_type& k) {
 
-		return ((*((this->insert(make_pair(k,mapped_type()))).first)).second);
-		// return (this->insert(value_type(k, mapped_type()))).first->second;
+		return ((*((this->insert(ft::make_pair(k,mapped_type()))).first)).second);
 	}
 
 //---------------------------MODIFIERS FUNCTIONS------------------------------//
@@ -254,48 +239,42 @@ class map {
 	// iterator erase
 	void	erase(iterator position) {
 
-		this->erase(position->_node->first);
+		// print(position->first)
+		this->erase(position->first);
 	}
 
 	// key erase
 	size_type erase (const key_type& k) {
 
-		iterator itKey = this->find(k);
-
-		if (itKey != this->end()) {
-
-			this->_redBlackTreeEraseAndRebalance(itKey._node);
-			return (1);
-		}
-		return (0);
+		if (this->_redBlackTreeEraseAndRebalance(ft::make_pair(k, mapped_type())) == false)
+			return (0);
+		return (1);
 	}
 
 	// range erase
 	void erase (iterator first, iterator last) {
 
-		while (first != last) {//test this function
+		while (first != last) {
 
 			first = find(first->first);
-			erase(first);
-			first++;//can have some bugs here
+			erase(first++);
 		}
 	}
 
 	void swap (map& x) {
 
-		node_type *tmp;
+		map tmp;
 
-		tmp->_root = x._root;
-		x._root = this->_root;
-		this->_root = tmp->_root;//test this
+		tmp._swapContent(x);
+		x._swapContent(*this);
+		this->_swapContent(tmp);
 	}
 
 	void clear() {
 
-		// this->_root->color = RED;
 		if (this->_root != NULL)
 			this->_destroyNode(this->_root);
-		this->_root = NULL;
+		this->_root = this->_sentinal;
 		this->_size = 0;
 	}
 
@@ -436,9 +415,15 @@ class map {
 	key_compare				_keyCompare;
 	size_type				_size;
 
+	template <class InputIterator>
+	void		_insertInputIterator(InputIterator first, InputIterator last) {
+
+		this->insert(first, last);
+	}
+
 	void	_leftRotate(node_ptr node) {
 		node_ptr	tmp = node->right;
-		
+
 		node->right = tmp->left;
 		if (tmp->left != this->_sentinal)
 			tmp->left->parent = node;
@@ -456,7 +441,6 @@ class map {
 	}
 
 	void	_rightRotate(node_ptr node) {
-
 		node_ptr	tmp = node->left;
 
 		node->left = tmp->right;
@@ -490,7 +474,7 @@ class map {
 		node_ptr root = this->_root;
 
 		this->_size++;
-		if (this->_root == NULL) {
+		if (this->_root == this->_sentinal) {
 
 			this->_root = toInsert;
 			this->_sentinal->parent = this->_root;
@@ -504,6 +488,7 @@ class map {
 			else if (comp(root->value, toInsert->value))
 				root = root->right;
 			else {
+				this->_size--;
 				allocator_type().destroy(toInsert);
 				allocator_type().deallocate(toInsert, 1);
 				return (false);
@@ -519,7 +504,6 @@ class map {
 		else
 			current->right = toInsert;
 
-		//Assign Black color to _root node
 		if (toInsert->parent == this->_sentinal) {
 			toInsert->color = BLACK;
 			return (true);
@@ -539,7 +523,7 @@ class map {
 		while (toFix->parent->color == RED) {
 			if (toFix->parent == toFix->parent->parent->right) {
 				tmp = toFix->parent->parent->left;
-				if (tmp != this->_sentinal && tmp->color == RED) {//add sentinal protect
+				if (tmp != this->_sentinal && tmp->color == RED) {
 					tmp->color = BLACK;
 					toFix->parent->color = BLACK;
 					toFix->parent->parent->color = RED;
@@ -558,7 +542,7 @@ class map {
 			else {
 				tmp = toFix->parent->parent->right;
 
-				if (tmp != this->_sentinal && tmp->color == RED) {//add sentinal protect
+				if (tmp != this->_sentinal && tmp->color == RED) {
 					tmp->color = BLACK;
 					toFix->parent->color = BLACK;
 					toFix->parent->parent->color = RED;
@@ -580,47 +564,196 @@ class map {
 		this->_root->color = BLACK;
 	}
 
-	void	_redBlackTreeEraseAndRebalance(node_ptr rmNode) {
-		node_ptr	replaceNode = NULL;
-		node_ptr	*rmPlace = &this->_root;
+	void	_insertNewNode(node_ptr node, node_ptr toInsert) {
 
-		print("ERAAASEEE")
-		--this->_size;
-		if (rmNode->parent)
-			rmPlace = (rmNode->parent->left == rmNode ? &rmNode->parent->left : &rmNode->parent->right);
-		if (rmNode->left == NULL && rmNode->right == NULL)
-			;
-		else if (rmNode->left == NULL) // left == NULL && right != NULL
-			replaceNode = rmNode->right;
-		else // left != NULL && right ?= NULL
-		{
-			replaceNode = lastRight(rmNode->left);
-			if (replaceNode != rmNode->left)
-				if ((replaceNode->parent->right = replaceNode->left))
-					replaceNode->left->parent = replaceNode->parent;
-		}
-		if (replaceNode)
-		{
-			replaceNode->parent = rmNode->parent;
-			if (rmNode->left && rmNode->left != replaceNode)
-			{
-				replaceNode->left = rmNode->left;
-				replaceNode->left->parent = replaceNode;
+		if (node->parent == this->_sentinal)
+			this->_root = toInsert;
+		else if (node == node->parent->left)
+			node->parent->left = toInsert;
+		else
+			node->parent->right = toInsert;
+
+		toInsert->parent = node->parent;
+	}
+
+	void	_eraseRotation(node_ptr toFix) {
+
+		node_ptr	tmp;
+
+		while (toFix != this->_root && toFix->color == BLACK) {
+
+			if (toFix == toFix->parent->left) {
+				tmp = toFix->parent->right;
+				if (tmp->color == RED) {
+					tmp->color = BLACK;
+					if (toFix->parent->color != NONE)
+						toFix->parent->color = RED;
+					_leftRotate(toFix->parent);
+					tmp = toFix->parent->right;
+				}
+
+				if (tmp->left->color == BLACK && tmp->right->color == BLACK) {
+					tmp->color = RED;
+					if (toFix != this->_sentinal)
+						toFix = toFix->parent;
+				}
+				else {
+					if (tmp->right->color == BLACK) {
+						tmp->left->color = BLACK;
+						tmp->color = RED;
+						_rightRotate(tmp);
+						tmp = toFix->parent->right;
+					}
+					if (tmp->color != NONE)
+						tmp->color = toFix->parent->color;
+					if (toFix->parent->color != NONE)
+						toFix->parent->color = BLACK;
+					if (tmp->right->color != NONE)
+						tmp->right->color = BLACK;
+					_leftRotate(toFix->parent);
+					toFix = this->_root;
+				}
 			}
-			if (rmNode->right && rmNode->right != replaceNode)
-			{
-				replaceNode->right = rmNode->right;
-				replaceNode->right->parent = replaceNode;
+			else {
+				tmp = toFix->parent->left;
+				if (tmp->color == RED) {
+					tmp->color = BLACK;
+					if (toFix->parent->color != NONE)
+						toFix->parent->color = RED;
+					_rightRotate(toFix->parent);
+					tmp = toFix->parent->left;
+				}
+				if (tmp->left->color == BLACK && tmp->right->color == BLACK) {
+					tmp->color = RED;
+					toFix = toFix->parent;
+				}
+				else {
+					if (tmp->left->color == BLACK) {
+						if (tmp->right->color != NONE)
+							tmp->right->color = BLACK;
+						if (tmp->color != NONE)
+							tmp->color = RED;
+						_leftRotate(tmp);
+						tmp = toFix->parent->left;
+					} 
+
+					tmp->color = toFix->parent->color;
+					if (toFix->parent->color != NONE)
+						toFix->parent->color = BLACK;
+					if (tmp->left->color != NONE)
+						tmp->left->color = BLACK;
+					_rightRotate(toFix->parent);
+					toFix = _root;
+				}
+			} 
+		}
+		if (toFix != this->_sentinal)
+			toFix->color = BLACK;
+	}
+
+	pointer	_rightMin(pointer node) {
+
+		if (node == this->_sentinal)
+			return this->_sentinal;
+		while (node->left != this->_sentinal)
+			node = node->left;
+		return (node);
+	}
+
+	bool	_redBlackTreeEraseAndRebalance(value_type const & val) {
+
+		node_ptr		node = this->_root;
+		node_ptr		toDelete = NULL;
+		node_ptr		tmp;
+		node_ptr		current;
+		value_compare	comp;
+
+		while (node != this->_sentinal) {
+
+			if (comp(node->value, val)){
+
+				node = node->right;
+			}
+			else if (comp(val, node->value)) {
+	
+				node = node->left;
+			}
+			else {
+
+				toDelete = node;
+				node = node->right;
 			}
 		}
-		*rmPlace = replaceNode;
-		allocator_type().destroy(rmNode);
-		allocator_type().deallocate(rmNode, 1);
+
+		if (toDelete == NULL) {
+
+			return false;
+		}
+
+		current = toDelete;
+		int previousCurrentColor = current->color;
+		if (toDelete->left == this->_sentinal) {
+
+			tmp = toDelete->right;
+			_insertNewNode(toDelete, toDelete->right);
+		}
+		else if (toDelete->right == this->_sentinal) {
+
+			tmp = toDelete->left;
+			_insertNewNode(toDelete, toDelete->left);
+		}
+		else {
+
+			current = _rightMin(toDelete->right);
+			previousCurrentColor = current->color;
+			tmp = current->right;
+			if (current->parent == toDelete) {// add condition
+
+				if (tmp != this->_sentinal)
+					tmp->parent = current;//change current for this->_root
+			}
+			else {
+				_insertNewNode(current, current->right);
+				current->right = toDelete->right;
+				if (current->right->parent != this->_sentinal)
+					current->right->parent = current;
+			}
+
+			_insertNewNode(toDelete, current);
+			current->left = toDelete->left;
+			if (current->left->parent != this->_sentinal)
+				current->left->parent = current;
+			current->color = toDelete->color;
+		}
+
+		allocator_type().destroy(toDelete);//use after free here
+		allocator_type().deallocate(toDelete, 1);
+		this->_size--;
+
+		if (previousCurrentColor == BLACK)
+			_eraseRotation(tmp);
+			
+		return (true);
+	}
+
+	void	_swapContent(map &src) {
+
+		this->clear();
+		node_ptr newRoot = this->_root;
+		node_ptr newSentinal = this->_sentinal;
+
+		this->_root = src._root;
+		this->_sentinal = src._sentinal;
+		this->_keyCompare = src._keyCompare;
+		this->_alloc = src._alloc;
+		this->_size = src._size;
+		src._root = newRoot;
+		src._sentinal = newSentinal;
+		src._size = 0;
 	}
 
 	void	_destroyNode(node_ptr node) {
 
-		// print(node->color)
 		if (node == this->_sentinal)
 			return ;
 		this->_destroyNode(node->right);
@@ -628,9 +761,76 @@ class map {
 		allocator_type().destroy(node);
 		allocator_type().deallocate(node, 1);
 	}
-
 };
 
+//--------------------------RELATIONAL OPERATOR-------------------------------//
+
+	// Operator ==
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator== (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs) {
+
+		if (lhs.size() == rhs.size()) {
+
+			return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+		}
+		return (false);
+	}
+
+	// Operator !=
+	// a!=b -> !(a==b)
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator!= (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs) {
+
+		return (!(lhs == rhs));
+	}
+
+	// Operator <
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<  (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs) {
+
+		if (lhs != rhs) {
+
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
+		return (false);
+	}
+
+	// Operator <=
+	// a<=b -> !(b<a)
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<= (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs) {
+
+		if (lhs == rhs)
+			return (true);
+		return (!(rhs < lhs));
+	}
+
+	// Operator >
+	// a>b -> b<a
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>  (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs) {
+
+		if (lhs == rhs)
+			return (false);
+		return (rhs < lhs);
+	}
+
+	// Operator >=
+	// a>=b -> !(a<b)
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>= (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs) {
+
+		if (lhs == rhs)
+			return (true);
+		return (!(lhs < rhs));
+	}
+
+	// Swap overload
+	template <class Key, class T, class Compare, class Alloc>
+	void swap (map<Key, T, Compare, Alloc>& x, map<Key, T, Compare, Alloc>& y) {
+
+		x.swap(y);
+	}
 };
 
 #endif

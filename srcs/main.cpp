@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/30 18:02:21 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/06 17:41:34 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,35 @@ static void mapTests() {
 	print("-----------------------------MAP----------------------------------");
 	ft::map<int, int> map;
 
+	map.insert(ft::pair<int,int>(1,8));
+	map.insert(ft::pair<int,int>(7,6));
+	map.insert(ft::pair<int,int>(3,8));
 	map.insert(ft::pair<int,int>(4,8));
-	map.insert(ft::pair<int,int>(5,10));
+	map.insert(ft::pair<int,int>(5,8));
+	map.insert(ft::pair<int,int>(2,8));
 	map.insert(ft::pair<int,int>(6,2));
-	map.insert(ft::pair<int,int>(3,6));
+
+	ft::map<int,int>::const_iterator it = map.begin(), ite = map.end();
+	std::cout << std::endl << "Content is:" << std::endl;
+	for (; it != ite; ++it) {
+
+		std::cout << "|  key: " << it->first << "   " << "value: " << it->second << "  |" << std::endl;
+	}
+
+	ft::map<int, int> map2(map.begin(), map.end());
+	
+
+	std::cout << "size: " << map2.size() << std::endl;
+	std::cout << "max_size: " << map2.max_size() << std::endl;
+
+	ft::map<int,int>::const_iterator it2 = map2.begin(), ite2 = map2.end();
+	std::cout << std::endl << "Content is:" << std::endl;
+	for (; it2 != ite2; ++it2) {
+
+		std::cout << "|  key: " << it2->first << "   " << "value: " << it2->second << "  |" << std::endl;
+	}
+
+	std::cout << "###############################################" << std::endl;
 
 	// ft::map<int,int>::iterator it = map.begin(), ite = map.end();
 	// std::cout << std::endl << "Content is:" << std::endl;
@@ -40,7 +65,7 @@ static void mapTests() {
 	// 	std::cout << "|  key: " << it->first << "   " << "value: " << it->second << "  |" << std::endl;
 	// }
 
-	map.clear();
+	// map.clear();
 
 	print("")
 
