@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 08:40:05 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/10 18:24:28 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/10 19:33:53 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,69 +230,69 @@ namespace ft
 
 		//------------------------------PRINT TREE------------------------------------//
 
-		std::string printTree()
-		{
+		// std::string printTree()
+		// {
 
-			Node *rootNode = this->_node;
+		// 	Node *rootNode = this->_node;
 
-			while (rootNode->parent != this->_sentinal)
-			{
+		// 	while (rootNode->parent != this->_sentinal)
+		// 	{
 
-				rootNode = rootNode->parent;
-			}
-			return (toString(rootNode).str());
-		}
+		// 		rootNode = rootNode->parent;
+		// 	}
+		// 	return (toString(rootNode).str());
+		// }
 
-		template <typename _T>
-		std::stringstream toString(mapNode<_T> *root)
-		{
+		// template <typename _T>
+		// std::stringstream toString(mapNode<_T> *root)
+		// {
 
-			return (toString(root, 0));
-		};
+		// 	return (toString(root, 0));
+		// };
 
-		template <typename _T>
-		std::stringstream toString(mapNode<_T> *tmp, int depth)
-		{
-			std::stringstream output;
+		// template <typename _T>
+		// std::stringstream toString(mapNode<_T> *tmp, int depth)
+		// {
+		// 	std::stringstream output;
 
-			if (tmp == this->_sentinal)
-			{
+		// 	if (tmp == this->_sentinal)
+		// 	{
 
-				return (output);
-			}
-			output << colorizeOutput(getSpaces(depth) + output.str(), tmp) << std::endl;
-			if (tmp->left != this->_sentinal)
-				output << toString(tmp->left, depth + 1).str();
-			if (tmp->right != this->_sentinal)
-				output << toString(tmp->right, depth + 1).str();
-			return (output);
-		};
+		// 		return (output);
+		// 	}
+		// 	output << colorizeOutput(getSpaces(depth) + output.str(), tmp) << std::endl;
+		// 	if (tmp->left != this->_sentinal)
+		// 		output << toString(tmp->left, depth + 1).str();
+		// 	if (tmp->right != this->_sentinal)
+		// 		output << toString(tmp->right, depth + 1).str();
+		// 	return (output);
+		// };
 
-		std::string getSpaces(int n)
-		{
-			std::string spaces("");
-			while (--n >= 0)
-			{
-				spaces += "  ";
-				spaces += ((n > 0) ? "│" : "└");
-			}
-			return spaces + "─ ";
-		}
+		// std::string getSpaces(int n)
+		// {
+		// 	std::string spaces("");
+		// 	while (--n >= 0)
+		// 	{
+		// 		spaces += "  ";
+		// 		spaces += ((n > 0) ? "│" : "└");
+		// 	}
+		// 	return spaces + "─ ";
+		// }
 
-		template <typename _T>
-		std::string colorizeOutput(std::string output, mapNode<_T> *tree)
-		{
-			std::stringstream tmp;
-			std::stringstream content;
+		// template <typename _T>
+		// std::string colorizeOutput(std::string output, mapNode<_T> *tree)
+		// {
+		// 	std::stringstream tmp;
+		// 	std::stringstream content;
 
-			content << tree->value.first;
-			if (tree->color == RED)
-				tmp << std::internal << content.str() + "R";
-			if (tree->color == BLACK)
-				tmp << std::internal << content.str() + "B";
-			output += tmp.str();
-			return (output);
-		}
+		// 	content << tree->value.first;
+		// 	if (tree->color == RED)
+		// 		tmp << std::internal << content.str() + "R";
+		// 	if (tree->color == BLACK)
+		// 		tmp << std::internal << content.str() + "B";
+		// 	output += tmp.str();
+		// 	return (output);
+		// }
 
 		//--------------------------------VARIABLES-----------------------------------//
 
@@ -387,11 +387,11 @@ namespace ft
 	}
 };
 
-template <typename _T>
-inline std::ostream &operator<<(std::ostream &outStream, ft::mapNode<_T> &instance)
-{
-	outStream << instance.toString().str();
-	return (outStream);
-};
+// template <typename _T>
+// inline std::ostream &operator<<(std::ostream &outStream, ft::mapNode<_T> &instance)
+// {
+// 	outStream << instance.toString().str();
+// 	return (outStream);
+// };
 
 #endif
