@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/09 16:40:09 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/10 18:26:43 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,13 @@ class map {
 		public:
 			Compare		comp;
 
-			value_compare(Compare __c = key_compare()) : comp(__c) {
+			value_compare(Compare c = key_compare()) : comp(c) {
 
 			}
 
-			bool operator()(const value_type& __x, const value_type& __y) const {
+			bool operator()(const value_type& x, const value_type& y) const {
 
-				return comp(__x.first, __y.first);
+				return comp(x.first, y.first);
 			}
 	};
 
@@ -166,22 +166,23 @@ class map {
 
 	reverse_iterator rbegin() {
 
-		return (reverse_iterator(lastRight(this->_root), this->_sentinal));
+		return (reverse_iterator(iterator(this->_sentinal, this->_sentinal)));
+
 	}
 
 	const_reverse_iterator rbegin() const {
 
-		return (const_reverse_iterator(lastRight(this->_root), this->_sentinal));
+		return (const_reverse_iterator(const_iterator(this->_sentinal, this->_sentinal)));
 	}
 
 	reverse_iterator rend() {
 
-		return (reverse_iterator(lastLeft(this->_root), this->_sentinal));
+		return (reverse_iterator(iterator(lastLeft(this->_root), this->_sentinal)));
 	}
 
 	const_reverse_iterator rend() const {
 
-		return (const_reverse_iterator(lastLeft(this->_root), this->_sentinal));
+		return (const_reverse_iterator(const_iterator(lastLeft(this->_root), this->_sentinal)));
 	}
 
 //---------------------------CAPACITY FUNCTIONS-------------------------------//
@@ -218,7 +219,7 @@ class map {
 
 			return (ft::make_pair(find(val.first), false));
 		}
-		return (ft::make_pair(find(val.first), true));//here
+		return (ft::make_pair(find(val.first), true));
 	}
 
 	iterator insert(iterator position, const value_type& val) {
@@ -239,16 +240,17 @@ class map {
 	// iterator erase
 	void	erase(iterator position) {
 
-		// print(position->first)
 		this->erase(position->first);
 	}
 
 	// key erase
 	size_type erase (const key_type& k) {
 
-		if (this->_redBlackTreeEraseAndRebalance(ft::make_pair(k, mapped_type())) == false)
-			return (0);
-		return (1);
+		if (this->_redBlackTreeEraseAndRebalance(ft::make_pair(k, mapped_type())) == true) {
+			
+			return (1);
+		}
+		return (0);
 	}
 
 	// range erase
@@ -430,7 +432,7 @@ class map {
 
 		tmp->parent = node->parent;
 		if (node->parent == this->_sentinal)
-			_root = tmp;
+			this->_root = tmp;
 		else if (node == node->parent->left)
 			node->parent->left = tmp;
 		else
@@ -449,7 +451,7 @@ class map {
 
 		tmp->parent = node->parent;
 		if (node->parent == this->_sentinal)
-			_root = tmp;
+			this->_root = tmp;
 		else if (node == node->parent->right)
 			node->parent->right = tmp;
 		else
@@ -482,6 +484,7 @@ class map {
 			return (true);
 		}
 		while (root != this->_sentinal) {
+
 			current = root;
 			if (comp(toInsert->value, root->value))
 				root = root->left;
@@ -558,7 +561,7 @@ class map {
 					_rightRotate(toFix->parent->parent);
 				}
 			}
-			if (toFix == _root)
+			if (toFix == this->_root)
 				break ;
 		}
 		this->_root->color = BLACK;
@@ -643,7 +646,7 @@ class map {
 					if (tmp->left->color != NONE)
 						tmp->left->color = BLACK;
 					_rightRotate(toFix->parent);
-					toFix = _root;
+					toFix = this->_root;
 				}
 			} 
 		}
@@ -707,10 +710,10 @@ class map {
 			current = _rightMin(toDelete->right);
 			previousCurrentColor = current->color;
 			tmp = current->right;
-			if (current->parent == toDelete) {// add condition
+			if (current->parent == toDelete) {
 
 				if (tmp != this->_sentinal)
-					tmp->parent = current;//change current for this->_root
+					tmp->parent = current;
 			}
 			else {
 				_insertNewNode(current, current->right);
@@ -726,13 +729,14 @@ class map {
 			current->color = toDelete->color;
 		}
 
-		allocator_type().destroy(toDelete);//use after free here
+		allocator_type().destroy(toDelete);
 		allocator_type().deallocate(toDelete, 1);
 		this->_size--;
 
 		if (previousCurrentColor == BLACK)
 			_eraseRotation(tmp);
-			
+		
+		this->_sentinal->parent = this->_root;
 		return (true);
 	}
 

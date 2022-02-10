@@ -6,18 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 08:40:05 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/09 16:32:57 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/10 18:24:28 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REDBLACKITERATOR_HPP
 #define REDBLACKITERATOR_HPP
-
-#include <sstream> //remove
-
-#ifndef COUCOU
-#define print(x) std::cout << x << std::endl; // delete this
-#endif
 
 namespace ft
 {
@@ -155,8 +149,6 @@ namespace ft
 		redBlackIterator &operator=(redBlackIterator const &rhs)
 		{
 
-			if (this == &rhs)
-				return (*this);
 			this->_node = rhs._node;
 			if (rhs._sentinal != NULL)
 				this->_sentinal = rhs._sentinal;
@@ -254,6 +246,7 @@ namespace ft
 		template <typename _T>
 		std::stringstream toString(mapNode<_T> *root)
 		{
+
 			return (toString(root, 0));
 		};
 
@@ -309,7 +302,6 @@ namespace ft
 
 		//----------------------------PRIVATE FUNCTION--------------------------------//
 
-
 		node_pointer _rbTreeIncrement(node_pointer head)
 		{
 
@@ -330,13 +322,12 @@ namespace ft
 					head = head->parent;
 				}
 			}
+
 			return (head);
 		}
 
 		node_pointer _rbTreeDecrement(node_pointer head)
 		{
-
-			// if (head->parent != this->_sentinal)
 			if (head == this->_sentinal)
 			{
 				while (head->parent != this->_sentinal)
@@ -345,12 +336,10 @@ namespace ft
 			}
 			else if (head->left != this->_sentinal)
 			{
-
 				head = lastRight(head->left);
 			}
 			else
 			{
-
 				node_type *child = head;
 
 				head = head->parent;
@@ -371,9 +360,12 @@ namespace ft
 
 		if (head->color != NONE)
 		{
-
-			while (head->right->color != NONE)
+			while (head->right->color != NONE) {
+				
 				head = head->right;
+				// print(head->value.first)
+				// print(head->value.second)
+			}
 		}
 		return (head);
 	}

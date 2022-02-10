@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:41:02 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/24 12:43:34 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/10 10:55:33 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ namespace ft {
 	template<typename _Iterator>
 	struct iterator_traits {
 
-		typedef typename _Iterator::iterator_category	iterator_category;
 		typedef typename _Iterator::value_type			value_type;
 		typedef typename _Iterator::difference_type		difference_type;
 		typedef typename _Iterator::pointer				pointer;

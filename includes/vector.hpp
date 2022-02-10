@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/09 14:22:03 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/10 18:25:55 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -367,9 +367,8 @@ class vector {
 
 		if (this->empty() == false) {
 
-			this->_alloc.destroy(this->_end);
+			this->_alloc.destroy(--this->_end);
 			this->_size--;
-			this->_end--;
 		}
 	}
 

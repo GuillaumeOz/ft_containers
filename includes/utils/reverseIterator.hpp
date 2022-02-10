@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/24 12:43:41 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/10 18:25:04 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@
 namespace ft {
 
 template < typename Iterator >
-class reverseIterator: public iterator< typename iterator_traits<Iterator>::iterator_category,
-										typename iterator_traits<Iterator>::value_type,
+class reverseIterator: public iterator< typename iterator_traits<Iterator>::value_type,
 										typename iterator_traits<Iterator>::difference_type,
 										typename iterator_traits<Iterator>::pointer,
 										typename iterator_traits<Iterator>::reference > {
@@ -29,7 +28,6 @@ class reverseIterator: public iterator< typename iterator_traits<Iterator>::iter
 	private:
 
 		Iterator								current;
-		Iterator								redBlackTreeSentinal;
 
 		typedef iterator_traits<Iterator>		traits_type;
 
@@ -51,18 +49,17 @@ class reverseIterator: public iterator< typename iterator_traits<Iterator>::iter
 		}
 
 		//initialization
-		explicit reverseIterator(iterator_type x) : current(x) {//add sentinal
+		explicit reverseIterator(iterator_type x) : current(x) {
 
 		}
 
 		//copy
-		reverseIterator(reverseIterator const & x, reverseIterator const & sentinal = NULL) : current(x.current) {
+		reverseIterator(reverseIterator const & x) : current(x.current) {
 
-			redBlackTreeSentinal = sentinal;
 		}
 
 		//copy form InputIterator
-		template<typename InputIterator>
+		template<typename InputIterator>//it is usefull ?
 		reverseIterator(reverseIterator<InputIterator> const & x) : current(x.base()) {
 
 		}
@@ -71,7 +68,7 @@ class reverseIterator: public iterator< typename iterator_traits<Iterator>::iter
 
 		iterator_type	base() const {
 
-			return current;
+			return (current);
 		}
 
 //----------------------------MEMBER FUNCTIONS--------------------------------//
@@ -182,8 +179,6 @@ class reverseIterator: public iterator< typename iterator_traits<Iterator>::iter
 		return (!(x < y));
 	}
 
-// _GLIBCXX_RESOLVE_LIB_DEFECTS
-// DR 280. Comparison of reverseIterator to const reverseIterator.
 	template<typename InputIteratorL, typename InputIteratorR>
 	bool	operator==(const reverseIterator<InputIteratorL>& x, const reverseIterator<InputIteratorR>& y) {
 

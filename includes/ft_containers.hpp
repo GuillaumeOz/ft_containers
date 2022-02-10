@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 08:59:15 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/07 14:27:23 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/10 18:25:24 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@
 # include <sstream>//remove
 # include <cstdlib>//remove
 
-
-// #define print(x)	std::cout << x << std::endl;
 
 # include "utils/lexicographical_compare.hpp"
 # include "utils/equal_compare.hpp"
