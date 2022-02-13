@@ -6,7 +6,7 @@
 #    By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/21 15:17:38 by gozsertt          #+#    #+#              #
-#    Updated: 2022/01/30 18:21:31 by gozsertt         ###   ########.fr        #
+#    Updated: 2022/02/13 15:57:37 by gozsertt         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,11 +51,11 @@ _WHITE=	$' \033[37m
 
 all:
 	@echo "\n$(_BLUE)___$(NAME) Setting___\n$(_WHITE)"
-	@make BONUS=$(D_NO_BONUS) $(NAME)
+	@make STD=$(D_NO_STD) $(NAME)
 
 std:
-	@echo "\n$(_BLUE)___$(NAME) Setting___\n$(_WHITE)"
-	@make BONUS=$(D_BONUS) $(NAME_STD)
+	@echo "\n$(_BLUE)___$(NAME_STD) Setting___\n$(_WHITE)"
+	@make STD=$(D_STD) $(NAME_STD)
 
 show:
 	@echo "$(_BLUE)SRC :\n$(_YELLOW)$(SRC)$(_WHITE)"
@@ -67,18 +67,18 @@ show:
 
 $(NAME): $(OBJ)
 	@echo "-----\nCreating Binary File $(_YELLOW)$@$(_WHITE) ... \c"
-	@$(CC) $(CFLAGS) $(BONUS) $(OBJ) -o $(NAME)
+	@$(CC) $(CFLAGS) $(STD) $(OBJ) -o $(NAME)
 	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 $(NAME_STD): $(OBJ)
 	@echo "-----\nCreating Binary File $(_YELLOW)$@$(_WHITE) ... \c"
-	@$(CC) $(CFLAGS) $(BONUS) $(OBJ) -o $(NAME_STD)
+	@$(CC) $(CFLAGS) $(STD) $(OBJ) -o $(NAME_STD)
 	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 $(OBJ_DIR)/%.o : %.cpp
 	@echo "Compiling $(_YELLOW)$@$(_WHITE) ... \c"
 	@mkdir -p $(OBJ_DIR)
-	@$(CC) $(CFLAGS) $(BONUS) $(IFLAGS) -o $@ -c $<
+	@$(CC) $(CFLAGS) $(STD) $(IFLAGS) -o $@ -c $<
 	@echo "$(_GREEN)DONE$(_WHITE)"
 
 re:	fclean all
@@ -86,7 +86,7 @@ re:	fclean all
 clean:
 	@echo "$(_WHITE)Deleting Objects Directory $(_YELLOW)$(OBJ_DIR)$(_WHITE) ... \c"
 	@$(foreach file, $(OBJ), rm -rf $(file))
-	@rm -rf ftVectorLog.txt vectorLog.txt
+	@rm -rf ftVectorLog vectorLog
 	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 fclean:	clean
@@ -99,4 +99,4 @@ fclean-std:	clean
 	@rm -f $(NAME_STD)
 	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
-.PHONY: all show re clean flcean
+.PHONY: all std show re clean flcean

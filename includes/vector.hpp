@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/12 19:48:18 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/13 20:49:41 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ class vector {
 		return (this->_alloc.max_size());
 	}
 
-	void resize (size_type size, value_type val = value_type()) {//check value type
+	void resize (size_type size, value_type val = value_type()) {
 
 		if (size < this->_size) {
 
