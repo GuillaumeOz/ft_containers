@@ -6,14 +6,15 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 15:21:48 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/06 17:41:34 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:49:51 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+# include "ft_containers.hpp"
 # include <vector>
 # include <stack>
 # include <map>
-# include "ft_containers.hpp"
+# include <set>
 
 #define bothvector(x)	vectorFile << x ; ftVectorFile << x ;
 #define VECTFILE(x,y)	vectorFile << x << y << std::endl;
@@ -21,7 +22,23 @@
 
 # define print(x) std::cout << x << std::endl;
 
-// static unsigned int i = 0;
+static void setTests() {
+
+	print("-----------------------------SET----------------------------------");
+	ft::set<int> set;
+//   std::set<int> myset;
+
+//   for (int i=1; i<=5; i++) myset.insert(i*10);   // myset: 10 20 30 40 50
+
+//   std::pair<std::set<int>::const_iterator,std::set<int>::const_iterator> ret;
+//   ret = myset.equal_range(30);
+
+//   std::cout << "the lower bound points to: " << *ret.first << '\n';
+//   std::cout << "the upper bound points to: " << *ret.second << '\n';
+
+//   return 0;
+
+}
 
 static void mapTests() {
 
@@ -253,6 +270,8 @@ int main(int ac, char **av) {
 		stackTests();
 	else if (input.compare("map") == 0)
 		mapTests();
+	else if (input.compare("set") == 0)
+		setTests();
 
 	return (0);
 }

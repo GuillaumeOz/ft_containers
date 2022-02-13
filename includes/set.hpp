@@ -6,31 +6,31 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/10 19:33:27 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:45:52 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SET_HPP
 # define SET_HPP
 
-# include "utils/lexicographical_compare.hpp"
-# include "utils/equal_compare.hpp"
-# include "utils/enable_if.hpp"
-# include "utils/is_integral.hpp"
-# include "utils/iteratorTraits.hpp"
-# include "utils/vectorIterator.hpp"
-# include "utils/reverseIterator.hpp"
-# include "utils/utils.hpp"
-# include "vector.hpp"
-# include "stack.hpp"
-# include "utils/pair.hpp"
-# include "utils/make_pair.hpp"
-# include "utils/redBlackIterator.hpp"
-# include "ft_containers.hpp"
+// # include "utils/lexicographical_compare.hpp"
+// # include "utils/equal_compare.hpp"
+// # include "utils/enable_if.hpp"
+// # include "utils/is_integral.hpp"
+// # include "utils/iteratorTraits.hpp"
+// # include "utils/vectorIterator.hpp"
+// # include "utils/reverseIterator.hpp"
+// # include "utils/utils.hpp"
+// # include "vector.hpp"
+// # include "stack.hpp"
+// # include "utils/pair.hpp"
+// # include "utils/make_pair.hpp"
+// # include "utils/redBlackIterator.hpp"
+// # include "ft_containers.hpp"
 
 namespace ft {
 
-template <class T, class Compare = std::less<T>, class Alloc = std::allocator<T> > 
+template <class T, class Compare = std::less<T>, class Alloc = std::allocator<ft::setNode<T> > >
 class set {
 
 //--------------------------------TYPEDEF-------------------------------------//
@@ -51,31 +51,13 @@ class set {
 	typedef ft::setNode<value_type>								node_type;
 	typedef node_type*											node_ptr;
 
-	typedef ft::redBlackIterator<value_type, node_type>			iterator;
+	typedef ft::redBlackIterator<const value_type, node_type>	iterator;
 	typedef ft::redBlackIterator<const value_type, node_type>	const_iterator;
 	typedef ft::reverseIterator<iterator>						reverse_iterator;
 	typedef ft::reverseIterator<const_iterator>					const_reverse_iterator;
 
 	typedef std::ptrdiff_t										difference_type;
 	typedef size_t												size_type;
-
-//------------------------NESTED VALUE COMPARE CLASS--------------------------//
-
-	public:
-		class value_compare : public std::binary_function<value_type, value_type, bool> {
-
-		public:
-			Compare		comp;
-
-			value_compare(Compare c = key_compare()) : comp(c) {
-
-			}
-
-			bool operator()(const value_type& x, const value_type& y) const {
-
-				return comp(x.first, y.first);
-			}
-	};
 
 //------------------------------CONSTRUCTORS----------------------------------//
 
@@ -120,7 +102,6 @@ class set {
 		this->_size = 0;
 
 		this->insert(src.begin(), src.end());
-
 	}
 
 //-------------------------------DESTRUCTOR-----------------------------------//
@@ -205,27 +186,20 @@ class set {
 		return (std::numeric_limits<difference_type>::max() / (sizeof(node_type)));
 	}
 
-//-------------------------ELEMENT ACCESS FUNCTION----------------------------//
-
-	setped_type&	operator[](const key_type& k) {
-
-		return ((*((this->insert(ft::make_pair(k,setped_type()))).first)).second);
-	}
-
 //---------------------------MODIFIERS FUNCTIONS------------------------------//
 
 	ft::pair<iterator, bool> insert(const value_type& val) {
 	
 		if (this->_setInsertUnique(val) == false) {
 
-			return (ft::make_pair(find(val.first), false));
+			return (ft::make_pair(find(val), false));
 		}
-		return (ft::make_pair(find(val.first), true));
+		return (ft::make_pair(find(val), true));
 	}
 
 	iterator insert(iterator position, const value_type& val) {
 		(void)position;
-		return insert(val).first;
+		return (insert(val).first);
 	}
 
 	template <class InputIterator>
@@ -241,13 +215,13 @@ class set {
 	// iterator erase
 	void	erase(iterator position) {
 
-		this->erase(position->first);
+		this->erase(*position);
 	}
 
 	// key erase
-	size_type erase (const key_type& k) {
+	size_type erase (const value_type& k) {
 
-		if (this->_redBlackTreeEraseAndRebalance(ft::make_pair(k, setped_type())) == true) {
+		if (this->_redBlackTreeEraseAndRebalance(k) == true) {
 			
 			return (1);
 		}
@@ -259,7 +233,7 @@ class set {
 
 		while (first != last) {
 
-			first = find(first->first);
+			first = find(*first);
 			erase(first++);
 		}
 	}
@@ -290,7 +264,7 @@ class set {
 
 	value_compare value_comp() const {
 
-		return (value_compare(key_compare()));
+		return (value_compare());
 	}
 
 //--------------------------OPERATIONS FUNCTIONS------------------------------//
@@ -302,7 +276,7 @@ class set {
 
 		for (iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
-			if (!this->_keyCompare(itBegin->first, k) && !this->_keyCompare(k, itBegin->first)) {
+			if (!this->_keyCompare(*itBegin, k) && !this->_keyCompare(k, *itBegin)) {
 
 				return (itBegin);
 			}
@@ -316,7 +290,7 @@ class set {
 
 		for (const_iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
-			if (!this->_keyCompare(itBegin->first, k) && !this->_keyCompare(k, itBegin->first)) {
+			if (!this->_keyCompare(*itBegin, k) && !this->_keyCompare(k, *itBegin)) {
 
 				return (itBegin);
 			}
@@ -329,51 +303,25 @@ class set {
 		return (this->find(k) != this->end() ? 1 : 0);
 	}
 
-	iterator lower_bound (const key_type& k) {
+	iterator lower_bound (const value_type& k) const {
 
 		iterator itEnd = this->end();
 
 		for (iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
-			if (!this->_keyCompare(itBegin->first, k))
+			if (!this->_keyCompare(*itBegin, k))
 				return (itBegin);
 		}
 		return (itEnd);
 	}
 
-	const_iterator lower_bound (const key_type& k) const {
-
-		const_iterator itEnd = this->end();
-
-		for (const_iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
-
-			if (!this->_keyCompare(itBegin->first, k))
-				return (itBegin);
-		}
-		return (itEnd);
-	}
-
-	iterator	upper_bound (const key_type& k) {
+	iterator	upper_bound (const value_type& k) const {
 
 		iterator itEnd = this->end();
 
 		for (iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
 
-			if (this->_keyCompare(k, itBegin->first)) {
-
-				return (itBegin);
-			}
-		}
-		return (itEnd);
-	}
-
-	const_iterator	upper_bound (const key_type& k) const {
-
-		const_iterator itEnd = this->end();
-
-		for (const_iterator itBegin = this->begin(); itBegin != itEnd; itBegin++) {
-
-			if (this->_keyCompare(k, itBegin->first)) {
+			if (this->_keyCompare(k, *itBegin)) {
 
 				return (itBegin);
 			}
@@ -383,7 +331,7 @@ class set {
 
 	pair<iterator,iterator>				equal_range (const key_type& k) {
 
-		pair<iterator, iterator> ret;
+		ft::pair<iterator, iterator> ret;
 
 		ret.first = this->lower_bound(k);
 		ret.second = this->upper_bound(k);
@@ -393,7 +341,7 @@ class set {
 
 	pair<const_iterator,const_iterator>	equal_range (const key_type& k) const {
 
-		pair<const_iterator, const_iterator> ret;
+		ft::pair<const_iterator, const_iterator> ret;
 
 		ret.first = this->lower_bound(k);
 		ret.second = this->upper_bound(k);
@@ -771,8 +719,8 @@ class set {
 //--------------------------RELATIONAL OPERATOR-------------------------------//
 
 	// Operator ==
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator== (const set<Key, T, Compare, Alloc>& lhs, const set<Key, T, Compare, Alloc>& rhs) {
+	template <class T, class Compare, class Alloc>
+	bool operator== (const set<T, Compare, Alloc>& lhs, const set<T, Compare, Alloc>& rhs) {
 
 		if (lhs.size() == rhs.size()) {
 
@@ -783,15 +731,15 @@ class set {
 
 	// Operator !=
 	// a!=b -> !(a==b)
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator!= (const set<Key, T, Compare, Alloc>& lhs, const set<Key, T, Compare, Alloc>& rhs) {
+	template <class T, class Compare, class Alloc>
+	bool operator!= (const set<T, Compare, Alloc>& lhs, const set<T, Compare, Alloc>& rhs) {
 
 		return (!(lhs == rhs));
 	}
 
 	// Operator <
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator<  (const set<Key, T, Compare, Alloc>& lhs, const set<Key, T, Compare, Alloc>& rhs) {
+	template <class T, class Compare, class Alloc>
+	bool operator<  (const set<T, Compare, Alloc>& lhs, const set<T, Compare, Alloc>& rhs) {
 
 		if (lhs != rhs) {
 
@@ -802,8 +750,8 @@ class set {
 
 	// Operator <=
 	// a<=b -> !(b<a)
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator<= (const set<Key, T, Compare, Alloc>& lhs, const set<Key, T, Compare, Alloc>& rhs) {
+	template <class T, class Compare, class Alloc>
+	bool operator<= (const set<T, Compare, Alloc>& lhs, const set<T, Compare, Alloc>& rhs) {
 
 		if (lhs == rhs)
 			return (true);
@@ -812,8 +760,8 @@ class set {
 
 	// Operator >
 	// a>b -> b<a
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator>  (const set<Key, T, Compare, Alloc>& lhs, const set<Key, T, Compare, Alloc>& rhs) {
+	template <class T, class Compare, class Alloc>
+	bool operator>  (const set<T, Compare, Alloc>& lhs, const set<T, Compare, Alloc>& rhs) {
 
 		if (lhs == rhs)
 			return (false);
@@ -822,8 +770,8 @@ class set {
 
 	// Operator >=
 	// a>=b -> !(a<b)
-	template <class Key, class T, class Compare, class Alloc>
-	bool operator>= (const set<Key, T, Compare, Alloc>& lhs, const set<Key, T, Compare, Alloc>& rhs) {
+	template <class T, class Compare, class Alloc>
+	bool operator>= (const set<T, Compare, Alloc>& lhs, const set<T, Compare, Alloc>& rhs) {
 
 		if (lhs == rhs)
 			return (true);
@@ -831,8 +779,8 @@ class set {
 	}
 
 	// Swap overload
-	template <class Key, class T, class Compare, class Alloc>
-	void swap (set<Key, T, Compare, Alloc>& x, set<Key, T, Compare, Alloc>& y) {
+	template <class T, class Compare, class Alloc>
+	void swap (set<T, Compare, Alloc>& x, set<T, Compare, Alloc>& y) {
 
 		x.swap(y);
 	}

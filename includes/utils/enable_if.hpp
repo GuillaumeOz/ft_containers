@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:26:37 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/10 18:20:20 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:43:37 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ namespace ft {
 template<bool Cond, class T = void>
 struct enable_if {
 
-	
 };
 
 template<class T>

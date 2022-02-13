@@ -6,14 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:41:02 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/10 10:55:33 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:33:37 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ITERATORTRAITS_HPP
 # define ITERATORTRAITS_HPP
-
-#include <iostream>
 
 namespace ft {
 

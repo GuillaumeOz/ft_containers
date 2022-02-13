@@ -6,27 +6,27 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/10 18:26:43 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:45:41 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
 
-# include "utils/lexicographical_compare.hpp"
-# include "utils/equal_compare.hpp"
-# include "utils/enable_if.hpp"
-# include "utils/is_integral.hpp"
-# include "utils/iteratorTraits.hpp"
-# include "utils/vectorIterator.hpp"
-# include "utils/reverseIterator.hpp"
-# include "utils/utils.hpp"
-# include "vector.hpp"
-# include "stack.hpp"
-# include "utils/pair.hpp"
-# include "utils/make_pair.hpp"
-# include "utils/redBlackIterator.hpp"
-# include "ft_containers.hpp"
+// # include "utils/lexicographical_compare.hpp"
+// # include "utils/equal_compare.hpp"
+// # include "utils/enable_if.hpp"
+// # include "utils/is_integral.hpp"
+// # include "utils/iteratorTraits.hpp"
+// # include "utils/vectorIterator.hpp"
+// # include "utils/reverseIterator.hpp"
+// # include "utils/utils.hpp"
+// # include "vector.hpp"
+// # include "stack.hpp"
+// # include "utils/pair.hpp"
+// # include "utils/make_pair.hpp"
+// # include "utils/redBlackIterator.hpp"
+// # include "ft_containers.hpp"
 
 namespace ft {
 
@@ -382,7 +382,7 @@ class map {
 
 	pair<iterator,iterator>				equal_range (const key_type& k) {
 
-		pair<iterator, iterator> ret;
+		ft::pair<iterator, iterator> ret;
 
 		ret.first = this->lower_bound(k);
 		ret.second = this->upper_bound(k);
@@ -392,7 +392,7 @@ class map {
 
 	pair<const_iterator,const_iterator>	equal_range (const key_type& k) const {
 
-		pair<const_iterator, const_iterator> ret;
+		ft::pair<const_iterator, const_iterator> ret;
 
 		ret.first = this->lower_bound(k);
 		ret.second = this->upper_bound(k);

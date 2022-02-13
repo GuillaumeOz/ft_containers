@@ -6,14 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:29:51 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/24 12:36:11 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:42:00 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ITERATOR_HPP
-# define ITERATOR_HPP
-
-#include "iteratorTraits.hpp"
+#ifndef VECTORITERATOR_HPP
+# define VECTORITERATOR_HPP
 
 namespace ft {
 

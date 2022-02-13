@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:28:26 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/01/10 13:57:08 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:38:29 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define LEXICOGRAPHICAL_COMPARE_HPP
 
 namespace ft {
-	
+
 // Lexicographical compare
 template <class InputIterator1, class InputIterator2>
 	bool	lexicographical_compare (InputIterator1 first1, InputIterator1 last1,
@@ -22,7 +22,7 @@ template <class InputIterator1, class InputIterator2>
 {
 	while (first1 != last1) {
 
-		if (first2 == last2 || *(first2) < *(first1))//test this
+		if (first2 == last2 || *(first2) < *(first1))
 			return (false);
 		else if (*(first1) < *(first2))
 			return (true);

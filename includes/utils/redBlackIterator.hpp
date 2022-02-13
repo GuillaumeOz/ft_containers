@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 08:40:05 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/10 19:33:53 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:40:22 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ namespace ft
 
 	template <typename T>
 	struct setNode
-	{ // change for set node specification
+	{
 
 		T value;
 		setNode *parent;
@@ -34,15 +34,28 @@ namespace ft
 		setNode *right;
 		e_tree_color color;
 
+		// Default constructor
 		setNode(T src = T()) : value(src)
 		{
 
 			parent = NULL;
 			left = NULL;
 			right = NULL;
-			color = BLACK;
+			color = RED;
 		}
 
+		// Fill constructor
+		setNode(T src, e_tree_color pColor,
+				setNode *pParent, setNode *pLeft, setNode *pRight) : value(src)
+		{
+
+			color = pColor;
+			parent = pParent;
+			left = pLeft;
+			right = pRight;
+		}
+
+		// Sentinal node constructor
 		setNode(e_tree_color pColor,
 				setNode *pParent, setNode *pLeft, setNode *pRight)
 		{
@@ -228,72 +241,6 @@ namespace ft
 			return (&(this->operator*()));
 		}
 
-		//------------------------------PRINT TREE------------------------------------//
-
-		// std::string printTree()
-		// {
-
-		// 	Node *rootNode = this->_node;
-
-		// 	while (rootNode->parent != this->_sentinal)
-		// 	{
-
-		// 		rootNode = rootNode->parent;
-		// 	}
-		// 	return (toString(rootNode).str());
-		// }
-
-		// template <typename _T>
-		// std::stringstream toString(mapNode<_T> *root)
-		// {
-
-		// 	return (toString(root, 0));
-		// };
-
-		// template <typename _T>
-		// std::stringstream toString(mapNode<_T> *tmp, int depth)
-		// {
-		// 	std::stringstream output;
-
-		// 	if (tmp == this->_sentinal)
-		// 	{
-
-		// 		return (output);
-		// 	}
-		// 	output << colorizeOutput(getSpaces(depth) + output.str(), tmp) << std::endl;
-		// 	if (tmp->left != this->_sentinal)
-		// 		output << toString(tmp->left, depth + 1).str();
-		// 	if (tmp->right != this->_sentinal)
-		// 		output << toString(tmp->right, depth + 1).str();
-		// 	return (output);
-		// };
-
-		// std::string getSpaces(int n)
-		// {
-		// 	std::string spaces("");
-		// 	while (--n >= 0)
-		// 	{
-		// 		spaces += "  ";
-		// 		spaces += ((n > 0) ? "│" : "└");
-		// 	}
-		// 	return spaces + "─ ";
-		// }
-
-		// template <typename _T>
-		// std::string colorizeOutput(std::string output, mapNode<_T> *tree)
-		// {
-		// 	std::stringstream tmp;
-		// 	std::stringstream content;
-
-		// 	content << tree->value.first;
-		// 	if (tree->color == RED)
-		// 		tmp << std::internal << content.str() + "R";
-		// 	if (tree->color == BLACK)
-		// 		tmp << std::internal << content.str() + "B";
-		// 	output += tmp.str();
-		// 	return (output);
-		// }
-
 		//--------------------------------VARIABLES-----------------------------------//
 
 		public:
@@ -363,8 +310,20 @@ namespace ft
 			while (head->right->color != NONE) {
 				
 				head = head->right;
-				// print(head->value.first)
-				// print(head->value.second)
+			}
+		}
+		return (head);
+	}
+
+	template <typename T>
+	setNode<T> *lastRight(setNode<T> *head)
+	{
+
+		if (head->color != NONE)
+		{
+			while (head->right->color != NONE) {
+				
+				head = head->right;
 			}
 		}
 		return (head);
@@ -379,19 +338,24 @@ namespace ft
 			while (head->left->color != NONE)
 			{
 				head = head->left;
-				// print(head->left)
-				// print(head->left->color)
+			}
+		}
+		return (head);
+	}
+
+	template <typename T>
+	setNode<T> *lastLeft(setNode<T> *head)
+	{
+
+		if (head->color != NONE)
+		{
+			while (head->left->color != NONE)
+			{
+				head = head->left;
 			}
 		}
 		return (head);
 	}
 };
-
-// template <typename _T>
-// inline std::ostream &operator<<(std::ostream &outStream, ft::mapNode<_T> &instance)
-// {
-// 	outStream << instance.toString().str();
-// 	return (outStream);
-// };
 
 #endif

@@ -6,14 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 16:42:56 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/10 18:25:04 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:42:07 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REVERSEITERATOR_HPP
 # define REVERSEITERATOR_HPP
-
-#include "iteratorTraits.hpp"
 
 namespace ft {
 

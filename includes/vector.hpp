@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/22 17:37:12 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/10 18:25:55 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/12 19:48:18 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 
 // #include "ft_containers.hpp"
 
-# include "utils/lexicographical_compare.hpp"
-# include "utils/equal_compare.hpp"
-# include "utils/enable_if.hpp"
-# include "utils/is_integral.hpp"
-# include "utils/iteratorTraits.hpp"
-# include "utils/vectorIterator.hpp"
-# include "utils/reverseIterator.hpp"
-# include "utils/utils.hpp"
+// # include "utils/lexicographical_compare.hpp"
+// # include "utils/equal_compare.hpp"
+// # include "utils/enable_if.hpp"
+// # include "utils/is_integral.hpp"
+// # include "utils/iteratorTraits.hpp"
+// # include "utils/vectorIterator.hpp"
+// # include "utils/reverseIterator.hpp"
+// # include "utils/utils.hpp"
 
 namespace ft {
 
@@ -238,7 +238,7 @@ class vector {
 		if (capacity <= this->capacity())
 			return ;
 		difference_type len = ft::itDiff(itBegin, itEnd);
-		if (capacity < (size_t)len)// || capacity < 0
+		if (capacity < (size_t)len)
 			throw std::bad_alloc();
 		res._alloc = this->_alloc;
 		res._size = len;
