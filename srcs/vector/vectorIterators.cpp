@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/13 19:11:19 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/13 20:46:45 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/15 10:44:39 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	vectorIterators(std::ofstream &outfile)
 	LOG2("Size = : ", int(vect1.size()))
 
 	NAMESP::vector<int>::iterator it = vect1.begin();
-	NAMESP::vector<int>::iterator ite = vect1.end();
+	NAMESP::vector<int>::const_iterator ite = vect1.end();
 	LOG1("vect1 content:")
 	while (it != ite) {
 

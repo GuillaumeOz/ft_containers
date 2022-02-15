@@ -6,27 +6,12 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/18 10:57:47 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/15 02:03:24 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/15 10:37:38 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SET_HPP
 # define SET_HPP
-
-// # include "utils/lexicographical_compare.hpp"
-// # include "utils/equal_compare.hpp"
-// # include "utils/enable_if.hpp"
-// # include "utils/is_integral.hpp"
-// # include "utils/iteratorTraits.hpp"
-// # include "utils/vectorIterator.hpp"
-// # include "utils/reverseIterator.hpp"
-// # include "utils/utils.hpp"
-// # include "vector.hpp"
-// # include "stack.hpp"
-// # include "utils/pair.hpp"
-// # include "utils/make_pair.hpp"
-// # include "utils/redBlackIterator.hpp"
-// # include "ft_containers.hpp"
 
 namespace ft {
 
