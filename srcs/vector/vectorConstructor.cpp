@@ -6,7 +6,7 @@
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/13 12:59:13 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/13 18:23:45 by gozsertt         ###   ########.fr       */
+/*   Updated: 2022/02/14 13:22:59 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 
 void	vectorConstructor(std::ofstream &outfile) {
 
-
 	LOG1("")
 	LOG1("//------------------------CONSTRUCTORS----------------------------//")
-
 	LOG1("")
 	LOG1("DEFAUT CONST")
 	NAMESP::vector<int>		vect1;

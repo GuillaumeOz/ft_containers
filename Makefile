@@ -6,7 +6,7 @@
 #    By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/21 15:17:38 by gozsertt          #+#    #+#              #
-#    Updated: 2022/02/13 15:57:37 by gozsertt         ###   ########.fr        #
+#    Updated: 2022/02/15 01:21:04 by gozsertt         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ OBJ			=	$(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 
 # Compilation flags
 
-CFLAGS		=	-Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address #-Wshadow -Wno-shadow
+CFLAGS		=	-Wall -Wextra -Werror -std=c++98 #-g3 -fsanitize=address #-Wshadow -Wno-shadow
 
 D_NO_STD  	=	-DSTD=0
 
@@ -86,7 +86,7 @@ re:	fclean all
 clean:
 	@echo "$(_WHITE)Deleting Objects Directory $(_YELLOW)$(OBJ_DIR)$(_WHITE) ... \c"
 	@$(foreach file, $(OBJ), rm -rf $(file))
-	@rm -rf ftVectorLog vectorLog
+	@rm -rf ftVectorLog stdVectorLog ftStackLog stdStackLog ftMapLog stdMapLog ftSetLog stdSetLog
 	@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 fclean:	clean

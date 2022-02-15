@@ -1,33 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vectorResize.cpp                                   :+:      :+:    :+:   */
+/*   stackConstructor.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/13 20:43:26 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/14 10:51:26 by gozsertt         ###   ########.fr       */
+/*   Created: 2022/02/14 12:43:34 by gozsertt          #+#    #+#             */
+/*   Updated: 2022/02/14 12:57:50 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_containers.hpp"
 
-void	vectorResize(std::ofstream &outfile)
+void	stackConstructor(std::ofstream &outfile)
 {
-
 	LOG1("")
-	LOG1("//---------------------------RESIZE-------------------------------//")
+	LOG1("//---------------------------CONSTRUCTOR--------------------------//")
 	LOG1("")
-	NAMESP::vector<int> vect1;
+	
+	NAMESP::vector<int> vect1(2,200);
 
-	for (int i = 1; i < 10; i++)
-		vect1.push_back(i);
+	NAMESP::stack<int> stack1;
 
-	vect1.resize(5);
-	vect1.resize(8, 100);
-	vect1.resize(12);
+	NAMESP::stack<int, NAMESP::vector<int> > stack2;
+	NAMESP::stack<int, NAMESP::vector<int> > stack3 (vect1);
 
-	LOG1("vect1 contains:")
-	for (int i = 0; i < (int)vect1.size(); i++)
-		LOG1(vect1[i])
+	LOG2("size of stack1: ", stack1.size())
+	LOG2("size of stack2: ", stack2.size())
+	LOG2("size of stack3: ", stack3.size())
 }

@@ -1,33 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vectorResize.cpp                                   :+:      :+:    :+:   */
+/*   vectorAssign.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/13 20:43:26 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/14 10:51:26 by gozsertt         ###   ########.fr       */
+/*   Created: 2022/02/14 11:16:20 by gozsertt          #+#    #+#             */
+/*   Updated: 2022/02/14 11:29:50 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_containers.hpp"
 
-void	vectorResize(std::ofstream &outfile)
+void	vectorAssign(std::ofstream &outfile)
 {
 
 	LOG1("")
-	LOG1("//---------------------------RESIZE-------------------------------//")
+	LOG1("//-----------------------------ASSIGN-----------------------------//")
 	LOG1("")
-	NAMESP::vector<int> vect1;
+	NAMESP::vector<int> vect1(10);
 
-	for (int i = 1; i < 10; i++)
-		vect1.push_back(i);
+    vect1.assign(7,100);
 
-	vect1.resize(5);
-	vect1.resize(8, 100);
-	vect1.resize(12);
+	LOG2("Size of vect1: ", int(vect1.size()))
 
-	LOG1("vect1 contains:")
-	for (int i = 0; i < (int)vect1.size(); i++)
-		LOG1(vect1[i])
+    NAMESP::vector<int>::iterator it = vect1.begin();
+    NAMESP::vector<int>::iterator ite = vect1.end();
+    while (it != ite) {
+        	
+        LOG1(*it)
+        ++it;
+    }
 }

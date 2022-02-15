@@ -1,33 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vectorResize.cpp                                   :+:      :+:    :+:   */
+/*   mapElementAccess.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/13 20:43:26 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/14 10:51:26 by gozsertt         ###   ########.fr       */
+/*   Created: 2022/02/14 14:41:08 by gozsertt          #+#    #+#             */
+/*   Updated: 2022/02/14 14:48:53 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_containers.hpp"
 
-void	vectorResize(std::ofstream &outfile)
+void	mapElementAccess(std::ofstream &outfile)
 {
-
 	LOG1("")
-	LOG1("//---------------------------RESIZE-------------------------------//")
+	LOG1("//-------------------------ELEMENTACCESS--------------------------//")
 	LOG1("")
-	NAMESP::vector<int> vect1;
+    NAMESP::map<char,std::string> map1;
 
-	for (int i = 1; i < 10; i++)
-		vect1.push_back(i);
+    map1['a'] = "Salut";
+    map1['b'] = "Coucou";
+    map1['c'] = map1['b'];
 
-	vect1.resize(5);
-	vect1.resize(8, 100);
-	vect1.resize(12);
+	LOG2("map1['a'] is ", map1['a'])
+	LOG2("map1['b'] is ", map1['b'])
+	LOG2("map1['c'] is ", map1['c'])
+	LOG2("map1['d'] is ", map1['d'])
 
-	LOG1("vect1 contains:")
-	for (int i = 0; i < (int)vect1.size(); i++)
-		LOG1(vect1[i])
+	LOG2("map1 size is", map1.size())
 }

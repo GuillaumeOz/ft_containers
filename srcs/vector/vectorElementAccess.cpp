@@ -1,33 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vectorResize.cpp                                   :+:      :+:    :+:   */
+/*   vectorElementAccess.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gozsertt <gozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/13 20:43:26 by gozsertt          #+#    #+#             */
-/*   Updated: 2022/02/14 10:51:26 by gozsertt         ###   ########.fr       */
+/*   Created: 2022/02/14 11:06:17 by gozsertt          #+#    #+#             */
+/*   Updated: 2022/02/14 12:18:08 by gozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_containers.hpp"
 
-void	vectorResize(std::ofstream &outfile)
+void	vectorElementAccess(std::ofstream &outfile)
 {
 
 	LOG1("")
-	LOG1("//---------------------------RESIZE-------------------------------//")
+	LOG1("//-------------------------ELEMENTACCESS--------------------------//")
 	LOG1("")
 	NAMESP::vector<int> vect1;
 
-	for (int i = 1; i < 10; i++)
+	LOG1("Init vect1 :")
+	for (int i = 0; i < 100; ++i) {
 		vect1.push_back(i);
-
-	vect1.resize(5);
-	vect1.resize(8, 100);
-	vect1.resize(12);
-
-	LOG1("vect1 contains:")
-	for (int i = 0; i < (int)vect1.size(); i++)
-		LOG1(vect1[i])
+	}
+	LOG2("Random Access : ", vect1[50])
+	LOG2("At function : ", vect1.at(42))
+	LOG2("Front function : ", vect1.front())
+	LOG2("Back function : ", vect1.back())
 }
